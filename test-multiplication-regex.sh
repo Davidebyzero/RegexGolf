@@ -17,8 +17,12 @@ for (( c=1; c<=144; c++ )); do
 }"
 	time_result="${time_result%%
 *}"
+	correct=$(($a * $b == $c))
 	if [ -n "${grep_result}" ]; then
-		echo $time_result: $a \* $b = $c
+		echo -n $time_result: $a \* $b = $c
+		[[ $correct -ne 0 ]] && echo "" || echo " - FALSE POSITIVE!"
+	elif [[ $correct -ne 0 ]]; then
+		echo $time_result: $a \* $b != $c " - FALSE NEGATIVE!"
 	fi
 done
 done
