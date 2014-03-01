@@ -1,4 +1,4 @@
-(?# Match correct multiplication statements in the domain ^x+\*x+=x+$ )
+(?# Match correct multiplication statements in the domain ^x+\*x+=x+$ using only the ECMAScript subset of regex functionality )
 
 (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
 ^(?=(x*)\*(x*)=)
