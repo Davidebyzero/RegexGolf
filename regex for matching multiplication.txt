@@ -37,7 +37,7 @@
                 the resulting divided-down \13 is equal to \10. To do this we will need to encode \7 and \13 into a single number, \7 + \13, which must fit into P
                 as a temporary variable so that we can operate on it. )
             (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \7 + \13 > P.
-                So, in this case, pre-divide \7 and \13 by \5 before going into the loop. )
+                So, just in this case we're in that situation, pre-divide \7 and \13 by \5 before going into the loop, unless one of them is 1. )
             (?=(                      (?# Cache a boolean variable \20 which is empty, i.e. "true", iff either \7 or \10 is equal to 1; otherwise it is one character in length, i.e. "false". )
                 (?=.*(?=\7$|\10$)x$)
             |
