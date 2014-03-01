@@ -1,60 +1,77 @@
 (?# Match correct multiplication statements )
 
+(?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
 ^(?=(x*)\*(x*)=)
-[^=]*\b(?=\1(x*)\b)(?=\2(x*)\b)
+[^=]*\b(?=\1(x*)\b)(?=\2(x*)\b)  (?# \3 and \4 will be used only once, as \3\4 )
 (?:
+    (?# Multiplication by 1 has to be treated as a special case, because there's no room in the product for two copies of the larger factor )
     .*=(?=
-        (?=.*(?=\1$)x$)\2$
+        (?=.*(?=\1$)x$)\2$  (?# matches if \1==1 and \2==P )
     |
-        (?=.*(?=\2$)x$)\1$
+        (?=.*(?=\2$)x$)\1$  (?# matches if \2==1 and \1==P )
     )
 |
+    (?# Multiplication by 1 has to be treated as a special case; see above )
     (?!
         .*(?=\1$)x$
     |
         .*(?=\2$)x$
     )
-    (?=.*=(?=\1\1)(?=\2\2))
+    (?=.*=(?=\1\1)(?=\2\2))   (?# if neither \1 nor \2 is 1, then P must be >= the double of either of them; and without this check, the test below could give a false positive )
     (?!
+        (?# Our negative-lookahead statement here is: there does not exist a prime factor of either \1 or \2 for which the corresponding
+            largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
+        (?# Iterate \5 through all the prime factors possessed by \1 or \2; use |\3\4 to allow either \1 or \2 to have the prime factor )
         (xx+)(?:|\3\4)\5*\b.*=(?!.*(?=\5$)(xx+)\6+$)
-        (?=(\5+|x)(?=.*(?=\1$)\ 7+$)(?!.*(?=\ 7$)((x+)(?=\ 9+$)x+)\ 8*(?!\ 9+$)\ 8$))
-        (?=(\5+|x)(?=.*(?=\2$)\10+$)(?!.*(?=\10$)((x+)(?=\12+$)x+)\11*(?!\12+$)\11$))
-        (?=(
-            (?=\5+$)(?!((x+)(?=\15+$)x+)\14*(?!\15+$)\14$).*$
+        (?=(\5+|x)(?=.*(?=\1$)\ 7+$)(?!.*(?=\ 7$)((x+)(?=\ 9+$)x+)\ 8*(?!\ 9+$)\ 8$))  (?# \ 7 = the largest power of \5 that is a factor of \1 - use prime power test to find it )
+        (?=(\5+|x)(?=.*(?=\2$)\10+$)(?!.*(?=\10$)((x+)(?=\12+$)x+)\11*(?!\12+$)\11$))  (?# \10 = the largest power of \5 that is a factor of \2 - use prime power test to find it )
+        (?=(                                                                           (?# \13 = the largest power of \5 that is a factor of P )
+            (?=\5+$)(?!((x+)(?=\15+$)x+)\14*(?!\15+$)\14$).*$                          (?# if P itself is a prime power, the formula below wouldn't work, so it must be treated as a special case )
         |
-            (?=(\5+|x)(?=     \16+$)(?!.*(?=\16$)((x+)(?=\18+$)x+)\17*(?!\18+$)\17$))\16
+            (?=(\5+|x)(?=     \16+$)(?!.*(?=\16$)((x+)(?=\18+$)x+)\17*(?!\18+$)\17$))\16   (?# otherwise, use the same formula to get \13 as was used for \7 and \10 )
         ))
         (
-            (?!.*(?=\13$)(?=\7)(?=\10))
+            (?!.*(?=\13$)(?=\7)(?=\10))   (?# if neither \1 nor \2 is 1, then \13 must be >= both \7 and \10 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
         |
-            (?=(
+            (?# Now we need to test if \7 * \10 == \13. To do this, we divide both \7 and \13 by \5, in a loop, until one of them equals 1, and then test to see if
+                the resulting divided-down \13 is equal to \10. To do this we will need to encode \7 and \13 into a single number, which must fit into P as a
+                temporary variable so that we can operate on it. This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime,
+                because \1 + P > P, and equivalently, \7 + \13 > \13. So, in this case, pre-divide \7 and \13 by \5 before going into the loop. )
+            (?=(                      (?# Cache a boolean variable \20 which is empty, i.e. "true", iff either \7 or \10 is equal to 1; otherwise it is one character in length, i.e. "false". )
                 (?=.*(?=\7$|\10$)x$)
             |
                 (?!.*(?=\7$|\10$)x$).
             ))
-            (?=(
+            (?=(                      (?# \21 = \20 ?  \7 :  \7 / \5;  the division by \5 is implicit )
                 (?=.*$\20)\7
             |
                 (?!.*$\20)(?=.*(?=\7$)(x+)\22+$)\22
             ))
-            (?=(
+            (?=(                      (?# \23 = \20 ? \13 : \13 / \5;  the division by \5 is implicit )
                 (?=.*$\20)\13
             |
                 (?!.*$\20)(?=.*(?=\13$)(x+)\24+$)\24
             ))
+            (?# So that we can operate on both \21 and \23 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
+                from it or keeping it the same -- encode it into a single number, as \21 + \23. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
+                only one unique pair of prime powers of that prime that will have that sum. )
             (?=.*(?=\21\23$)
                 (
+                    (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \26 and \29, where \26 is the smaller one, if they are different )
                     (?=(x|\5+?)(?!((x+)(?=\28+$)x+)\27*(?!\28+$)\27$)(\5+|x)$)
                     (
-                        (?=x\29$) |
-                        (?=.*(?=\26$)(x+)\31+$)
-                        (?=.*(?=\29$)(x+)\32+$).*(?=\31\32$)
+                        (?=x\29$) |              (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \26 and \29 can be captured )
+                        (?=.*(?=\26$)(x+)\31+$)  (?# \31 = \26 divided by its smallest factor, which implicitly must be \5 )
+                        (?=.*(?=\29$)(x+)\32+$)  (?# \32 = \29 divided by its smallest factor, which implicitly must be \5 )
+                        .*(?=\31\32$)            (?# return \31 + \32 as the new number to operate on in the next iteration of this loop )
                     )
                 )*
             )
-            (?!.*(?=\29$)\10$)
+            (?!.*(?=\29$)\10$)  (?# The above algorithm culminates here: this tests if after dividing \7 and \13 by \5 repeatedly until one of them is 1, the larger result, \29, equals \10.
+                                    Implicit is the assumption that the larger result, \29, corresponds to \13. This is guaranteed due to other checks that were done earlier. )
         )
     |
+        (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
         .*=(xx+)(?=\33+$)(?!.*(?=\33$)(xx+)\34+$)
         (?!
             .*(?=\1$)\33+$
