@@ -1,6 +1,6 @@
 #!/bin/bash
 
-regex=$(tr -d '[:space:]' < "regex for matching multiplication.txt")
+regex=$(tr -d '[:space:]' < "regex for matching multiplication.txt" | sed -e 's/(?#[^)]*)//g')
 
 echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)
