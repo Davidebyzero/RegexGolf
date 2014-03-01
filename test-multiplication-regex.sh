@@ -2,6 +2,8 @@
 
 regex=$(tr -d '[:space:]' < "regex for matching multiplication.txt")
 
+echo Regex length = $(echo -n "$regex"|wc -c)
+
 for (( a=1; a<=12; a++ )); do
 for (( b=1; b<=12; b++ )); do
 for (( c=1; c<=144; c++ )); do
