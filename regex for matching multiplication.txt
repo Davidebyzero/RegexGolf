@@ -38,46 +38,41 @@
                 as a temporary variable so that we can operate on it. )
             (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \7 + \13 > P.
                 So, just in this case we're in that situation, pre-divide \7 and \13 by \5 before going into the loop, unless one of them is 1. )
-            (?=(                      (?# Cache a boolean variable \20 which is empty, i.e. "true", iff either \7 or \10 is equal to 1; otherwise it is one character in length, i.e. "false". )
-                (?=.*(?=\7$|\10$)x$)
+            (?=(                      (?# \20 = \7==1 || \10==1 ?  \7 :  \7 / \5;  the division by \5 is implicit )
+                (?=.*(?=\7$|\10$)x$)\7
             |
-                (?!.*(?=\7$|\10$)x$).
+                (?!.*(?=\7$|\10$)x$)(?=.*(?=\7$)(x+)\21+$)\21
             ))
-            (?=(                      (?# \21 = \20 ?  \7 :  \7 / \5;  the division by \5 is implicit )
-                (?=.*$\20)\7
+            (?=(                      (?# \22 = \7==1 || \10==1 ? \13 : \13 / \5;  the division by \5 is implicit )
+                (?=.*(?=\7$|\10$)x$)\13
             |
-                (?!.*$\20)(?=.*(?=\7$)(x+)\22+$)\22
+                (?!.*(?=\7$|\10$)x$)(?=.*(?=\13$)(x+)\23+$)\23
             ))
-            (?=(                      (?# \23 = \20 ? \13 : \13 / \5;  the division by \5 is implicit )
-                (?=.*$\20)\13
-            |
-                (?!.*$\20)(?=.*(?=\13$)(x+)\24+$)\24
-            ))
-            (?# So that we can operate on both \21 and \23 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
-                from it or keeping it the same -- encode it into a single number, as \21 + \23. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
+            (?# So that we can operate on both \20 and \22 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
+                from it or keeping it the same -- encode it into a single number, as \20 + \22. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
                 only one unique pair of prime powers of that prime that will have that sum. )
-            (?=.*(?=\21\23$)
+            (?=.*(?=\20\22$)
                 (
-                    (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \26 and \29, where \26 is the smaller one, if they are different )
-                    (?=(x|\5+?)(?!((x+)(?=\28+$)x+)\27*(?!\28+$)\27$)(\5+|x)$)
+                    (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \25 and \28, where \25 is the smaller one, if they are different )
+                    (?=(x|\5+?)(?!((x+)(?=\27+$)x+)\26*(?!\27+$)\26$)(\5+|x)$)
                     (
-                        (?=x\29$) |              (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \26 and \29 can be captured )
-                        (?=.*(?=\26$)(x+)\31+$)  (?# \31 = \26 divided by its smallest factor, which implicitly must be \5 )
-                        (?=.*(?=\29$)(x+)\32+$)  (?# \32 = \29 divided by its smallest factor, which implicitly must be \5 )
-                        .*(?=\31\32$)            (?# return \31 + \32 as the new number to operate on in the next iteration of this loop )
+                        (?=x\28$) |              (?# if either \25 or \28 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \25 and \28 can be captured )
+                        (?=.*(?=\25$)(x+)\30+$)  (?# \30 = \25 divided by its smallest factor, which implicitly must be \5 )
+                        (?=.*(?=\28$)(x+)\31+$)  (?# \31 = \28 divided by its smallest factor, which implicitly must be \5 )
+                        .*(?=\30\31$)            (?# return \30 + \31 as the new number to operate on in the next iteration of this loop )
                     )
                 )*
             )
-            (?!.*(?=\29$)\10$)  (?# The above algorithm culminates here: this tests if after dividing \7 and \13 by \5 repeatedly until one of them is 1, the larger result, \29, equals \10.
-                                    Implicit is the assumption that the larger result, \29, corresponds to \13. This is guaranteed due to other checks that were done earlier. )
+            (?!.*(?=\28$)\10$)  (?# The above algorithm culminates here: this tests if after dividing \7 and \13 by \5 repeatedly until one of them is 1, the larger result, \28, equals \10.
+                                    Implicit is the assumption that the larger result, \28, corresponds to \13. This is guaranteed due to other checks that were done earlier. )
         )
     |
         (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
-        .*=(xx+)(?=\33+$)(?!.*(?=\33$)(xx+)\34+$)
+        .*=(xx+)(?=\32+$)(?!.*(?=\32$)(xx+)\33+$)
         (?!
-            .*(?=\1$)\33+$
+            .*(?=\1$)\32+$
         |
-            .*(?=\2$)\33+$
+            .*(?=\2$)\32+$
         )
     )
 )
