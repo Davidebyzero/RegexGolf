@@ -41,12 +41,12 @@
             (?=(                      (?# \20 = \7==1 || \10==1 ?  \7 :  \7 / \5;  the division by \5 is implicit )
                 (?=.*(?=\7$|\10$)x$)\7
             |
-                (?!.*(?=\7$|\10$)x$)(?=.*(?=\7$)(x+)\21+$)\21
+                (?=.*(?=\7$)(x+)\21+$)\21
             ))
             (?=(                      (?# \22 = \7==1 || \10==1 ? \13 : \13 / \5;  the division by \5 is implicit )
                 (?=.*(?=\7$|\10$)x$)\13
             |
-                (?!.*(?=\7$|\10$)x$)(?=.*(?=\13$)(x+)\23+$)\23
+                (?=.*(?=\13$)(x+)\23+$)\23
             ))
             (?# So that we can operate on both \20 and \22 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
                 from it or keeping it the same -- encode it into a single number, as \20 + \22. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
