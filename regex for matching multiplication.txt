@@ -2,7 +2,7 @@
 
 (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
 ^(?=(x*)\*(x*)=)
-[^=]*\b(?=\1(x*)\b)(?=\2(x*)\b)  (?# \3 and \4 will be used only once, as \3\4 )
+[^=]*\b(?=\1(x*)\b)(?=\2(x*)\b)  (?# \3 and \4 will be used only once, as \3\4, which is the absolute value of \1 - \2 )
 (?:
     (?# Multiplication by 1 has to be treated as a special case, because there's no room in the product for two copies of the larger factor )
     .*=(?=
