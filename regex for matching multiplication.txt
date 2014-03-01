@@ -34,9 +34,10 @@
             (?!.*(?=\13$)(?=\7)(?=\10))   (?# if neither \1 nor \2 is 1, then \13 must be >= both \7 and \10 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
         |
             (?# Now we need to test if \7 * \10 == \13. To do this, we divide both \7 and \13 by \5, in a loop, until one of them equals 1, and then test to see if
-                the resulting divided-down \13 is equal to \10. To do this we will need to encode \7 and \13 into a single number, which must fit into P as a
-                temporary variable so that we can operate on it. This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime,
-                because \1 + P > P, and equivalently, \7 + \13 > \13. So, in this case, pre-divide \7 and \13 by \5 before going into the loop. )
+                the resulting divided-down \13 is equal to \10. To do this we will need to encode \7 and \13 into a single number, \7 + \13, which must fit into P
+                as a temporary variable so that we can operate on it. )
+            (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \7 + \13 > P.
+                So, in this case, pre-divide \7 and \13 by \5 before going into the loop. )
             (?=(                      (?# Cache a boolean variable \20 which is empty, i.e. "true", iff either \7 or \10 is equal to 1; otherwise it is one character in length, i.e. "false". )
                 (?=.*(?=\7$|\10$)x$)
             |
