@@ -11,7 +11,7 @@ for (( b=1; b<=12; b++ )); do
 for (( c=1; c<=144; c++ )); do
 	result=$( (
 		time (perl -E "print 'x' x $a; print '*'; print 'x' x $b; print '='; print 'x' x $c" |
-			pgrep "$regex")
+			pcregrep "$regex")
 	) 2>&1 )
 	grep_result="${result%%
 *}"
