@@ -33,7 +33,7 @@
                     (?=.*(?=\28$)(x+)\33+$)  (?# \33 = \28 divided by its smallest factor, which implicitly must be \5 )
                     (?=.*(?=\31$)(x+)\34+$)  (?# \34 = \31 divided by its smallest factor, which implicitly must be \5 )
                     .*(?=\33\34$)            (?# return \33 + \34 as the new number to operate on in the next iteration of this loop )
-                    |                        (?# if either \28 or \31 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \31 is captured for use outside the loop )
+                    |                        (?# if either \28 or \31 is 1, then this loop would fail on its first iteration; force it to succeed, so \28 and \31 are captured for use outside the loop )
                 )
             )*
             \28\16$  (?# The above algorithm culminates here: this tests if after dividing \11 and \21 by \5 repeatedly until one of them is 1, the larger result, \31, equals \16.
