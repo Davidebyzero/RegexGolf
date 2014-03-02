@@ -34,7 +34,8 @@
             (?# So that we can operate on both \20 and \22 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
                 from it or keeping it the same -- encode it into a single number, as \20 + \22. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
                 only one unique pair of prime powers of that prime that will have that sum. )
-            (?=.*(?=\20\22$)
+            (?!
+                .*(?=\20\22$)
                 (
                     (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \25 and \28, where \25 is the smaller one, if they are different )
                     (?=(x|\6+?)(?!((x+)(?=\27+$)x+)\26*(?!\27+$)\26$)(\6+|x)$)
@@ -45,9 +46,9 @@
                         |                        (?# if either \25 or \28 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \28 is captured for use outside the loop )
                     )
                 )*
+                \25\11$  (?# The above algorithm culminates here: this tests if after dividing \8 and \18 by \6 repeatedly until one of them is 1, the larger result, \28, equals \11.
+                             Implicit is the assumption that the larger result, \28, corresponds to \18. This is guaranteed due to other checks that were done earlier. )
             )
-            (?!.*(?=\28$)\11$)  (?# The above algorithm culminates here: this tests if after dividing \8 and \18 by \6 repeatedly until one of them is 1, the larger result, \28, equals \11.
-                                    Implicit is the assumption that the larger result, \28, corresponds to \18. This is guaranteed due to other checks that were done earlier. )
         )
     |
         (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
