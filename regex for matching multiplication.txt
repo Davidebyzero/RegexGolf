@@ -60,11 +60,7 @@
         )
     |
         (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
-        .*=(xx+)(?=\32+$)         (?# \32 = a factor of P )
-        (?!
-            .*(?=\32$)(xx+)\33+$  (?# ensure that \32 is prime )
-        |
-            .*(?=\1$|\2$)\32+$    (?# return a non-match if \32 is not a factor of either \1 or \2 )
-        )
+        .*=(xx+)(?=\32*(?!(xx+)\33+$)\32$)  (?# \32 = a prime factor of P smaller than P )
+        (?!.*(?=\1$|\2$)\32+$)              (?# return a non-match if \32 is not a factor of either \1 or \2 )
     )
 )
