@@ -7,7 +7,7 @@
     (?# Multiplication by 1 has to be treated as a special case, for two reasons. First, the method for calculating the largest prime power factor of \1 and \2 would need to be
         given a special case for if it equals P, because the main algorithm that is in use requires two copies of the factor to fit into \1 or \2, i.e., it must be no more than
         half of \1 or \2. Secondly, and most of all, even if the prime power factors of \1 and \2 were correctly calculated, the sum of them would not fit into P. )
-    (?=x\4\5\b).*=x\4\5$  (?# matches if \1==1 and \2==P, or \2==1 and \1==P )
+    (?=x\4\5\b).*=\3$  (?# matches if \1==1 and \2==P, or \2==1 and \1==P )
 |
     (?=.*=\3\3)  (?# if neither \1 nor \2 is 1, then P must be >= the double of either of them; and without this check, the test below could give a false positive )
     (?!
