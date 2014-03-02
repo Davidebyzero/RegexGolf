@@ -11,12 +11,9 @@
         (?=.*(?=\2$)x$)\1$  (?# matches if \2==1 and \1==P )
     )
 |
-    (?=.*=(?=\1\1)(?=\2\2))   (?# if neither \1 nor \2 is 1, then P must be >= the double of either of them; and without this check, the test below could give a false positive )
-    (?# Multiplication by 1 has to be treated as a special case; see above )
+    (?=.*=(?=\1\1)(?=\2\2))  (?# if neither \1 nor \2 is 1, then P must be >= the double of either of them; and without this check, the test below could give a false positive )
     (?!
-        .*(?=\1$)x$
-    |
-        .*(?=\2$)x$
+        .*(?=\1$|\2$)x$  (?# Multiplication by 1 has to be treated as a special case; see above )
     |
         (?# Our negative-lookahead statement here is: there does not exist a prime factor of either \1 or \2 for which the corresponding
             largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
