@@ -7,9 +7,9 @@
         largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
     (?# Iterate \3 through all the prime factors possessed by \1 or \2 )
     (?:|.+\*)(xx+)\3*\b.*=(?!.*(?=\3$)(xx+)\4+$)
-    (?=.*?(?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\ 6*(?=\ 6$))(?!((x+)(?=\ 8+$)x+)\ 7*(?!\ 8+$)\ 7$)(x+$))  (?# \ 9 = the largest power of \3 that is a factor of \1 - use prime power test to find it )
-    (?=.* (?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\11*(?=\11$))(?!((x+)(?=\13+$)x+)\12*(?!\13+$)\12$)(x+$))  (?# \14 = the largest power of \3 that is a factor of \2 - use prime power test to find it )
-    (?=              ((?=\3+$|x$)|(\3+|x)\16*(?=\16$))(?!((x+)(?=\18+$)x+)\17*(?!\18+$)\17$)(x+$))  (?# \19 = the largest power of \3 that is a factor of P  - use prime power test to find it )
+    (?=.*?(?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\ 6*(?=\ 6$))(?!((x+)(?=\ 8+$)x+)\ 7*(?!\ 8+$)\ 7$)(x+$))  (?# \ 9 = the largest power of \3 that is a factor of the smaller of \1 and \2 )
+    (?=.* (?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\11*(?=\11$))(?!((x+)(?=\13+$)x+)\12*(?!\13+$)\12$)(x+$))  (?# \14 = the largest power of \3 that is a factor of the larger  of \1 and \2 )
+    (?=              ((?=\3+$|x$)|(\3+|x)\16*(?=\16$))(?!((x+)(?=\18+$)x+)\17*(?!\18+$)\17$)(x+$))  (?# \19 = the largest power of \3 that is a factor of P )
     (
         (?!.*(?=\19$)(?=\ 9)\14)   (?# \19 must be >= both \ 9 and \14 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
     |
