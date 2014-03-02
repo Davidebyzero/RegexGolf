@@ -6,32 +6,45 @@ echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)
 echo
 
-for (( phase=0; phase<=1; phase++ ))
+a0=""
+b0=""
+c0=""
+
+perl -E '
+	foreach my $a (1.. 12)  {
+	foreach my $b (1.. 12)  {
+	foreach my $c (1..144) {
+		say "x" x $a . "*" . "x" x $b . "=" . "x" x $c;
+		if ($a * $b == $c) {
+			say "@" . $a . "*" . $b . "=" . $c;  # allow detection of false negatives
+		}
+	}}}
+	' |
+# too small a --buffer-size will result in falsely detected false positives and negatives
+pcregrep --buffer-size=1M --line-buffered -e"$regex" -e'^@' |
+while read -r result
 do
-	for (( a=2; a<=12; a++ )); do
-	for (( b=1; b<=12; b++ )); do
-	for (( c=1; c<=144; c++ )); do
-		correct=$(($a * $b == $c))
-		if [[ $correct -eq $phase ]]; then
-			continue
+	a=${result%%\**}
+	b=${result#*\*}
+	b=${b%%=*}
+	c=${result#*=}
+
+	if [[ ${a:0:1} = '@' ]]; then
+		a=${a:1}
+		if [[ $a -ne $a0 || $b -ne $b0 || $c -ne $c0 ]]; then
+			echo $a \* $b != $c "- FALSE NEGATIVE!"
 		fi
-		result=$( (
-			time (perl -E "print 'x' x $a; print '*'; print 'x' x $b; print '='; print 'x' x $c" |
-				pcregrep "$regex")
-		) 2>&1 )
-		grep_result="${result%%
-*}"
-		time_result="${result#*
-}"
-		time_result="${time_result%%
-*}"
-		if [ -n "${grep_result}" ]; then
-			echo -n $time_result: $a \* $b = $c
-			[[ $correct -ne 0 ]] && echo "" || echo " - FALSE POSITIVE!"
-		elif [[ $correct -ne 0 ]]; then
-			echo $time_result: $a \* $b != $c " - FALSE NEGATIVE!"
-		fi
-	done
-	done
-	done
+		continue
+	fi
+
+	a0=${#a}
+	b0=${#b}
+	c0=${#c}
+
+	echo -n ${#a} \* ${#b} = ${#c}
+	if [[ ${#a}*${#b} -ne ${#c} ]]; then
+		echo " - FALSE POSITIVE!"
+	else
+		echo
+	fi
 done
