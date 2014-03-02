@@ -32,8 +32,8 @@
                 as a temporary variable so that we can operate on it. )
             (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \8 + \14 > P.
                 So, just in this case we're in that situation, pre-divide \8 and \14 by \6 before going into the loop, unless one of them is 1. )
-            (?=.*(          (?=x$)\ 8 | (?=  (?=\ 8$)(x+)\22+$)\22 ))  (?# \21 = \8==1 ?  \8 :  \8 / \6;  the division by \6 is implicit )
-            (?=  ( (?=.*(?=\8$)x$)\14 | (?=.*(?=\14$)(x+)\24+$)\24 ))  (?# \23 = \8==1 ? \14 : \14 / \6;  the division by \6 is implicit )
+            (?=.*(      (?=x$)\8      | (?=\ 8$)(x+)(?=\22+$) ))  (?# \21 = \8==1 ?  \8 :  \8 / \6;  the division by \6 is implicit )
+            (?=.*( (?=.*(?=x$)\8$)\14 | (?=\14$)(x+)(?=\24+$) ))  (?# \23 = \8==1 ? \14 : \14 / \6;  the division by \6 is implicit )
             (?# So that we can operate on both \21 and \23 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
                 from it or keeping it the same -- encode it into a single number, as \21 + \23. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
                 only one unique pair of prime powers of that prime that will have that sum. )
