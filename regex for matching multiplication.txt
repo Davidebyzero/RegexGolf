@@ -17,11 +17,10 @@
             largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
         (?# Iterate \6 through all the prime factors possessed by \1 or \2; use |\4\5 to allow either \1 or \2 to have the prime factor )
         (xx+)(?:|\4\5)\6*\b.*=(?!.*(?=\6$)(xx+)\7+$)
-        (?=(\6+|x)(?=.*(?=\1$)\ 8+$)(?!.*(?=\ 8$)((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$))  (?# \ 8 = the largest power of \6 that is a factor of \1 - use prime power test to find it )
-        (?=(\6+|x)(?=.*(?=\2$)\11+$)(?!.*(?=\11$)((x+)(?=\13+$)x+)\12*(?!\13+$)\12$))  (?# \11 = the largest power of \6 that is a factor of \2 - use prime power test to find it )
-        (?=( (?=\6+$) | (\6+|x)\15*(?=\15$) )                                          (?# since P might itself be a prime power, we need to include itself as a possible factor  )
-            (?!((x+)(?=\17+$)x+)\16*(?!\17+$)\16$)(x+$)                                (?# \18 = the largest power of \6 that is a factor of P  - use prime power test to find it )
-        )
+        (?=          (\6+|x)    (?=.*(?=\1$)\ 8+$)(?!.*(?=\ 8$)((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$))       (?# \ 8 = the largest power of \6 that is a factor of \1 - use prime power test to find it )
+        (?=          (\6+|x)    (?=.*(?=\2$)\11+$)(?!.*(?=\11$)((x+)(?=\13+$)x+)\12*(?!\13+$)\12$))       (?# \11 = the largest power of \6 that is a factor of \2 - use prime power test to find it )
+        (?=((?=\6+$)|(\6+|x)\15*(?=\15$))         (?!          ((x+)(?=\17+$)x+)\16*(?!\17+$)\16$)(x+$))  (?# \18 = the largest power of \6 that is a factor of P  - use prime power test to find it;
+                                                                                                              since P might itself be a prime power, we need to include itself as a possible factor )
         (
             (?!.*(?=\18$)(?=\8)\11)   (?# if neither \1 nor \2 is 1, then \18 must be >= both \8 and \11 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
         |
