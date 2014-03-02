@@ -42,6 +42,6 @@
     )
 |
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
-    .*=(xx+)(?=\35*(?!(xx+)\36+$)\35$)  (?# \35 = a prime factor of P smaller than P )
-    (?!.*(?=\1$|\2$)\35+$)              (?# return a non-match if \35 is not a factor of either \1 or \2 )
+    .*=(x*)(?=\35*(?!(xx+)\36+$)(\35$|x+$\35))  (?# \37 = a prime factor of P )
+    (?!.*(?=\1$|\2$)\37+$)                      (?# return a non-match if \37 is not a factor of either \1 or \2 )
 )
