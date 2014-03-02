@@ -42,5 +42,6 @@
 |
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
     .*=(x*)(?=\33*(?=\33$|x+$\33)(x?x+?)\34*$)  (?# \34 = a prime factor of P )
+    (?=\1)(?=\2)                                (?# make sure there's room in P for a divisibility test; the only situation in which there isn't room is if \1 or \2 is 1, in which case the test isn't needed )
     (?!.*(?=\1$|\2$)\34+$)                      (?# return a non-match if \34 is not a factor of either \1 or \2 )
 )
