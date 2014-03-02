@@ -25,7 +25,7 @@
             (?=(\6+|x)(?=     \17+$)(?!.*(?=\17$)((x+)(?=\19+$)x+)\18*(?!\19+$)\18$))\17   (?# otherwise, use the same formula to get \14 as was used for \8 and \11 )
         ))
         (
-            (?!.*(?=\14$)(?=\8)(?=\11))   (?# if neither \1 nor \2 is 1, then \14 must be >= both \8 and \11 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
+            (?!.*(?=\14$)(?=\8)\11)   (?# if neither \1 nor \2 is 1, then \14 must be >= both \8 and \11 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
         |
             (?# Now we need to test if \8 * \11 == \14. To do this, we divide both \8 and \14 by \6, in a loop, until one of them equals 1, and then test to see if
                 the resulting divided-down \14 is equal to \11. To do this we will need to encode \8 and \14 into a single number, \8 + \14, which must fit into P
