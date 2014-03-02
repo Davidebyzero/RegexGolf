@@ -42,10 +42,10 @@
                     (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \26 and \29, where \26 is the smaller one, if they are different )
                     (?=(x|\6+?)(?!((x+)(?=\28+$)x+)\27*(?!\28+$)\27$)(\6+|x)$)
                     (
-                        (?=x\29$) |              (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \26 and \29 can be captured )
                         (?=.*(?=\26$)(x+)\31+$)  (?# \31 = \26 divided by its smallest factor, which implicitly must be \6 )
                         (?=.*(?=\29$)(x+)\32+$)  (?# \32 = \29 divided by its smallest factor, which implicitly must be \6 )
                         .*(?=\31\32$)            (?# return \31 + \32 as the new number to operate on in the next iteration of this loop )
+                        |                        (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed in this case, so \29 is captured for use outside the loop )
                     )
                 )*
             )
