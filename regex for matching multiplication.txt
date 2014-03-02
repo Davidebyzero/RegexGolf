@@ -2,46 +2,45 @@
 
 (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
 ^(?=(x*)\*(x*)=(?=\1)\2)         (?# assert that \1 and \2 must both be <= P )
-[^=]*\b(?=\1(x*)\b)(?=\2(x*)\b)  (?# \3 + \4 is the absolute value of \1 - \2, and is used below as \3\4 )
 (?!
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of either \1 or \2 for which the corresponding
         largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
-    (?# Iterate \5 through all the prime factors possessed by \1 or \2; use |\3\4 to allow either \1 or \2 to have the prime factor )
-    (xx+)(?:|\3\4)\5*\b.*=(?!.*(?=\5$)(xx+)\6+$)
-    (?=.*?(?=\1$|\2$)((?=\5+$|x$)|(\5+|x)\ 8*(?=\ 8$))(?!((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$)(x+$))  (?# \11 = the largest power of \5 that is a factor of \1 - use prime power test to find it )
-    (?=.* (?=\1$|\2$)((?=\5+$|x$)|(\5+|x)\13*(?=\13$))(?!((x+)(?=\15+$)x+)\14*(?!\15+$)\14$)(x+$))  (?# \16 = the largest power of \5 that is a factor of \2 - use prime power test to find it )
-    (?=              ((?=\5+$|x$)|(\5+|x)\18*(?=\18$))(?!((x+)(?=\20+$)x+)\19*(?!\20+$)\19$)(x+$))  (?# \21 = the largest power of \5 that is a factor of P  - use prime power test to find it )
+    (?# Iterate \3 through all the prime factors possessed by \1 or \2 )
+    (?:|.+\*)(xx+)\3*\b.*=(?!.*(?=\3$)(xx+)\4+$)
+    (?=.*?(?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\ 6*(?=\ 6$))(?!((x+)(?=\ 8+$)x+)\ 7*(?!\ 8+$)\ 7$)(x+$))  (?# \ 9 = the largest power of \3 that is a factor of \1 - use prime power test to find it )
+    (?=.* (?=\1$|\2$)((?=\3+$|x$)|(\3+|x)\11*(?=\11$))(?!((x+)(?=\13+$)x+)\12*(?!\13+$)\12$)(x+$))  (?# \14 = the largest power of \3 that is a factor of \2 - use prime power test to find it )
+    (?=              ((?=\3+$|x$)|(\3+|x)\16*(?=\16$))(?!((x+)(?=\18+$)x+)\17*(?!\18+$)\17$)(x+$))  (?# \19 = the largest power of \3 that is a factor of P  - use prime power test to find it )
     (
-        (?!.*(?=\21$)(?=\11)\16)   (?# \21 must be >= both \11 and \16 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
+        (?!.*(?=\19$)(?=\ 9)\14)   (?# \19 must be >= both \ 9 and \14 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
     |
-        (?# Now we need to test if \11 * \16 == \21. To do this, we divide both \11 and \21 by \5, in a loop, until one of them equals 1, and then test to see if
-            the resulting divided-down \21 is equal to \16. To do this we will need to encode \11 and \21 into a single number, \11 + \21, which must fit into P
+        (?# Now we need to test if \ 9 * \14 == \19. To do this, we divide both \ 9 and \19 by \3, in a loop, until one of them equals 1, and then test to see if
+            the resulting divided-down \19 is equal to \14. To do this we will need to encode \ 9 and \19 into a single number, \ 9 + \19, which must fit into P
             as a temporary variable so that we can operate on it. )
-        (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \11 + \21 > P.
-            So, just in this case we're in that situation, pre-divide \11 and \21 by \5 before going into the loop, unless one of them is 1. )
-        (?=.*(?=\11$)(           x$ | (x+)(?=\24+$) ))  (?# \23 = \11==1 ? \11 : \11 / \5;  the division by \5 is implicit )
-        (?=.*(?=\21$)( x*(?=\11$)x$ | (x+)(?=\26+$) ))  (?# \25 = \11==1 ? \21 : \21 / \5;  the division by \5 is implicit )
-        (?# So that we can operate on both \23 and \25 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
-            from it or keeping it the same -- encode it into a single number, as \23 + \25. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
+        (?# This algorithm would fail in the case that \1, \2, and P are all prime powers of the same prime, because \1 + P > P, and equivalently, \ 9 + \19 > P.
+            So, just in this case we're in that situation, pre-divide \ 9 and \19 by \3 before going into the loop, unless one of them is 1. )
+        (?=.*(?=\ 9$)(           x$ | (x+)(?=\22+$) ))  (?# \21 = \ 9==1 ? \ 9 : \ 9 / \3;  the division by \3 is implicit )
+        (?=.*(?=\19$)( x*(?=\ 9$)x$ | (x+)(?=\24+$) ))  (?# \23 = \ 9==1 ? \19 : \19 / \3;  the division by \3 is implicit )
+        (?# So that we can operate on both \21 and \23 in a loop -- which in a regex can only change the value of one number every iteration, and only in the direction of subtracting
+            from it or keeping it the same -- encode it into a single number, as \21 + \23. This is unambiguous; if a number is the sum of two prime powers of the same prime, there is
             only one unique pair of prime powers of that prime that will have that sum. )
         (?!
-            .*(?=\23\25$)
+            .*(?=\21\23$)
             (
-                (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \28 and \31, where \28 is the smaller one, if they are different )
-                (?=(x|\5+?)(?!((x+)(?=\30+$)x+)\29*(?!\30+$)\29$)(\5+|x)$)
+                (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \26 and \29, where \26 is the smaller one, if they are different )
+                (?=(x|\3+?)(?!((x+)(?=\28+$)x+)\27*(?!\28+$)\27$)(\3+|x)$)
                 (
-                    (?=.*(?=\28$)(x+)\33+$)  (?# \33 = \28 divided by its smallest factor, which implicitly must be \5 )
-                    (?=.*(?=\31$)(x+)\34+$)  (?# \34 = \31 divided by its smallest factor, which implicitly must be \5 )
-                    .*(?=\33\34$)            (?# return \33 + \34 as the new number to operate on in the next iteration of this loop )
-                    |                        (?# if either \28 or \31 is 1, then this loop would fail on its first iteration; force it to succeed, so \28 and \31 are captured for use outside the loop )
+                    (?=.*(?=\26$)(x+)\31+$)  (?# \31 = \26 divided by its smallest factor, which implicitly must be \3 )
+                    (?=.*(?=\29$)(x+)\32+$)  (?# \32 = \29 divided by its smallest factor, which implicitly must be \3 )
+                    .*(?=\31\32$)            (?# return \31 + \32 as the new number to operate on in the next iteration of this loop )
+                    |                        (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed, so \26 and \29 are captured for use outside the loop )
                 )
             )*
-            \28\16$  (?# The above algorithm culminates here: this tests if after dividing \11 and \21 by \5 repeatedly until one of them is 1, the larger result, \31, equals \16.
-                         Implicit is the assumption that the larger result, \31, corresponds to \21. This is guaranteed due to other checks that were done earlier. )
+            \26\14$  (?# The above algorithm culminates here: this tests if after dividing \ 9 and \19 by \3 repeatedly until one of them is 1, the larger result, \29, equals \14.
+                         Implicit is the assumption that the larger result, \29, corresponds to \19. This is guaranteed due to other checks that were done earlier. )
         )
     )
 |
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either \1 or \2. )
-    .*=(x*)(?=\35*(?=\35$|x+$\35)(x?x+?)\36*$)  (?# \36 = a prime factor of P )
-    (?!.*(?=\1$|\2$)\36+$)                      (?# return a non-match if \36 is not a factor of either \1 or \2 )
+    .*=(x*)(?=\33*(?=\33$|x+$\33)(x?x+?)\34*$)  (?# \34 = a prime factor of P )
+    (?!.*(?=\1$|\2$)\34+$)                      (?# return a non-match if \34 is not a factor of either \1 or \2 )
 )
