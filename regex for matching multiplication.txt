@@ -8,9 +8,9 @@
         largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
     (?# Iterate \5 through all the prime factors possessed by \1 or \2; use |\3\4 to allow either \1 or \2 to have the prime factor )
     (xx+)(?:|\3\4)\5*\b.*=(?!.*(?=\5$)(xx+)\6+$)
-    (?=.*(?=\1$)((?=\5+$|x$)|(\5+|x)\ 8*(?=\ 8$))(?!((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$)(x+$))  (?# \11 = the largest power of \5 that is a factor of \1 - use prime power test to find it )
-    (?=.*(?=\2$)((?=\5+$|x$)|(\5+|x)\13*(?=\13$))(?!((x+)(?=\15+$)x+)\14*(?!\15+$)\14$)(x+$))  (?# \16 = the largest power of \5 that is a factor of \2 - use prime power test to find it )
-    (?=         ((?=\5+$|x$)|(\5+|x)\18*(?=\18$))(?!((x+)(?=\20+$)x+)\19*(?!\20+$)\19$)(x+$))  (?# \21 = the largest power of \5 that is a factor of P  - use prime power test to find it )
+    (?=.*?(?=\1$|\2$)((?=\5+$|x$)|(\5+|x)\ 8*(?=\ 8$))(?!((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$)(x+$))  (?# \11 = the largest power of \5 that is a factor of \1 - use prime power test to find it )
+    (?=.* (?=\1$|\2$)((?=\5+$|x$)|(\5+|x)\13*(?=\13$))(?!((x+)(?=\15+$)x+)\14*(?!\15+$)\14$)(x+$))  (?# \16 = the largest power of \5 that is a factor of \2 - use prime power test to find it )
+    (?=              ((?=\5+$|x$)|(\5+|x)\18*(?=\18$))(?!((x+)(?=\20+$)x+)\19*(?!\20+$)\19$)(x+$))  (?# \21 = the largest power of \5 that is a factor of P  - use prime power test to find it )
     (
         (?!.*(?=\21$)(?=\11)\16)   (?# \21 must be >= both \11 and \16 if P is the product of \1 and \2; and without this check, the test below could give a false positive )
     |
