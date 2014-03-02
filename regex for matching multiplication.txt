@@ -20,7 +20,7 @@
         (?=(\6+|x)(?=.*(?=\1$)\ 8+$)(?!.*(?=\ 8$)((x+)(?=\10+$)x+)\ 9*(?!\10+$)\ 9$))  (?# \ 8 = the largest power of \6 that is a factor of \1 - use prime power test to find it )
         (?=(\6+|x)(?=.*(?=\2$)\11+$)(?!.*(?=\11$)((x+)(?=\13+$)x+)\12*(?!\13+$)\12$))  (?# \11 = the largest power of \6 that is a factor of \2 - use prime power test to find it )
         (?=(                                                                           (?# \14 = the largest power of \6 that is a factor of P )
-            (?=\6+$)(?!((x+)(?=\16+$)x+)\15*(?!\16+$)\15$).*$                          (?# if P itself is a prime power, the formula below wouldn't work, so it must be treated as a special case )
+            (?!((x+)(?=\16+$)x+)\15*(?!\16+$)\15$)\6+$                                 (?# if P itself is a prime power, the formula below wouldn't work, so it must be treated as a special case )
         |
             (?=(\6+|x)(?=     \17+$)(?!.*(?=\17$)((x+)(?=\19+$)x+)\18*(?!\19+$)\18$))\17   (?# otherwise, use the same formula to get \14 as was used for \8 and \11 )
         ))
