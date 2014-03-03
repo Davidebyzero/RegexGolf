@@ -1,8 +1,7 @@
 (?# Match correct multiplication statements in the domain ^x+\*x+=x+$ using only the ECMAScript subset of regex functionality )
 (?# A = first factor; B = second factor; P = number we're testing as the potential product of A and B )
 
-(?=^(x*).(x*))          (?# \1 = A; \2 = B )
-(?=(\2|\1))             (?# \3 = the smaller of A and B )
+(?=^(x*).((\1|x*)x*))   (?# \1 = A; \2 = B; \3 = the smaller of A and B )
 (?=.*?(?=(\2x*))x(x*))  (?# \4 = the larger of A and B; \5=\4-1 )
 .*=(?=\4+$)             (?# assert that P is divisible by \4, and that \4 <= P, and advance current position to beginning of P )
 
