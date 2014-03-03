@@ -3,11 +3,11 @@
 (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
 ^(x*).(x*)=
 
-(?=.*?(?=\1$|\2$)(x(x*)))  (?# \3 = the larger  of \1 and \2; \4=\3-1 )
-(?=.* (?=\1$|\2$)  (x*) )  (?# \5 = the smaller of \1 and \2 )
-
 (?=\1+$)
 (?=\2+$)
+
+(?=.*?(?=\1$|\2$)(x(x*)))  (?# \3 = the larger  of \1 and \2; \4=\3-1 )
+(?=.* (?=\1$|\2$)  (x*) )  (?# \5 = the smaller of \1 and \2 )
 
 \5
 (
