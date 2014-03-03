@@ -7,13 +7,19 @@ echo Regex md5sum = $(echo -n "$regex"|md5sum)
 echo
 
 a0=-1
+n=0
+z=1
 
 perl -E '
-	foreach my $a (0..100)  {
-		say "x" x ($a*$a);
-		#if ($a * $b == $c) {
-			say "@" . ($a*$a);  # allow detection of false negatives
-		#}
+	$n = 0;
+	$z = 1;
+	foreach my $a (0..2025)  {
+		say "x" x ($a);
+		if ($n == $a) {
+			say "@" . ($a);  # allow detection of false negatives
+			$n += $z;
+			$z += 2;
+		}
 	}
 	' |
 # too small a --buffer-size will result in falsely detected false positives and negatives
@@ -25,10 +31,17 @@ do
 		if [[ $a -ne $a0 ]]; then
 			echo $a "- FALSE NEGATIVE!"
 		fi
+		n=$(($n + $z))
+		z=$(($z + 2))
 		continue
 	fi
 
 	a0=${#a}
 
-	echo $a0
+	echo -n $a0
+	if [[ ${#a} -ne $n ]]; then
+		echo " - FALSE POSITIVE!"
+	else
+		echo
+	fi
 done
