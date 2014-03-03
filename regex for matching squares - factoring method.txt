@@ -1,4 +1,4 @@
-(?# Match perfect squares in the domain ^x+$ )
+(?# Match perfect squares in the domain ^x*$ )
 
 ^(
     (?=(xx+?)\2+$)
