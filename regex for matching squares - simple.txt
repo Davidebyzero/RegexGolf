@@ -1,0 +1,8 @@
+(?# Match perfect squares in the domain ^x+$ )
+
+^(x(x*))(?=\1*$)
+(
+    \2
+    (?=\1*(x*$))
+    (?!x+$\4)
+)+$
