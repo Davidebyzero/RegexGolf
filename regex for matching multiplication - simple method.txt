@@ -1,13 +1,11 @@
 (?# Match correct multiplication statements in the domain ^x+\*x+=x+$ using only the ECMAScript subset of regex functionality )
 
 (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
-^(x*).(x*)=
+(?=^(x*).(x*))
 
-(?=\1+$)
-(?=\2+$)
-
-(?=.*?(?=(\1$|\2$))x(x*))  (?# \3 = the larger  of \1 and \2; \4=\3-1 )
-(?=.*    (\1 |\2 )      )  (?# \5 = the smaller of \1 and \2 )
+(?=.*?(?=(\2x*))x(x*))  (?# \3 = the larger of \1 and \2; \4=\3-1 )
+.*=(?=\3+$)             (?# assert that P is divisible by \3, and that \3 <= P, and advance current position to beginning of P )
+(?=.*(\1|\2))           (?# \5 = the smaller of \1 and \2 )
 
 \5
 (
