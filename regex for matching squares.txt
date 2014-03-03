@@ -1,0 +1,10 @@
+(?# Match perfect squares in the domain ^x+$ )
+
+^(
+    (?=(xx+?)\2+$)
+    (
+        (?=\2+$)
+        (?=(x+)(\4+)$)\5
+    ){2}
+)*
+x?$
