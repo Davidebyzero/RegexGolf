@@ -1,6 +1,12 @@
 #!/bin/bash
 
-regex=$(tr -d '[:space:]' < "regex for matching squares.txt" | sed -e 's/(?#[^)]*)//g')
+if [ -z "$1" ]; then
+	echo "Usage: $0 FILE"
+	echo "Reads a Perfect Square regex from FILE and tests it."
+	exit
+fi
+
+regex=$(tr -d '[:space:]' < "$1" | sed -e 's/(?#[^)]*)//g')
 
 echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)
