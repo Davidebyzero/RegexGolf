@@ -1,7 +1,10 @@
 (?# Match correct multiplication statements in the domain ^x+\*x+=x+$ using only the ECMAScript subset of regex functionality )
 
-(?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
-^(?=(x*)\*(x*)=(?=\1)\2)         (?# assert that \1 and \2 must both be <= P )
+^
+(?=
+    (x*)\*(x*)=   (?# \1 = first factor; \2 = second factor; P = number we're testing as the potential product of \1 * \2 )
+    (?=\1)\2      (?# assert that \1 and \2 must both be <= P )
+)
 (?!
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of either \1 or \2 for which the corresponding
         largest prime power factor of P is not equal to the product of the corresponding prime power factors of \1 and \2. )
