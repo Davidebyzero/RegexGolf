@@ -1,0 +1,9 @@
+(?# Match perfect squares in the domain ^x*$ )
+
+    ^(x(x*))        (?# \1 = potential square root; \2 = \1 - 1 )
+    (?=
+        (\1*)\2+$   (?# iff \1 * \1 == our number, then the first match here must result in \3 == 0 )
+    )
+    \1*$\3          (?# test for divisibility by \1 and for \3 == 0 simultaneously )
+|
+    ^$              (?# must match zero separately, since the main algorithm can't )
