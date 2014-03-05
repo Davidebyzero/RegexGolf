@@ -1,0 +1,19 @@
+(?# Match triangular numbers in the domain ^x*$ )
+(?# in the form n*{n*2+1} or n*{n*2-1}          )
+
+    ^(                  (?# \1 = n*2-1 or n*2+1 )
+        (               (?# \2 = \1-1 )
+            (
+                (x*)    (?# \4 = n-1 )
+                x?
+            )
+            \3
+        )
+        x
+    )
+    (?=
+        \4(\1*)\2*$     (?# iff \1 + \4 * \1 == our number, then the first match here must result in \5 == 0 )
+    )
+    \1*$\5
+|
+    ^$
