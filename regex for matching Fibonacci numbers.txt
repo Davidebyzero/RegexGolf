@@ -42,7 +42,7 @@
         (
             \20
             (?!\19+$)
-        )+$
+        )+
     |
         \13\5{2}
 
@@ -51,7 +51,7 @@
         (
             \23
             (?!\22+$)
-        )+$
+        )+
     )
 |
     xx?x?|(x{5})?(x{8})?|x{21}   (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 13, 21 cannot be handled by our main algorithm, so match them here )
