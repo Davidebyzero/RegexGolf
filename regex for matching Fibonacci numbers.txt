@@ -35,23 +35,23 @@
             (?!\15+$)
         )+$
     )
-    \13\5{3}
-    (\13\5{2}|)                  (?# \18 )
+    (\13\5{2})\5                 (?# \18 )
+    (\18?)                       (?# \19 - controls which multiplication we're trying )
     (?=
-        (x(                      (?# \19 = \1*4 or \1*6 = larger number to multiply by, \20 = 19 - 1 )
+        (x(                      (?# \20 = \1*4 or \1*6 = larger number to multiply by, \21 = 20 - 1 )
             \2\1{3}
             (
-                (?!.*$\18)\1{2}
+                (?!.*$\19)\1{2}
             |
-                (?=.*$\18)
+                (?=.*$\19)
             )
         ))+$
     )
     \9                           (?# \9 = smaller number to multiply by )
     (
-        \20
-        (?!\19+$)
+        \21
+        (?!\20+$)
     )+
 |
-    xx?x?|(x{8}|)(x{5}\23?)?     (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 13, 21 cannot be handled by our main algorithm, so match them here )
+    xx?x?|(x{8}|)(x{5}\24?)?     (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 13, 21 cannot be handled by our main algorithm, so match them here )
 )$
