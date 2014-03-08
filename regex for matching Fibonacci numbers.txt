@@ -19,13 +19,13 @@
             (?!\5+$)
         )+$
     )
-    (?=.*(?=\3{5}xx$)\4(x*)\7(x?))     (?# \7 = arithmetic mean of \1*\1*5 and \5*\5, divided by 2; \8 = remainder of division )
+    (?=.*(?=\3{5}xx$)\4(x*)(\7 x?))    (?# \7 = arithmetic mean of \1*\1*5 and \5*\5, divided by 2; \8 = the other half, including remainder )
     (?=
         .*(?=\5+$)
         (\1\6+?(?=\5*$))               (?# \9 = result of multiplying \5 * \1, where \5 is larger )
     )
-    (?=.*(?=\9)(x*)\10)                (?# \10 = \9 / 2; the remainder of division will always be == \8, because \5 is odd iff \1 is odd )
-    \7\8\9
+    (?=.*(?=\9)(x*)\10)                (?# \10 = \9 / 2; the remainder will always be the same as it is in \8, because \5 is odd iff \1 is odd )
+    \8\9
     (
         \7\9
     |
