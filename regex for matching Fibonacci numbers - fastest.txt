@@ -1,0 +1,42 @@
+(?# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality )
+
+^(?:
+    (?=
+        (x((x*?)(x?)))                 (?# \1 = potential number for which \1 * \1 * 5 plus or minus 4 is a perfect square;
+                                           this is true iff \1 is a Fibonacci number. Outside the surrounding lookahead block,
+                                           \1 is guaranteed to be the largest number for which this is true such that
+                                           \1 * \1 * 5 + 4 fits into the main number. \2 = \1 - 1.
+                                           \4 = parity - is determined by whether the index of Fibonacci number \1 is odd or even;
+                                           \3 = \2 - \4 )
+        (?=
+            \3{3}x{4}
+            (?=\1*(x?$))\5\1*
+            (\1\2+$)                   (?# \6 = result of multiplying \1 * \1 )
+        )
+        (?# leave a leftover number equalling \6 * 5 plus or minus 4, on which the next test will be done )
+        (?=\6{5} x{4} (.*))\7          (?# \7 will be reused later to recreate the same leftover )
+        (?=\7)                         (?# this allows the lazy quantifier on \2 to work, and results in a huge speed optimization )
+        \4{8}                          (?# \4 = parity - is determined by whether the index of Fibonacci number \1 is odd or even )
+        (?# require that the current leftover number is a perfect square)
+        (x(x*))(?=\8*$)                (?# \8 = potential square root, which will be the square root outside the surrounding lookahead; \9 = \8-1 )
+        (?:
+            \9
+            (?!\8+$)
+        )+$
+    )
+    (?=\1\7 xx \4{4}(x*)(\10 x?))      (?# \10 = arithmetic mean of \1*\1*5 and \8*\8, divided by 2; \11 = the other half, including remainder )
+    (?=
+        .*(?=\8+$)\8*
+        (\1\9+$)                       (?# \12 = result of multiplying \8 * \1, where \8 is larger )
+    )
+    (?=.*(?=\12)(x*)\13)               (?# \13 = \12 / 2; the remainder will always be the same as it is in \11, because \8 is odd iff \1 is odd )
+    \11\12
+    (
+        \10\12
+    |
+        \13
+    )
+|
+    x?x?x?|x{5}|x{8}|x{21}             (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
+                                           note, a recent optimization allows the main algorithm to match 13, so that doesn't need to be handled here )
+)$
