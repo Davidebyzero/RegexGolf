@@ -2,17 +2,17 @@
 
 ^(?:
     (?=
-        (                              (?# \1 )
-            (x(x*))                    (?# \2 = potential number for which \2 * \2 * 5 plus or minus 4 is a perfect square;
-                                           this is true iff \2 is a Fibonacci number. Outside the surrounding lookahead block,
-                                           \2 is guaranteed to be the largest number for which this is true such that
-                                           \2 * \2 * 5 + 4 fits into the main number. \3 = \2 - 1 )
-            (?=
-                (?=\2*(x*))\4
-                (\2\3+?(?=\2*$))       (?# \5 = result of multiplying \2 * \2 )
-            )
-        .*)(?=\5{5} x{4}$)             (?# leave a leftover number equalling \5 * 5 plus or minus 4, on which the next test will be done )
-        (|x{4})\6                      (?# \6 = parity - is determined by whether the index of Fibonacci number \2 is odd or even )
+        (x(x*))                        (?# \1 = potential number for which \1 * \1 * 5 plus or minus 4 is a perfect square;
+                                           this is true iff \1 is a Fibonacci number. Outside the surrounding lookahead block,
+                                           \1 is guaranteed to be the largest number for which this is true such that
+                                           \1 * \1 * 5 + 4 fits into the main number. \2 = \1 - 1 )
+        (?=
+            (?=\1*(x*))\3
+            (\1\2+?(?=\1*$))           (?# \4 = result of multiplying \1 * \1 )
+        )
+        (?# leave a leftover number equalling \4 * 5 plus or minus 4, on which the next test will be done )
+        (?=\4{5} x{4} (.*))\5          (?# \5 will be reused later to recreate the same leftover )
+        (|x{4})\6                      (?# \6 = parity - is determined by whether the index of Fibonacci number \1 is odd or even )
         (?# require that the current leftover number is a perfect square)
         (x(x*))(?=\7*$)                (?# \7 = potential square root, which will be the square root outside the surrounding lookahead; \8 = \7-1 )
         (?:
@@ -20,12 +20,12 @@
             (?!\7+$)
         )+$
     )
-    (?=\1 xx \6(x*)(\9 x?))            (?# \9 = arithmetic mean of \2*\2*5 and \7*\7, divided by 2; \10 = the other half, including remainder )
+    (?=\1\5 xx \6(x*)(\9 x?))          (?# \9 = arithmetic mean of \1*\1*5 and \7*\7, divided by 2; \10 = the other half, including remainder )
     (?=
         (?=\7+(x*))\11
-        (\2\8+?(?=\7*$))               (?# \12 = result of multiplying \7 * \2, where \7 is larger )
+        (\1\8+?(?=\7*$))               (?# \12 = result of multiplying \7 * \1, where \7 is larger )
     )
-    (?=.*(?=\12)(x*)\13)               (?# \13 = \12 / 2; the remainder will always be the same as it is in \10, because \7 is odd iff \2 is odd )
+    (?=.*(?=\12)(x*)\13)               (?# \13 = \12 / 2; the remainder will always be the same as it is in \10, because \7 is odd iff \1 is odd )
     \10\12
     (
         \9\12
