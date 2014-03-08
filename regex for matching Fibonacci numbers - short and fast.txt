@@ -2,7 +2,7 @@
 
 ^(?:
     (?=
-        (x(x*))                        (?# \1 = potential number for which \1 * \1 * 5 plus or minus 4 is a perfect square;
+        (x(x+?))                       (?# \1 = potential number for which \1 * \1 * 5 plus or minus 4 is a perfect square;
                                            this is true iff \1 is a Fibonacci number. Outside the surrounding lookahead block,
                                            \1 is guaranteed to be the largest number for which this is true such that
                                            \1 * \1 * 5 + 4 fits into the main number. \2 = \1 - 1 )
@@ -12,6 +12,7 @@
         )
         (?# leave a leftover number equalling \4 * 5 plus or minus 4, on which the next test will be done )
         (?=\4{5} x{4} (.*))\5          (?# \5 will be reused later to recreate the same leftover )
+        (?=\5)                         (?# this allows the lazy quantifier on \2 to work, and results in a huge speed optimization )
         (|x{4})\6                      (?# \6 = parity - is determined by whether the index of Fibonacci number \1 is odd or even )
         (?# require that the current leftover number is a perfect square)
         (x(x*))(?=\7*$)                (?# \7 = potential square root, which will be the square root outside the surrounding lookahead; \8 = \7-1 )
