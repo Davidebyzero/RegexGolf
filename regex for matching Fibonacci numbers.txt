@@ -7,8 +7,8 @@
                                            \1 is guaranteed to be the largest number for which this is true such that
                                            \1 * \1 * 5 + 4 fits into the main number. \2 = \1 - 1 )
         (?=
-            (?=\1*(x*))
-            (\1\2+?(?=\1*\3$))         (?# \4 = result of multiplying \1 * \1 )
+            (?=\1*(x*))\3
+            (\1\2+?(?=\1*$))           (?# \4 = result of multiplying \1 * \1 )
         )
         .*(?=\4{5} x{4}$)              (?# leave a leftover number equalling \4 * 5 plus or minus 4, on which the next test will be done )
         (|x{4})\5                      (?# \5 = parity - is determined by whether the index of Fibonacci number \1 is odd or even )
@@ -21,8 +21,8 @@
     )
     (?=.*(?=\4{5}xx$)\5(x*)\8(x?))     (?# \8 = arithmetic mean of \1*\1*5 and \6*\6, divided by 2; \9 = remainder of division )
     (?=
-        (?=\6+(x*))
-        (\1\7+?(?=\6*\10$))            (?# \11 = result of multiplying \6 * \1, where \6 is larger )
+        (?=\6+(x*))\10
+        (\1\7+?(?=\6*$))               (?# \11 = result of multiplying \6 * \1, where \6 is larger )
     )
     (?=.*(?=\11)(x*)\12)               (?# \12 = \11 / 2; the remainder of division will always be == \9, because \6 is odd iff \1 is odd )
     \8\9\11
