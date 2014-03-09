@@ -13,7 +13,7 @@
                                            and prepares for the leftover subtraction capture that will be done afterward )
             (?=
                 \3{3}
-                (?=\1*(x?$))\5\1*
+                (?=\1*(x?$))\5\1*      (?# \5 )
                 (\1\2+$)               (?# \6 = result of multiplying \1 * \1 )
             )
             \6{5}(.*)                  (?# \7 = a subtraction that will be used to leave a leftover number equalling \6 * 5 plus or minus 4 )
@@ -36,9 +36,9 @@
     (?=.*(?=\12)(x*)\13)               (?# \13 = \12 / 2; the remainder will always be the same as it is in \11, because \8 is odd iff \1 is odd )
     \11\12
     (
-        \10\12
+        \10\12                         (?# this path will result in a match iff \4 == \5; this fact probably can't be used to improve the regex )
     |
-        \13
+        \13                            (?# this path will result in a match iff \4 != \5; this fact probably can't be used to improve the regex )
     )
 |
     x{0,3}|x{5}|x{8}|x{21}             (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
