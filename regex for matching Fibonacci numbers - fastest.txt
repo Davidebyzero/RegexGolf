@@ -23,22 +23,22 @@
         \4{8}                          (?# \4 = parity - is determined by whether the index of Fibonacci number \1 is odd or even )
         (?# require that the current leftover number is a perfect square)
         (x(x*))(?=\8*$)                (?# \8 = potential square root, which will be the square root outside the surrounding lookahead; \9 = \8-1 )
-        (?:
+        (
             \9
             (?!\8+$)
         )+$
     )
-    (?=\1\7 xx \4{4}(x*)(\10 x?))      (?# \10 = arithmetic mean of \1*\1*5 and \8*\8, divided by 2; \11 = the other half, including remainder )
+    (?=\1\7 xx \4{4}(x*)(\11 x?))      (?# \11 = arithmetic mean of \1*\1*5 and \8*\8, divided by 2; \12 = the other half, including remainder )
     (?=
         .*(?=\8+$)\8*
-        (\1\9+$)                       (?# \12 = result of multiplying \8 * \1, where \8 is larger )
+        (\1\9+$)                       (?# \13 = result of multiplying \8 * \1, where \8 is larger )
     )
-    (?=.*(?=\12)(x*)\13)               (?# \13 = \12 / 2; the remainder will always be the same as it is in \11, because \8 is odd iff \1 is odd )
-    \11\12
+    (?=.*(?=\13)(x*)\14)               (?# \14 = \13 / 2; the remainder will always be the same as it is in \12, because \8 is odd iff \1 is odd )
+    \12\13
     (
-        \10\12                         (?# this path will result in a match iff \4 == \5; this fact probably can't be used to improve the regex )
+        \11\13                         (?# this path will result in a match iff \4 == \5; this fact probably can't be used to improve the regex )
     |
-        \13                            (?# this path will result in a match iff \4 != \5; this fact probably can't be used to improve the regex )
+        \14                            (?# this path will result in a match iff \4 != \5; this fact probably can't be used to improve the regex )
     )
 |
     x{0,3}|x{5}|x{8}|x{21}             (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
