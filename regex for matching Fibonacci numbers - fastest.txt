@@ -29,7 +29,7 @@
             )
             (?=\1(.*))                       (?# \16 )
             (?=(                             (?# \17 )
-                (?!\16\15).*                 (?# exit the loop when \12*\12 > \1; \7 will be our return value )
+                (?!\16\15).*                 (?# exit the loop when \12*\12 > \1; \7 and \12 will be our return values )
             |
                 (?=                          (?# encode the next Fibonacci pair chunk )
                     (?=x\15(.*))             (?# \18 )
