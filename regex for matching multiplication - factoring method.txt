@@ -29,24 +29,28 @@
             only one unique pair of prime powers of that prime that will have that sum. )
         (?!
             .*(?=\21\23$)
-            (
-                (?# The first thing we need to do every iteration is decode the current number back into two prime powers, \26 and \29, where \26 is the smaller one, if they are different )
-                (?=(x|\3+?)(?!((x+)(?=\28+$)x+)\27*(?!\28+$)\27$)(\3+|x)$)
-                (
-                    (?=.*(?=\26$)(x+)\31+$)  (?# \31 = \26 divided by its smallest factor, which implicitly must be \3 )
-                    (?=.*(?=\29$)(x+)\32+$)  (?# \32 = \29 divided by its smallest factor, which implicitly must be \3 )
-                    .*(?=\31\32$)            (?# return \31 + \32 as the new number to operate on in the next iteration of this loop )
-                    |                        (?# if either \26 or \29 is 1, then this loop would fail on its first iteration; force it to succeed, so \26 and \29 are captured for use outside the loop )
-                )
-            )*
-            \26\14$  (?# The above algorithm culminates here: this tests if after dividing \9 and \19 by \3 repeatedly until one of them is 1, the larger result, \29, equals \14.
-                         Implicit is the assumption that the larger result, \29, corresponds to \19. This is guaranteed due to other checks that were done earlier. )
+            (?=     (?# This loop must be executed inside a lookahead to make it atomic, so that the regex engine won't backtrack to an earlier iteration of the loop, which results in some false positives. )
+				(
+					(
+						(?# The first thing we need to do every iteration is decode the current number back into two prime powers, \27 and \30, where \27 is the smaller one, if they are different )
+						(?=(x|\3+?)(?!((x+)(?=\29+$)x+)\28*(?!\29+$)\28$)(\3+|x)$)
+						(
+							(?=.*(?=\27$)(x+)\32+$)  (?# \32 = \27 divided by its smallest factor, which implicitly must be \3 )
+							(?=.*(?=\30$)(x+)\33+$)  (?# \33 = \30 divided by its smallest factor, which implicitly must be \3 )
+							.*(?=\32\33$)            (?# return \32 + \33 as the new number to operate on in the next iteration of this loop )
+							|                        (?# if either \27 or \30 is 1, then this loop would fail on its first iteration; force it to succeed, so \27 and \30 are captured for use outside the loop )
+						)
+					)*
+				)
+			)\25
+            \27\14$  (?# The above algorithm culminates here: this tests if after dividing \9 and \19 by \3 repeatedly until one of them is 1, the larger result, \30, equals \14.
+                         Implicit is the assumption that the larger result, \30, corresponds to \19. This is guaranteed due to other checks that were done earlier. )
         )
     )
 |
     (?# Our negative-lookahead statement here is: there does not exist a prime factor of P that is not also a factor of either A or B. )
     .*=(x*)                              (?# allow the prime factor we find to be P itself )
     (?=\1\2)                             (?# make sure there's room in P for a divisibility test; the only situation in which there isn't room is if A or B is 1, in which case the test isn't needed )
-    (?=\33*(?=\33$|x+$\33)(x?x+?)\34*$)  (?# \34 = a prime factor of P )
-    (?!.*(?=\1\2?$)\34+$)                (?# return a non-match if \34 is not a factor of either A or B )
+    (?=\34*(?=\34$|x+$\34)(x?x+?)\35*$)  (?# \35 = a prime factor of P )
+    (?!.*(?=\1\2?$)\35+$)                (?# return a non-match if \35 is not a factor of either A or B )
 )
