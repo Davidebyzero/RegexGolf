@@ -8,7 +8,7 @@
                                            \2 is guaranteed to be the largest number for which this is true such that
                                            \2 * \2 * 5 + 4 fits into the main number. \3 = \2 - 1 )
             (?=
-                .*(?=\2*$)\2*
+                .*(?=\2*$)
                 (\2\3+$)               (?# \4 = result of multiplying \2 * \2 )
             )
         .*)(?=\4{5} x{4}$)             (?# leave a leftover number equalling \4 * 5 plus or minus 4, on which the next test will be done )
@@ -22,7 +22,7 @@
     )
     (?=\1 xx \5(x*)(\8 x?))            (?# \8 = arithmetic mean of \2*\2*5 and \6*\6, divided by 2; \9 = the other half, including remainder )
     (?=
-        .*(?=\6+$)\6*
+        .*(?=\6+$)
         (\2\7+$)                       (?# \10 = result of multiplying \6 * \2, where \6 is larger )
     )
     (?=.*(?=\10)(x*)\11)               (?# \11 = \10 / 2; the remainder will always be the same as it is in \9, because \6 is odd iff \2 is odd )
