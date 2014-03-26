@@ -27,11 +27,11 @@
                 (\11\12+$)                   (?# \14 = result of multiplying \11*\11 )
             )
             (?=\1(.*))                       (?# \15 )
-            (?=(                             (?# \16 )
-                (?!\15\14).*                 (?# exit the loop when \11*\11 > \1; \7 and \11 will be our return values )
+            (
+                .*(?=x\14\15$)\6\7\11        (?# consume the current Fibonacci pair chunk, \6, and encode and write the next chunk )
             |
-                .*(?=x\14\15$)\6\7\11        (?# encode and write the next Fibonacci pair chunk )
-            ))\16
+                .*                           (?# exit the loop when \11*\11 >= \1; \7 and \11 will be our return values )
+            )
         )*
     )
     (?=
