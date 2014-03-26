@@ -20,67 +20,58 @@
                     (\7\8+$)                 (?# \10 = result of multiplying \7*\7 )
                 )
                 (?!\5\10)                    (?# require that \7*\7 be just large enough to not fit inside the current chunk - enabled by lazy quantifier )
-                (?=x\10(.*))                 (?# \11 )
-                (?=\11\6(x(x*)))             (?# \12 = the larger Fibonacci number; \13 = \12 - 1; in sequence, we now have \7, \12, \7\12 )
+                (?=.*(?=x\10$)\6(x(x*)))     (?# \11 = the larger Fibonacci number; \12 = \11 - 1; in sequence, we now have \7, \11, \7\11 )
             )
             (?=
-                (?=\12*(.*))\14\12*
-                (\12\13+$)                   (?# \15 = result of multiplying \12*\12 )
+                (?=\11*(.*))\13\11*
+                (\11\12+$)                   (?# \14 = result of multiplying \11*\11 )
             )
-            (?=\1(.*))                       (?# \16 )
-            (?=(                             (?# \17 )
-                (?!\16\15).*                 (?# exit the loop when \12*\12 > \1; \7 and \12 will be our return values )
+            (?=\1(.*))                       (?# \15 )
+            (?=(                             (?# \16 )
+                (?!\15\14).*                 (?# exit the loop when \11*\11 > \1; \7 and \11 will be our return values )
             |
-                (?=                          (?# encode the next Fibonacci pair chunk )
-                    (?=x\15(.*))             (?# \18 )
-                    (?=\18\7\12(.*))         (?# \19 )
-                    \16\19(.*)               (?# \20 = encoding of next chunk )
-                )
-                \6                           (?# eat up the chunk we just decoded )
-                \20                          (?# write the next chunk )
-            ))\17
+                .*(?=x\14\15$)\6\7\11        (?# encode and write the next Fibonacci pair chunk )
+            ))\16
         )*
     )
     (?=
-        (?=\12*(.*))\21\12*
-        (\7\13+$)                            (?# \22 = \7 * \12 )
+        (?=\11*(.*))\17\11*
+        (\7\12+$)                            (?# \18 = \7 * \11 )
     )
-    (?=(\10\15)(.*))                         (?# \23 = \7*\7 + \12*\12;  \24 = leftover for modulo usage )
-    (?=(\22\22\15))                          (?# \25 = 2*\7*\12 + \12*\12 )
-    (?=\25(.*))                              (?# \26 )
-    (?=\26\23(x*))                           (?# \27 = \25 - \23; a consecutive sequence is formed by \27, \23, \25 )
+    (?=(\10\14)(.*))                         (?# \19 = \7*\7 + \11*\11;  \20 = leftover for modulo usage )
+    (?=(\18\18\14))                          (?# \21 = 2*\7*\11 + \11*\11 )
+    (?=.*(?=\21)\19(x*))                     (?# \22 = \21 - \19; a consecutive sequence is formed by \22, \19, \21 )
 
-    (?=x\24(x*))                             (?# \28 = \23 - 1, for modulo usage )
-    (?=   \27*(x*))                          (?# \29 - this modulo allows us to link two events to the same condition; can be 0, 1, or 2 )
-    (?=\28\23*(x*))                          (?# \30 - this modulo allows us to link two events to the same condition; can be 0, 1, or 2 )
-    (?=(\29{3}\30))                          (?# \31 - this can be 2, 3, 4, or 6, corresponding to consecutive Fibonacci numbers that our main number might be )
+    (?=x\20(x*))                             (?# \23 = \19 - 1, for modulo usage )
+    (?=   \22*(x*))                          (?# \24 - this modulo allows us to link two events to the same condition; can be 0, 1, or 2 )
+    (?=\23\19*(x*))                          (?# \25 - this modulo allows us to link two events to the same condition; can be 0, 1, or 2 )
+    (?=(\24{3}\25))                          (?# \26 - this can be 2, 3, 4, or 6, corresponding to consecutive Fibonacci numbers that our main number might be )
 
-    (?=( (?=.*(?=\31$)x{4})\23 | \27 )(.*))  (?# \32 = the first  Fibonacci that we'll use for our final formula; \33 = tool for subtracting 1 from it )
-    (?=( (?=.*(?=\31$)x{4})\25 | \23 )(.*))  (?# \34 = the second Fibonacci that we'll use for our final formula; \35 = tool for subtracting 1 from it )
-    (?=x\33(x*))                             (?# \36 = \32 - 1 )
-    (?=x\35(x*))                             (?# \37 = \34 - 1 )
+    (?=( (?=.*(?=\26$)x{4})\19 | \22 )(.*))  (?# \27 = the first  Fibonacci that we'll use for our final formula; \28 = tool for subtracting 1 from it )
+    (?=( (?=.*(?=\26$)x{4})\21 | \19 )(.*))  (?# \29 = the second Fibonacci that we'll use for our final formula; \30 = tool for subtracting 1 from it )
+    (?=x\28(x*))                             (?# \31 = \27 - 1 )
+    (?=x\30(x*))                             (?# \32 = \29 - 1 )
 
     (
         (?=
-            (?=\32*(.*))\39\32*
-            (\32\36+$)                       (?# \40 = result of multiplying \32*\32 )
-        )\40
+            (?=\27*(.*))\34\27*
+            (\27\31+$)                       (?# \35 = result of multiplying \27*\27 )
+        )\35
         
-        (?=\34+$)                            (?# commence multiplication of \34*\34 )
-        \34
+        (?=\29+$)                            (?# commence multiplication of \29*\29 )
+        \29
         (
-            \37
-            (?!\34+$)
+            \32
+            (?!\29+$)
         )+
     |
-        (?=\34{2}(.*))                       (?# \42 )
-        (?=\42\32(x(x*)))                    (?# \43 = 2*\34 - \32;  \44 = \43 - 1 )
+        (?=.*(?=\29{2}$)\27(x(x*)))          (?# \37 = 2*\29 - \27;  \38 = \37 - 1 )
         
-        (?=\43+$)                            (?# commence multiplication of \43 * \32 )
-        \32
+        (?=\37+$)                            (?# commence multiplication of \37 * \27 )
+        \27
         (
-            \44
-            (?!\43+$)
+            \38
+            (?!\37+$)
         )+
     )
 |
