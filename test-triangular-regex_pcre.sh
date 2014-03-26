@@ -6,4 +6,4 @@ if [ -z "$1" ]; then
 	exit
 fi
 
-exec "$(dirname "$0")/test-polygonal-number-regex.sh" 3 "$1"
+exec "$(dirname "$0")/test-polygonal-number-regex_pcre.sh" 3 "$1"
