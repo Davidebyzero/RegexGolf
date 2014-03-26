@@ -19,7 +19,7 @@
                     (?=\7*(.*))\9\7*
                     (\7\8+$)                 (?# \10 = result of multiplying \7*\7 )
                 )
-                (?!\5\10)
+                (?!\5\10)                    (?# require that \7*\7 be just large enough to not fit inside the current chunk - enabled by lazy quantifier )
                 (?=x\10(.*))                 (?# \11 )
                 (?=\11\6(x(x*)))             (?# \12 = the larger Fibonacci number; \13 = \12 - 1; in sequence, we now have \7, \12, \7\12 )
             )
@@ -74,7 +74,7 @@
         )+
     |
         (?=\34{2}(.*))                       (?# \42 )
-        (?=\42\32(x(x*)))                    (?# \43 = 2*\34 - \32;  \44 = 2*\34 - 1 )
+        (?=\42\32(x(x*)))                    (?# \43 = 2*\34 - \32;  \44 = \43 - 1 )
         
         (?=\43+$)                            (?# commence multiplication of \43 * \32 )
         \32
