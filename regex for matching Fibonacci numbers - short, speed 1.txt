@@ -5,7 +5,7 @@
         (x(x*))                        (?# \2 = potential number for which \2 * \2 * 5 plus or minus 4 is a perfect square;
                                            this is true iff \2 is a Fibonacci number. Outside the surrounding lookahead block,
                                            \2 is guaranteed to be the largest number for which this is true such that
-                                           \2 * \2 * 5 + 4 fits into the main number. \3 = \2 - 1 )
+                                           \2 + {\2 * \2 * 5} + 4 fits into the main number. \3 = \2 - 1 )
         (?=
             .*(?=\2*$)
             (\2\3+$)                   (?# \4 = result of multiplying \2 * \2 )

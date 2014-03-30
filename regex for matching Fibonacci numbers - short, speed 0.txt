@@ -5,7 +5,7 @@
         (x*)                           (?# x\2 = potential number for which x\2 * x\2 * 5 plus or minus 4 is a perfect square;
                                            this is true iff x\2 is a Fibonacci number. Outside the surrounding lookahead block,
                                            x\2 is guaranteed to be the largest number for which this is true such that
-                                           x\2 * x\2 * 5 + 4 fits into the main number. \2 = x\2 - 1 )
+                                           \2 + {x\2 * x\2 * 5} + 4 fits into the main number. \2 = x\2 - 1 )
         .*
         (?=                            (?# leave a leftover equal to x\2 * x\2 * 5 + 4 )
             x{4}
