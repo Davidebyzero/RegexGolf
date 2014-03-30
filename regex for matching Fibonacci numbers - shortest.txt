@@ -14,23 +14,19 @@
         .*)(?=\4{5} x{4}$)             (?# leave a leftover number equalling \4 * 5 plus or minus 4, on which the next test will be done )
         (|x{4})\5                      (?# \5 = parity - is determined by whether the index of Fibonacci number \2 is odd or even )
         (?# require that the current leftover number is a perfect square)
-        (x(x*))(?=\6*$)                (?# \6 = potential square root, which will be the square root outside the surrounding lookahead; \7 = \6-1 )
-        (?=
-            (?:
-                \7
-                (?!\6+$)
-            )+$
-        )
+        (x(x*))                        (?# \6 = potential square root, which will be the square root outside the surrounding lookahead; \7 = \6-1 )
+        (?=(\6*)\7+$)                  (?# \8 = must be zero for \6 to be a valid square root )
+        (?=\6*$\8)
         \6*
-        (?=(\2\7+$))                   (?# \8 = result of multiplying \6 * \2, where \6 is larger )
-        (x*)\9                         (?# \9 = \8 / 2; the remainder will always be the same as it is in \11, because \6 is odd iff \2 is odd )
+        (?=(\2\7+$))                   (?# \9 = result of multiplying \6 * \2, where \6 is larger )
+        (x*)\10                        (?# \10 = \9 / 2; the remainder will always be the same as it is in \12, because \6 is odd iff \2 is odd )
     )
-    (?=\1 xx \5(x*)(\10 x?))           (?# \10 = arithmetic mean of \2*\2*5 and \6*\6, divided by 2; \11 = the other half, including remainder )
-    \11\8
+    (?=\1 xx \5(x*)(\11 x?))           (?# \11 = arithmetic mean of \2*\2*5 and \6*\6, divided by 2; \12 = the other half, including remainder )
+    \12\9
     (
-        \10\8
+        \11\9
     |
-        \9
+        \10
     )
 |
     x{0,3}|x{5}|x{8}|x{21}             (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
