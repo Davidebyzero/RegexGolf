@@ -2,28 +2,30 @@
 
 ^(
     (?=
-        (x(x*))                        (?# \2 = potential number for which \2 * \2 * 5 plus or minus 4 is a perfect square;
-                                           this is true iff \2 is a Fibonacci number. Outside the surrounding lookahead block,
-                                           \2 is guaranteed to be the largest number for which this is true such that
-                                           \2 * \2 * 5 + 4 fits into the main number. \3 = \2 - 1 )
+        (x*)                           (?# x\2 = potential number for which x\2 * x\2 * 5 plus or minus 4 is a perfect square;
+                                           this is true iff x\2 is a Fibonacci number. Outside the surrounding lookahead block,
+                                           x\2 is guaranteed to be the largest number for which this is true such that
+                                           x\2 * x\2 * 5 + 4 fits into the main number. \2 = x\2 - 1 )
         .*
-        (?=                            (?# leave a leftover equal to \2*\2*5 + 4 )
+        (?=                            (?# leave a leftover equal to x\2 * x\2 * 5 + 4 )
             x{4}
-            (\2\3+)                    (?# \4 = result of multiplying \2 * \2 )
-            \4{3}
-            (?=\2*$)
-            \4$
+            (                          (?# \3 = x\2 * 5 )
+                x{5}
+                (\2{5})                (?# \4 = \2 * 5 )
+            )
+            (?=\3*$)
+            \4+$
         )
-        (|x{4})                        (?# \5 = parity - is determined by whether the index of Fibonacci number \2 is odd or even )
-        (?=xx (x*)(\6 x?))             (?# \6 = arithmetic mean of \2*\2*5 and \8*\8, divided by 2; \7 = the other half, including remainder )
+        (|x{4})                        (?# \5 = parity - is determined by whether the index of Fibonacci number x\2 is odd or even )
+        (?=xx (x*)(\6 x?))             (?# \6 = arithmetic mean of x\2 * x\2 * 5 and \8*\8, divided by 2; \7 = the other half, including remainder )
         \5
         (?# require that the current leftover number is a perfect square)
         (x(x*))                        (?# \8 = potential square root, which will be the square root outside the surrounding lookahead; \9 = \8-1 )
         (?=(\8*)\9+$)                  (?# \10 = must be zero for \8 to be a valid square root )
         (?=\8*$\10)
         \8*
-        (?=(\2\9+$))                   (?# \11 = result of multiplying \8 * \2, where \8 is larger )
-        (x*)\12                        (?# \12 = \11 / 2; the remainder will always be the same as it is in \7, because \8 is odd iff \2 is odd )
+        (?=(x\2\9+$))                  (?# \11 = result of multiplying \8 * x\2, where \8 is larger )
+        (x*)\12                        (?# \12 = \11 / 2; the remainder will always be the same as it is in \7, because \8 is odd iff x\2 is odd )
     )
     \7\11
     (
