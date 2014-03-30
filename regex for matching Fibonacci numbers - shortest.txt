@@ -23,9 +23,9 @@
     (?=\1 xx \5(x*)(\9 x?))            (?# \9 = arithmetic mean of \2*\2*5 and \6*\6, divided by 2; \10 = the other half, including remainder )
     (?=
         .*(?=\6+$)
-        (\2\7+$)                       (?# \11 = result of multiplying \6 * \2, where \6 is larger )
+        (?=(\2\7+$))                   (?# \11 = result of multiplying \6 * \2, where \6 is larger )
+        (x*)\12                        (?# \12 = \11 / 2; the remainder will always be the same as it is in \10, because \6 is odd iff \2 is odd )
     )
-    (?=.*(?=\11)(x*)\12)               (?# \12 = \11 / 2; the remainder will always be the same as it is in \10, because \6 is odd iff \2 is odd )
     \10\11
     (
         \9\11

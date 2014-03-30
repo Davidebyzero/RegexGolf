@@ -31,9 +31,9 @@
     (?=\1\7 xx \4{4}(x*)(\11 x?))      (?# \11 = arithmetic mean of \1*\1*5 and \8*\8, divided by 2; \12 = the other half, including remainder )
     (?=
         .*(?=\8+$)\8*
-        (\1\9+$)                       (?# \13 = result of multiplying \8 * \1, where \8 is larger )
+        (?=(\1\9+$))                   (?# \13 = result of multiplying \8 * \1, where \8 is larger )
+        (x*)\14                        (?# \14 = \13 / 2; the remainder will always be the same as it is in \12, because \8 is odd iff \1 is odd )
     )
-    (?=.*(?=\13)(x*)\14)               (?# \14 = \13 / 2; the remainder will always be the same as it is in \12, because \8 is odd iff \1 is odd )
     \12\13
     (
         \11\13                         (?# this path will result in a match iff \4 == \5; this fact probably can't be used to improve the regex )
