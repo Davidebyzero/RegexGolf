@@ -33,5 +33,6 @@
         \11
     )
 |
-    xx?x?|(x{8}|)(x{5}\13?)?           (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 13, 21 cannot be handled by our main algorithm, so match them here )
+    x{0,3}|x{5}|x{8}|x{21}             (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
+                                           note, as it so happens the main algorithm does match 13, so that doesn't need to be handled here )
 )$
