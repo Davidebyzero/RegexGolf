@@ -1,0 +1,207 @@
+(?# Match abundant numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality. )
+(?# N = main number )
+^
+(?# Capture the largest prime factor of N. The way this is implemented here, it will fail if N is prime,
+    which is fine because prime numbers are never abundant. )
+(?=
+    (x(x+))\1*(?=\1$)                (?# \1 = largest prime factor of N; \2 = \1-1 )
+    (?!(xx+)\3+$)                    (?# assert that \1 is prime )
+)
+(?=                                  (?# Find the largest power of \1 that is a factor of N )
+    (
+        (?=\1+$)
+    |
+        (\1+)\5*(?=\5$)
+    )
+    (?!                              (?# Prime Powers test )
+        ((x+)(?=\7+$)x+)
+        \6*
+        (?!\7+$)
+        \6$
+    )
+    (x(x*))                          (?# \8 = the largest power of \1 that is a factor of N; \9 = \8-1 )
+)
+(?# We want to capture \8 + \8/\1 + \8/19^2 + ... + \1^2 + \1 + 1 = {\8 * \1 - 1} / {\1 - 1}, but
+    in case \8 * \1 > N we need to calculate it as {\8 - 1} / {\1 - 1} * \1 + 1. )
+(?# The following division will fail if \8 == N, but that's fine, because no prime power is abundant. )
+(?=
+    (x(x*))                          (?# \10 = {\8 - 1} / \2; \11 = \10-1 )
+    .*(?=\8$)x
+    (?# it is guaranteed that either \10 > \2 or \10 == 1, which allows the following division-by-multiplication to work )
+    .*(?=\10*$)
+    \2\11+$
+)
+(?=
+    .*(x(                            (?# \12 = 1 + \10 * \1 = {\8 - 1} / {\1 - 1} * \1 + 1; \13 = \12-1 )
+        (?=\10*$)
+        \1\11+$
+    ))
+)
+(?# Calculate \20 = 2 * N / \12. Since this might be > N / 2, we need to calculate N / \12 first, including the
+    fractional part {i.e. the remainder}, and then multiply the result, including the fractional part, by 2. )
+(?=
+    (?=\12(x*))                      (?# \14 )
+    (x*)(?=x\14)                     (?# \15 = N % \12 )
+    (?=\12*$)
+    (x(x*))                          (?# \16 = N / \12; \17 = \16-1 )
+    (?=\16*$)
+    (
+        (?=.*(?=\16$)\12)            (?# what to do if \16 >= \12 )
+        (?=
+            (\16*)                   (?# \19 )
+            \13\17+$
+        )
+        .*$\19
+    |
+        (?!.*(?=\16$)\12)            (?# what to do if \12 > \16 )
+        \13+$
+    )
+)
+(?# Multiply the result, including remainder, by 2 )
+(?=
+    (                                (?# \20 = \16 * 2 + \15 * 2 / \12 )
+        (
+            (?=.*(?=\12$)\15{2}x)
+        |
+            x
+        )
+        \16{2}
+    )
+)
+(?# Calculate \22 = N / \8 )
+(?=
+    (x(x*))                          (?# \22 = N / \8; \23 = \22-1 )
+    (?=\22*$)
+    (
+        (?=.*(?=\22$)\8)             (?# what to do if \22 >= \8 )
+        (?=
+            (\22*)                   (?# \25 )
+            \9\23+$
+        )
+        .*$\25
+    |
+        (?!.*(?=\22$)\8)             (?# what to do if \8 > \22 )
+        \9+$
+    )
+)
+(?# Seed a loop which will start with \20 and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
+    factor of \22. The state is encoded as \22 * P + R, where the initial value of R is \20, and P is
+    the last prime factor of N to have been already processed. However, since the initial R would be
+    larger than \22 {and for that matter there would be no room for any nonzero R since with the
+    initial value of P, \22 * P == N} treat it as a special case, and let the initial value of R be 0,
+    signalling the first iteration to pretend R=\20. This way we can avoid having to divide \20 and
+    \22 again outside the loop. )
+(
+    (?=.*(?=\22$)\1)                 (?# what to do if \22 >= \1 )
+    .*(?=
+        (?=(\22*)\1\23+$)
+        \22*$\27
+    )
+|
+    (?!.*(?=\22$)\1)                 (?# what to do if \1 > \22 )
+    .*(?=
+        (?=(\1*)\22\2+$)
+        \1*$\28
+    )
+)
+(?# Start the loop. )
+(
+    (?=\22*(x*))                     (?# \30 = decoded value of R )
+    (?=
+        \30
+        (x(x+))                      (?# \31 = decoded value of P; \32 = \31-2 )
+        (?=\31*$)
+        (
+            (?=.*(?=\31$)\22)        (?# what to do if \31 >= \22 )
+            (?=
+                (\31*)               (?# \34 )
+                \23\32+$
+            )
+            .*$\34
+        |
+            (?!.*(?=\31$)\22)        (?# what to do if \22 > \31 )
+            \23+$
+        )
+    )
+    (?=
+        (x(x(x*)))                   (?# \35 = next value of P to work with; \36 = \35-1; \37 = \36-1 )
+        .*(?=\22$)
+        (?=
+            \35*(?=\35$)             (?# assert that \35 is a factor of \22 )
+            (?!\31)                  (?# assert that \35 < \31 )
+            (?!(xx+)\38+$)           (?# assert that \35 is prime )
+        )
+        (?# Find the largest power of \35 that is a factor of \22 )
+        (
+            (?=\35+$)
+        |
+            (\35+)\40*(?=\40$)
+        )
+        (?!                          (?# Prime Powers test )
+            ((x+)(?=\42+$)x+)
+            \41*
+            (?!\42+$)
+            \41$
+        )
+        x(x*)                        (?# \43 = {the largest power of \35 that is a factor of \22} - 1 )
+    )
+    (?=
+        (                            (?# \44 = actual value of R )
+            (?=.*$\30)
+            \20
+        |
+            \30
+        )
+    )
+    (?# Calculate \48 = \43 / {\35 - 1} * \35 + 1 )
+    (?=
+        .*(?=\43$)
+        (x(x*))                      (?# \45 = {\43 - 1} / {\35 - 1}; \46 = \45-1 )
+        (?=(\45*)\37\46*$)
+        \45*$\47
+    )
+    (?=
+        .*(x(                        (?# \48 = 1 + \45 * \35 = {\45 - 1} / {\35 - 1} * \35 + 1; \49 = \48-1 )
+            (?=\45*$)
+            \35\46+$
+        ))
+    )
+    (?# Calculate \52 = \44 / \48 )
+    (
+        .*(?=\48$)x\44.*$                    (?# if dividing \44 / \48 would result in a number less than 1,
+                                                 then N is abundant and we can exit the loop successfully )
+    |
+        (?=
+            .*(?=\44$)
+            (?=\48(x*))                      (?# \51 )
+            .*(?=x\51)
+            (?=\48*$)
+            (x(x*))                          (?# \52 = N / \48; \53 = \52-1 )
+            (?=\52*$)
+            (
+                (?=.*(?=\52$)\48)            (?# what to do if \52 >= \48 )
+                (?=
+                    (\52*)                   (?# \55 )
+                    \49\53+$
+                )
+                .*$\55
+            |
+                (?!.*(?=\52$)\48)            (?# what to do if \48 > \52 )
+                \49+$
+            )
+        )
+        (?# Encode the state for the next iteration of the loop )
+        .*(?=
+            \52
+            (
+                (?=.*(?=\22$)\35)            (?# what to do if \22 >= \35 )
+                (?=(\22*)\35\23+$)
+                \22*$\57
+            |
+                (?!.*(?=\22$)\35)            (?# what to do if \35 > \22 )
+                (?=(\35*)\22\36+$)
+                \35*$\58
+            )
+        )
+    )
+)+$
