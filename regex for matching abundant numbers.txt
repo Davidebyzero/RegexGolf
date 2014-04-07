@@ -88,9 +88,9 @@
     factor of \22. The state is encoded as \22 * P + R, where the initial value of R is \20, and P is
     the last prime factor of N to have been already processed. However, since the initial R would be
     larger than \22 {and for that matter there would be no room for any nonzero R since with the
-    initial value of P, \22 * P == N} treat it as a special case, and let the initial value of R be 0,
-    signalling the first iteration to pretend R=\20. This way we can avoid having to divide \20 and
-    \22 again outside the loop. )
+    initial value of P, it is possible for \22 * P to equal N}, treat it as a special case, and let
+    the initial value of R be 0, signalling the first iteration to pretend R=\20. This way we can
+    avoid having to divide \20 and \22 again outside the loop. )
 (
     (?=.*(?=\22$)\1)                 (?# what to do if \22 >= \1 )
     .*(?=
