@@ -1,17 +1,19 @@
 (?# Match abundant numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality. )
 (?# N = main number )
 ^
-(?# Capture the largest prime factor of N. The way this is implemented here, it will fail if N is prime,
-    which is fine because prime numbers are never abundant. )
+(?# Capture the largest prime factor of N. )
 (?=
-    (x(x+))\1*(?=\1$)                (?# \1 = largest prime factor of N; \2 = \1-1 )
-    (?!(xx+)\3+$)                    (?# assert that \1 is prime )
+    (?:                              (?# Repeatedly divide current number by its smallest factor, until a prime remains. )
+        (x+)\1*(?=\1$)
+    )+                               (?# A "+" is intentionally used instead of a "*", to fail if N is prime. This saves the rest
+                                         of the regex from having to do needless work, because prime numbers are never abundant. )
+    (x(x+))                          (?# \2 = the largest prime factor of N; \3 = \2-1 )
 )
-(?=                                  (?# Find the largest power of \1 that is a factor of N )
+(?=                                  (?# Find the largest power of \2 that is a factor of N )
     (
-        (?=\1+$)
+        (?=\2+$)
     |
-        (\1+)\5*(?=\5$)
+        (\2+)\5*(?=\5$)
     )
     (?!                              (?# Prime Powers test )
         ((x+)(?=\7+$)x+)
@@ -19,22 +21,22 @@
         (?!\7+$)
         \6$
     )
-    (x(x*))                          (?# \8 = the largest power of \1 that is a factor of N; \9 = \8-1 )
+    (x(x*))                          (?# \8 = the largest power of \2 that is a factor of N; \9 = \8-1 )
 )
-(?# We want to capture \8 + \8/\1 + \8/19^2 + ... + \1^2 + \1 + 1 = {\8 * \1 - 1} / {\1 - 1}, but
-    in case \8 * \1 > N we need to calculate it as {\8 - 1} / {\1 - 1} * \1 + 1. )
+(?# We want to capture \8 + \8/\2 + \8/19^2 + ... + \2^2 + \2 + 1 = {\8 * \2 - 1} / {\2 - 1}, but
+    in case \8 * \2 > N we need to calculate it as {\8 - 1} / {\2 - 1} * \2 + 1. )
 (?# The following division will fail if \8 == N, but that's fine, because no prime power is abundant. )
 (?=
-    (x(x*))                          (?# \10 = {\8 - 1} / \2; \11 = \10-1 )
+    (x(x*))                          (?# \10 = {\8 - 1} / \3; \11 = \10-1 )
     .*(?=\8$)x
-    (?# it is guaranteed that either \10 > \2 or \10 == 1, which allows the following division-by-multiplication to work )
+    (?# it is guaranteed that either \10 > \3 or \10 == 1, which allows the following division-by-multiplication to work )
     .*(?=\10*$)
-    \2\11+$
+    \3\11+$
 )
 (?=
-    .*(x(                            (?# \12 = 1 + \10 * \1 = {\8 - 1} / {\1 - 1} * \1 + 1; \13 = \12-1 )
+    .*(x(                            (?# \12 = 1 + \10 * \2  =  {\8 - 1} / {\2 - 1} * \2 + 1;  \13 = \12-1 )
         (?=\10*$)
-        \1\11+$
+        \2\11+$
     ))
 )
 (?# Calculate \20 = 2 * N / \12. Since this might be > N / 2, we need to calculate N / \12 first, including the
@@ -92,16 +94,16 @@
     the initial value of R be 0, signalling the first iteration to pretend R=\20. This way we can
     avoid having to divide \20 and \22 again outside the loop. )
 (
-    (?=.*(?=\22$)\1)                 (?# what to do if \22 >= \1 )
+    (?=.*(?=\22$)\2)                 (?# what to do if \22 >= \2 )
     .*(?=
-        (?=(\22*)\1\23+$)
+        (?=(\22*)\2\23+$)
         \22*$\27
     )
 |
-    (?!.*(?=\22$)\1)                 (?# what to do if \1 > \22 )
+    (?!.*(?=\22$)\2)                 (?# what to do if \2 > \22 )
     .*(?=
-        (?=(\1*)\22\2+$)
-        \1*$\28
+        (?=(\2*)\22\3+$)
+        \2*$\28
     )
 )
 (?# Start the loop. )
