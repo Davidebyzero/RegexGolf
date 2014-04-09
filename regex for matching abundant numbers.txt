@@ -93,9 +93,8 @@
 
 (?# Start the loop. )
 (
-    (?=\19*(x*))                     (?# \24 = decoded value of R )
     (?=
-        \24
+        (x*?)(?=\19*$)               (?# \24 = decoded value of R )
         (x(x+))                      (?# \25 = decoded value of P; \26 = \25-2 )
         (?=\25*$)
         (
