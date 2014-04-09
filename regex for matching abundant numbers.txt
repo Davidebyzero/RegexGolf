@@ -18,7 +18,7 @@
 (?# The following division will fail if \5 == N, but that's fine, because no prime power is abundant. )
 (?=
     (x(x*))                          (?# \7 = {\5 - 1} / \4; \8 = \7-1 )
-    .*(?=\5$)x
+    .*(?=\6$)
     (?# it is guaranteed that either \7 > \4 or \7 == 1, which allows the following division-by-multiplication to work )
     .*(?=\7*$)
     \4\8+$
@@ -160,7 +160,7 @@
     )
     (?# Calculate \49 = \41 / \45 )
     (
-        .*(?=\45$)x\41.*$                    (?# if dividing \41 / \45 would result in a number less than 1,
+        .*(?=\46$)\41.*$                     (?# if dividing \41 / \45 would result in a number less than 1,
                                                  then N is abundant and we can exit the loop successfully )
     |
         (?=
