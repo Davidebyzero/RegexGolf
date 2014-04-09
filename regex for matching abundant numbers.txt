@@ -49,30 +49,32 @@
         \10+$
     )
 )
-(?# Calculate \17 = N / \5 )
+(?# Calculate \18 = N / \5 )
 (?=
-    (x(x*))                          (?# \17 = N / \5; \18 = \17-1 )
-    (?=\17*$)
-    (
-        (?=.*(?=\17$)\5)             (?# what to do if \17 >= \5 )
-        (?=
-            (\17*)                   (?# \20 )
-            \6\18+$
+    (                                (?# \17 = N, for testing for first iteration of loop below )
+        (x(x*))                      (?# \18 = N / \5; \19 = \18-1 )
+        (?=\18*$)
+        (
+            (?=.*(?=\18$)\5)         (?# what to do if \18 >= \5 )
+            (?=
+                (\18*)               (?# \21 )
+                \6\19+$
+            )
+            .*$\21
+        |
+            (?!.*(?=\18$)\5)         (?# what to do if \5 > \18 )
+            \6+$
         )
-        .*$\20
-    |
-        (?!.*(?=\17$)\5)             (?# what to do if \5 > \17 )
-        \6+$
     )
 )
 (?# Seed a loop which will start with Q and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
-    factor of \17. The state is encoded as \17 * P + R, where the initial value of R is Q, and P is
+    factor of \18. The state is encoded as \18 * P + R, where the initial value of R is Q, and P is
     the last prime factor of N to have been already processed.
     
-    However, since the initial R would be larger than \17 {and for that matter there would be no room
-    for any nonzero R since with the initial value of P, it is possible for \17 * P to equal N}, treat
+    However, since the initial R would be larger than \18 {and for that matter there would be no room
+    for any nonzero R since with the initial value of P, it is possible for \18 * P to equal N}, treat
     it as a special case, and let the initial value of R be 0, signalling the first iteration to
-    pretend R=Q. This way we can avoid having to divide Q and \17 again outside the loop.
+    pretend R=Q. This way we can avoid having to divide Q and \18 again outside the loop.
     
     While we're at it, there's really no reason to do anything extra to seed this loop. We would have
     to seed it with an initial value of P=\3; if we don't do anything to seed it, it will decode P=\5,
@@ -83,101 +85,102 @@
 (?# Start the loop. )
 (
     (?=
-        (x*?)(?=\17*$)               (?# \22 = decoded value of R )
-        (?# The division by \17 can be done quite simply, because it is known that the quotient is prime. )
-        (x(x+))                      (?# \23 = decoded value of P; \24 = \23-1 )
-        (?=\18+$)                    (?# iff \23 > \17, this can have a false positive, but never a false negative )
-        \23*$                        (?# iff \23 < \17, this can have a false positive, but never a false negative )
-    )
-    (?=
-        (x(x(x*)))                   (?# \25 = next value of P to work with; \26 = \25-1; \27 = \26-1 )
-        .*(?=\17$)
-        (?=
-            \25*(?=\25$)             (?# assert that \25 is a factor of \17 )
-            (?!
-                \3|\23               (?# assert that \25 is less than the previous P )
-            |
-                (xx+)\28+$           (?# assert that \25 is prime )
+        (                            (?# \23 = actual value of R )
+            x*?(?=\18*$)             (?# move forward by directly decoded value of R, which can be zero )
+            (?# The division by \18 can be done quite simply, because it is known that the quotient is prime. )
+            (?=
+                (x(x+))              (?# \24 = decoded value of P; \25 = \24-1 )
+                (?=\19+$)            (?# iff \24 > \18, this can have a false positive, but never a false negative )
+                \24*$                (?# iff \24 < \18, this can have a false positive, but never a false negative )
             )
-        )
-        (?# Find the largest power of \25 that is a factor of \17 )
-        (
-            (?=\25+$)
-        |
-            (\25+)\30*(?=\30$)
-        )
-        (?!                          (?# Prime Powers test )
-            ((x+)(?=\32+$)x+)
-            \31*
-            (?!\32+$)
-            \31$
-        )
-        x(x*)                        (?# \33 = {the largest power of \25 that is a factor of \17} - 1 )
-    )
-    (?=
-        (                            (?# \34 = actual value of R )
-            (?=.*$\22)
-            \13{2}
-            (                        (?# add Q_R = \12 * 2 / \9 )
-                (?=
-                    .*(?=\9$)
-                    \12{2}x
+            (
+                (?=\17)              (?# true iff this is the first iteration of the loop )
+                \13{2}
+                (                    (?# add Q_R = \12 * 2 / \9 )
+                    (?=
+                        .*(?=\9$)
+                        \12{2}x
+                    )
+                |
+                    x
                 )
             |
-                x
             )
-        |
-            \22
         )
     )
-    (?# Calculate \39 = \33 / {\25 - 1} * \25 + 1 )
     (?=
-        .*(?=\33$)
-        (x(x*))                      (?# \36 = {\33 - 1} / {\25 - 1}; \37 = \36-1 )
-        (?=(\36*)\27\37*$)
-        \36*$\38
+        (x(x(x*)))                   (?# \28 = next value of P to work with; \29 = \28-1; \30 = \29-1 )
+        .*(?=\18$)
+        (?=
+            \28*(?=\28$)             (?# assert that \28 is a factor of \18 )
+            (?!
+                \3|\24               (?# assert that \28 is less than the previous P )
+            |
+                (xx+)\31+$           (?# assert that \28 is prime )
+            )
+        )
+        (?# Find the largest power of \28 that is a factor of \18 )
+        (
+            (?=\28+$)
+        |
+            (\28+)\33*(?=\33$)
+        )
+        (?!                          (?# Prime Powers test )
+            ((x+)(?=\35+$)x+)
+            \34*
+            (?!\35+$)
+            \34$
+        )
+        x(x*)                        (?# \36 = {the largest power of \28 that is a factor of \18} - 1 )
+    )
+    (?# Calculate \40 = \36 / {\28 - 1} * \28 + 1 )
+    (?=
+        .*(?=\36$)
+        (x(x*))                      (?# \37 = {\36 - 1} / {\28 - 1}; \38 = \37-1 )
+        (?=(\37*)\30\38*$)
+        \37*$\39
     )
     (?=
-        .*(x(                        (?# \39 = 1 + \36 * \25 = {\36 - 1} / {\25 - 1} * \25 + 1; \40 = \39-1 )
-            (?=\36*$)
-            \25\37+$
+        .*(x(                        (?# \40 = 1 + \37 * \28 = {\37 - 1} / {\28 - 1} * \28 + 1; \41 = \40-1 )
+            (?=\37*$)
+            \28\38+$
         ))
     )
-    (?# Calculate \43 = \34 / \39 )
+    (?# Calculate \44 = \23 / \40 )
     (
-        .*(?=\40$)\34.*$                     (?# if dividing \34 / \39 would result in a number less than 1,
+        .*(?=\41$)\23.*$                     (?# if dividing \23 / \40 would result in a number less than 1,
                                                  then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*(?=\34$)
-            (?=\39(x*))                      (?# \42 )
-            .*(?=x\42)
-            (?=\39*$)
-            (x(x*))                          (?# \43 = N / \39; \44 = \43-1 )
-            (?=\43*$)
+            .*(?=\23$)
+            (?=\40(x*))                      (?# \43 )
+            .*(?=x\43)
+            (?=\40*$)
+            (x(x*))                          (?# \44 = N / \40; \45 = \44-1 )
+            (?=\44*$)
             (
-                (?=.*(?=\43$)\39)            (?# what to do if \43 >= \39 )
+                (?=.*(?=\44$)\40)            (?# what to do if \44 >= \40 )
                 (?=
-                    (\43*)                   (?# \46 )
-                    \40\44+$
+                    (\44*)                   (?# \47 )
+                    \41\45+$
                 )
-                .*$\46
+                .*$\47
             |
-                (?!.*(?=\43$)\39)            (?# what to do if \39 > \43 )
-                \40+$
+                (?!.*(?=\44$)\40)            (?# what to do if \40 > \44 )
+                \41+$
             )
         )
         (?# Encode the state for the next iteration of the loop )
         .*(?=
-            \43
+            \44
             (
-                (?=.*(?=\17$)\25)            (?# what to do if \17 >= \25 )
-                (?=(\17*)\25\18+$)
-                \17*$\48
+                (?=.*(?=\18$)\28)            (?# what to do if \18 >= \28 )
+                (?=(\18*)\28\19+$)
+                \18*$\49
             |
-                (?!.*(?=\17$)\25)            (?# what to do if \25 > \17 )
-                (?=(\25*)\17\26+$)
-                \25*$\49
+                (?!.*(?=\18$)\28)            (?# what to do if \28 > \18 )
+                (?=(\28*)\18\29+$)
+                \28*$\50
             )
         )
     )
