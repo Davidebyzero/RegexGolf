@@ -120,7 +120,6 @@
         )
         (?# Find the largest power of \28 that is a factor of \18 )
         (
-            (?=\28+$)
         |
             (\28+)\33*(?=\33$)
         )
