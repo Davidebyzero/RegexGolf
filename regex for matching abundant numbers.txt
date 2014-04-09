@@ -78,121 +78,124 @@
 )
 (?# Seed a loop which will start with \17 and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
     factor of \19. The state is encoded as \19 * P + R, where the initial value of R is \17, and P is
-    the last prime factor of N to have been already processed. However, since the initial R would be
-    larger than \19 {and for that matter there would be no room for any nonzero R since with the
-    initial value of P, it is possible for \19 * P to equal N}, treat it as a special case, and let
-    the initial value of R be 0, signalling the first iteration to pretend R=\17. This way we can
-    avoid having to divide \17 and \19 again outside the loop. )
-(
-    (?=.*(?=\19$)\3)                 (?# what to do if \19 >= \3 )
-    .*(?=
-        (?=(\19*)\3\20+$)
-        \19*$\24
-    )
-|
-    (?!.*(?=\19$)\3)                 (?# what to do if \3 > \19 )
-    .*(?=
-        (?=(\3*)\19\4+$)
-        \3*$\25
-    )
-)
+    the last prime factor of N to have been already processed.
+    
+    However, since the initial R would be larger than \19 {and for that matter there would be no room
+    for any nonzero R since with the initial value of P, it is possible for \19 * P to equal N}, treat
+    it as a special case, and let the initial value of R be 0, signalling the first iteration to
+    pretend R=\17. This way we can avoid having to divide \17 and \19 again outside the loop.
+    
+    While we're at it, there's really no reason to do anything extra to seed this loop. We would have
+    to seed it with an initial value of P=\3; if we don't do anything to seed it, it will decode P=\5,
+    which is wrong because this will make it use P=\3 as the next prime when it needs to work on the
+    next lower prime. So, we'll treat the first iteration as a special case for decoding P as well,
+    making it decode P=\3 if the initially decoded R is 0, which only happens on the first iteration. )
+
 (?# Start the loop. )
 (
-    (?=\19*(x*))                     (?# \27 = decoded value of R )
+    (?=\19*(x*))                     (?# \24 = decoded value of R )
     (?=
-        \27
-        (x(x+))                      (?# \28 = decoded value of P; \29 = \28-2 )
-        (?=\28*$)
+        \24
+        (x(x+))                      (?# \25 = decoded value of P; \26 = \25-2 )
+        (?=\25*$)
         (
-            (?=.*(?=\28$)\19)        (?# what to do if \28 >= \19 )
+            (?=.*(?=\25$)\19)        (?# what to do if \25 >= \19 )
             (?=
-                (\28*)               (?# \31 )
-                \20\29+$
+                (\25*)               (?# \28 )
+                \20\26+$
             )
-            .*$\31
+            .*$\28
         |
-            (?!.*(?=\28$)\19)        (?# what to do if \19 > \28 )
+            (?!.*(?=\25$)\19)        (?# what to do if \19 > \25 )
             \20+$
         )
     )
     (?=
-        (x(x(x*)))                   (?# \32 = next value of P to work with; \33 = \32-1; \34 = \33-1 )
+        (                            (?# \29 = actual value of P )
+            (?=.*$\24)
+            \3
+        |
+            \25
+        )
+    )
+    (?=
+        (x(x(x*)))                   (?# \30 = next value of P to work with; \31 = \30-1; \32 = \31-1 )
         .*(?=\19$)
         (?=
-            \32*(?=\32$)             (?# assert that \32 is a factor of \19 )
-            (?!\28)                  (?# assert that \32 < \28 )
-            (?!(xx+)\35+$)           (?# assert that \32 is prime )
+            \30*(?=\30$)             (?# assert that \30 is a factor of \19 )
+            (?!\29)                  (?# assert that \30 < \29 )
+            (?!(xx+)\33+$)           (?# assert that \30 is prime )
         )
-        (?# Find the largest power of \32 that is a factor of \19 )
+        (?# Find the largest power of \30 that is a factor of \19 )
         (
-            (?=\32+$)
+            (?=\30+$)
         |
-            (\32+)\37*(?=\37$)
+            (\30+)\35*(?=\35$)
         )
         (?!                          (?# Prime Powers test )
-            ((x+)(?=\39+$)x+)
-            \38*
-            (?!\39+$)
-            \38$
+            ((x+)(?=\37+$)x+)
+            \36*
+            (?!\37+$)
+            \36$
         )
-        x(x*)                        (?# \40 = {the largest power of \32 that is a factor of \19} - 1 )
+        x(x*)                        (?# \38 = {the largest power of \30 that is a factor of \19} - 1 )
     )
     (?=
-        (                            (?# \41 = actual value of R )
-            (?=.*$\27)
+        (                            (?# \39 = actual value of R )
+            (?=.*$\24)
             \17
         |
-            \27
+            \24
         )
     )
-    (?# Calculate \45 = \40 / {\32 - 1} * \32 + 1 )
+    (?# Calculate \43 = \38 / {\30 - 1} * \30 + 1 )
     (?=
-        .*(?=\40$)
-        (x(x*))                      (?# \42 = {\40 - 1} / {\32 - 1}; \43 = \42-1 )
-        (?=(\42*)\34\43*$)
-        \42*$\44
+        .*(?=\38$)
+        (x(x*))                      (?# \40 = {\38 - 1} / {\30 - 1}; \41 = \40-1 )
+        (?=(\40*)\32\41*$)
+        \40*$\42
     )
     (?=
-        .*(x(                        (?# \45 = 1 + \42 * \32 = {\42 - 1} / {\32 - 1} * \32 + 1; \46 = \45-1 )
-            (?=\42*$)
-            \32\43+$
+        .*(x(                        (?# \43 = 1 + \40 * \30 = {\40 - 1} / {\30 - 1} * \30 + 1; \44 = \43-1 )
+            (?=\40*$)
+            \30\41+$
         ))
     )
-    (?# Calculate \49 = \41 / \45 )
+    (?# Calculate \47 = \39 / \43 )
     (
-        .*(?=\46$)\41.*$                     (?# if dividing \41 / \45 would result in a number less than 1,
+        .*(?=\44$)\39.*$                     (?# if dividing \39 / \43 would result in a number less than 1,
                                                  then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*(?=\41$)
-            (?=\45(x*))                      (?# \48 )
-            .*(?=x\48)
-            (?=\45*$)
-            (x(x*))                          (?# \49 = N / \45; \50 = \49-1 )
-            (?=\49*$)
+            .*(?=\39$)
+            (?=\43(x*))                      (?# \46 )
+            .*(?=x\46)
+            (?=\43*$)
+            (x(x*))                          (?# \47 = N / \43; \48 = \47-1 )
+            (?=\47*$)
             (
-                (?=.*(?=\49$)\45)            (?# what to do if \49 >= \45 )
+                (?=.*(?=\47$)\43)            (?# what to do if \47 >= \43 )
                 (?=
-                    (\49*)                   (?# \52 )
-                    \46\50+$
+                    (\47*)                   (?# \50 )
+                    \44\48+$
                 )
-                .*$\52
+                .*$\50
             |
-                (?!.*(?=\49$)\45)            (?# what to do if \45 > \49 )
-                \46+$
+                (?!.*(?=\47$)\43)            (?# what to do if \43 > \47 )
+                \44+$
             )
         )
         (?# Encode the state for the next iteration of the loop )
         .*(?=
-            \49
+            \47
             (
-                (?=.*(?=\19$)\32)            (?# what to do if \19 >= \32 )
-                (?=(\19*)\32\20+$)
-                \19*$\54
+                (?=.*(?=\19$)\30)            (?# what to do if \19 >= \30 )
+                (?=(\19*)\30\20+$)
+                \19*$\52
             |
-                (?!.*(?=\19$)\32)            (?# what to do if \32 > \19 )
-                (?=(\32*)\19\33+$)
-                \32*$\55
+                (?!.*(?=\19$)\30)            (?# what to do if \30 > \19 )
+                (?=(\30*)\19\31+$)
+                \30*$\53
             )
         )
     )
