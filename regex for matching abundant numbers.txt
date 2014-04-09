@@ -114,8 +114,11 @@
         .*(?=\19$)
         (?=
             \29*(?=\29$)             (?# assert that \29 is a factor of \19 )
-            (?!\3|\25)               (?# assert that \29 is less than the previous P )
-            (?!(xx+)\32+$)           (?# assert that \29 is prime )
+            (?!
+                \3|\25               (?# assert that \29 is less than the previous P )
+            |
+                (xx+)\32+$           (?# assert that \29 is prime )
+            )
         )
         (?# Find the largest power of \29 that is a factor of \19 )
         (
