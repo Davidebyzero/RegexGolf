@@ -40,7 +40,7 @@
     (
         \12                          (?# only require the alternative to be true if \12 >= \9 )
     |
-        .*$\15
+        \10\15                       (?# identical to .*$\15 )
     )
 )
 (?# Calculate \17 = N / \5 )
@@ -53,7 +53,7 @@
         (
             \17                      (?# only require the alternative to be true if \17 >= \5 )
         |
-            .*$\19
+            \6\19                    (?# identical to .*$\19 )
         )
     )
 )
@@ -148,7 +148,7 @@
             (
                 \42                  (?# only require the alternative to be true if \42 >= \39 )
             |
-                .*$\44
+                \40\44               (?# identical to .*$\44 )
             )
         )
         (?# Encode the state for the next iteration of the loop, as \17 * \27 + \42 )
