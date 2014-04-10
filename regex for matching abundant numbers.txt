@@ -43,47 +43,45 @@
         \10\15                       (?# identical to .*$\15 )
     )
 )
-(?# Calculate \17 = N / \5 )
+(?# Calculate \16 = N / \5 )
 (?=
-    (                                (?# \16 = N, or a large number close enough to N, for testing for first iteration of loop below )
-        (x(x*))                      (?# \17 = N / \5; \18 = \17-1 )
-        (?=\17*$)
-        (?=\6+$)                     (?# must match if \17 < \5; otherwise doesn't matter )
-        (\17*)\18+(?=\6$)            (?# \19 = must be zero for multiplication to be true if \17 >= \5; otherwise doesn't matter )
-        (
-            \17                      (?# only require the alternative to be true if \17 >= \5 )
-        |
-            \6\19                    (?# identical to .*$\19 )
-        )
+    (x(x*))                          (?# \16 = N / \5; \17 = \16-1 )
+    (?=\16*$)
+    (?=\6+$)                         (?# must match if \16 < \5; otherwise doesn't matter )
+    (\16*)\17+(?=\6$)                (?# \18 = must be zero for multiplication to be true if \16 >= \5; otherwise doesn't matter )
+    (
+        \16                          (?# only require the alternative to be true if \16 >= \5 )
+    |
+        \6\18                        (?# identical to .*$\18 )
     )
 )
 (?# Seed a loop which will start with Q and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
-    factor of \17. The state is encoded as \17 * P + R, where the initial value of R is Q, and P is
+    factor of \16. The state is encoded as \16 * P + R, where the initial value of R is Q, and P is
     the last prime factor of N to have been already processed.
     
-    However, since the initial R would be larger than \17 {and for that matter there would be no room
-    for any nonzero R since with the initial value of P, it is possible for \17 * P to equal N}, treat
+    However, since the initial R would be larger than \16 {and for that matter there would be no room
+    for any nonzero R since with the initial value of P, it is possible for \16 * P to equal N}, treat
     it as a special case, and let the initial value of R be 0, signalling the first iteration to
-    pretend R=Q. This way we can avoid having to divide Q and \17 again outside the loop.
+    pretend R=Q. This way we can avoid having to divide Q and \16 again outside the loop.
     
     While we're at it, there's really no reason to do anything extra to seed this loop. To seed it
     with an initial value of P=\3, we'd have to do some multiplication. If we don't do anything to
-    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \17
-    is divisible by will still be the same, as \3 cannot be a factor of \17. )
+    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \16
+    is divisible by will still be the same, as \3 cannot be a factor of \16. )
 
 (?# Start the loop. )
 (
     (?=
-        (                            (?# \22 = actual value of R )
-            x*?(?=\17*$)             (?# move forward by directly decoded value of R, which can be zero )
-            (?# The division by \17 can be done quite simply, because it is known that the quotient is prime. )
+        (                            (?# \21 = actual value of R )
+            x*?(?=\16*$)             (?# move forward by directly decoded value of R, which can be zero )
+            (?# The division by \16 can be done quite simply, because it is known that the quotient is prime. )
             (?=
-                (x(x+))              (?# \23 = decoded value of P; \24 = \23-1 )
-                (?=\18+$)            (?# iff \23 > \17, this can have a false positive, but never a false negative )
-                \23*$                (?# iff \23 < \17, this can have a false positive, but never a false negative )
+                (x(x+))              (?# \22 = decoded value of P; \23 = \22-1 )
+                (?=\17+$)            (?# iff \22 > \16, this can have a false positive, but never a false negative )
+                \22*$                (?# iff \22 < \16, this can have a false positive, but never a false negative )
             )
             (
-                (?=\16)              (?# true iff this is the first iteration of the loop )
+                (?=\5+$)             (?# true iff this is the first iteration of the loop )
                 \12{2}
                 (                    (?# add Q_R = floor{\11 * 2 / \9} )
                     (?=
@@ -98,64 +96,64 @@
         )
     )
     (?=
-        (x(x(x*)))                   (?# \27 = next value of P to work with; \28 = \27-1; \29 = \28-1 )
-        .*(?=\17$)
+        (x(x(x*)))                   (?# \26 = next value of P to work with; \27 = \26-1; \28 = \27-1 )
+        .*(?=\16$)
         (?=
-            \27*(?=\27$)             (?# assert that \27 is a factor of \17 )
+            \26*(?=\26$)             (?# assert that \26 is a factor of \16 )
             (?!
-                \23                  (?# assert that \27 is less than the previous P )
+                \22                  (?# assert that \26 is less than the previous P )
             |
-                (xx+)\30+$           (?# assert that \27 is prime )
+                (xx+)\29+$           (?# assert that \26 is prime )
             )
         )
-        (?# Find the largest power of \27 that is a factor of \17 )
+        (?# Find the largest power of \26 that is a factor of \16 )
         (
         |
-            (\27+)\32*(?=\32$)
+            (\26+)\31*(?=\31$)
         )
         (?!                          (?# Prime Powers test )
-            ((x+)(?=\34+$)x+)
-            \33*
-            (?!\34+$)
-            \33$
+            ((x+)(?=\33+$)x+)
+            \32*
+            (?!\33+$)
+            \32$
         )
-        x(x*)                        (?# \35 = {the largest power of \27 that is a factor of \17} - 1 )
+        x(x*)                        (?# \34 = {the largest power of \26 that is a factor of \16} - 1 )
     )
-    (?# Calculate \39 = \35 / {\27 - 1} * \27 + 1 )
+    (?# Calculate \38 = \34 / {\26 - 1} * \26 + 1 )
     (?=
-        .*(?=\35$)
-        (x(x*))                      (?# \36 = {\35 - 1} / {\27 - 1}; \37 = \36-1 )
-        (?=(\36*)\29\37*$)           (?# \38 = must be zero for multiplication to be true )
-        \36*$\38
+        .*(?=\34$)
+        (x(x*))                      (?# \35 = {\34 - 1} / {\26 - 1}; \36 = \35-1 )
+        (?=(\35*)\28\36*$)           (?# \37 = must be zero for multiplication to be true )
+        \35*$\37
     )
     (?=
-        .*(x(                        (?# \39 = 1 + \36 * \27 = {\36 - 1} / {\27 - 1} * \27 + 1; \40 = \39-1 )
-            (?=\36*$)
-            \27\37+$
+        .*(x(                        (?# \38 = 1 + \35 * \26 = {\35 - 1} / {\26 - 1} * \26 + 1; \39 = \38-1 )
+            (?=\35*$)
+            \26\36+$
         ))
     )
-    (?# Calculate \42 = floor{\22 / \39} )
+    (?# Calculate \41 = floor{\21 / \38} )
     (
-        .*(?=\40$)\22.*$             (?# if dividing \22 / \39 would result in a number less than 1,
+        .*(?=\39$)\21.*$             (?# if dividing \21 / \38 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\22)(?=\39*$)
-            (x(x*))                  (?# \42 = N / \39; \43 = \42-1 )
-            (?=\42*$)
-            (?=\40+$)                (?# must match if \42 < \39; otherwise doesn't matter )
-            (\42*)\43+(?=\40$)       (?# \44 = must be zero for multiplication to be true if \42 >= \39; otherwise doesn't matter )
+            .*?(?!x\21)(?=\38*$)
+            (x(x*))                  (?# \41 = N / \38; \42 = \41-1 )
+            (?=\41*$)
+            (?=\39+$)                (?# must match if \41 < \38; otherwise doesn't matter )
+            (\41*)\42+(?=\39$)       (?# \43 = must be zero for multiplication to be true if \41 >= \38; otherwise doesn't matter )
             (
-                \42                  (?# only require the alternative to be true if \42 >= \39 )
+                \41                  (?# only require the alternative to be true if \41 >= \38 )
             |
-                \40\44               (?# identical to .*$\44 )
+                \39\43               (?# identical to .*$\43 )
             )
         )
-        (?# Encode the state for the next iteration of the loop, as \17 * \27 + \42 )
+        (?# Encode the state for the next iteration of the loop, as \16 * \26 + \41 )
         .*(?=
-            \42
-            (?=(\17*)\27\18+$)       (?# \46 = must be zero for multiplication to be true )
-            \17*$\46
+            \41
+            (?=(\16*)\26\17+$)       (?# \45 = must be zero for multiplication to be true )
+            \16*$\45
         )
     )
 )+$
