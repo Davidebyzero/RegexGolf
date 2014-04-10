@@ -35,12 +35,12 @@
     (x*?)(?=\9*$)                    (?# \11 = N % \9 )
     (x(x*))                          (?# \12 = N / \9; \13 = \12-1 )
     (?=\12*$)
-    (?=\10+$)                        (?# iff \12 > \9, this can have a false positive, but never a false negative )
-    (
-        .*(?=\9$)\12                 (?# only require the alternative to be true if \12 > \9 )
+    (?=\10+$)                        (?# must match if \12 <= \9; otherwise doesn't matter )
+    (?=(\12*)\10\13+$)               (?# \15 = must be zero for multiplication to be true if \12 > \9; otherwise doesn't matter )
+    .*(
+        (?=\9$)\12                   (?# only require the alternative to be true if \12 > \9 )
     |
-        (?=(\12*)\10\13+$)           (?# \15 = must be zero for multiplication to be true )
-        .*$\15
+        $\15
     )
 )
 (?# Calculate \17 = N / \5 )
@@ -48,12 +48,12 @@
     (                                (?# \16 = N, for testing for first iteration of loop below )
         (x(x*))                      (?# \17 = N / \5; \18 = \17-1 )
         (?=\17*$)
-        (?=\6+$)                     (?# iff \17 > \5, this can have a false positive, but never a false negative )
-        (
-            .*(?=\5$)\17             (?# only require the alternative to be true if \17 > \5 )
+        (?=\6+$)                     (?# must match if \17 <= \5; otherwise doesn't matter )
+        (?=(\17*)\6\18+$)            (?# \19 = must be zero for multiplication to be true iff \17 > \5; otherwise doesn't matter )
+        .*(
+            (?=\5$)\17               (?# only require the alternative to be true if \17 > \5 )
         |
-            (?=(\17*)\6\18+$)        (?# \20 = must be zero for multiplication to be true )
-            .*$\20
+            $\19
         )
     )
 )
@@ -143,12 +143,12 @@
             .*?(?!x\22)(?=\39*$)
             (x(x*))                          (?# \42 = N / \39; \43 = \42-1 )
             (?=\42*$)
-            (?=\40+$)                        (?# iff \42 > \39, this can have a false positive, but never a false negative )
-            (
-                .*(?=\39$)\42                (?# only require the alternative to be true if \42 > \39 )
+            (?=\40+$)                        (?# must match if \42 <= \39; otherwise doesn't matter )
+            (?=(\42*)\40\43+$)               (?# \44 = must be zero for multiplication to be true iff \42 > \39; otherwise doesn't matter )
+            .*(
+                (?=\39$)\42                  (?# only require the alternative to be true if \42 > \39 )
             |
-                (?=(\42*)\40\43+$)           (?# \45 = must be zero for multiplication to be true )
-                .*$\45
+                $\44
             )
         )
         (?# Encode the state for the next iteration of the loop, as \17 * \27 + \42 )
