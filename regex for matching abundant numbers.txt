@@ -134,10 +134,11 @@
             \35\38+$                 (?# must match if \37 >= \34; otherwise doesn't matter )
         )
         (?# Encode the state for the next iteration of the loop, as \14 * \22 + \37 )
-        .*(?=
+        (?=
             \37
-            (?=(\14*)\22\15+$)       (?# \39 = must be zero for multiplication to be true )
-            \14*$\39
+            (x*)(?=\14*$)            (?# \39 )
+            \22\15+$
         )
+        \39
     )
 )+$
