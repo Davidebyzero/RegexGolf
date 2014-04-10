@@ -39,10 +39,7 @@
     (
         .*(?=\9$)\12                 (?# only require the alternative to be true if \12 > \9 )
     |
-        (?=
-            (\12*)                   (?# \15 )
-            \10\13+$
-        )
+        (?=(\12*)\10\13+$)           (?# \15 = must be zero for multiplication to be true )
         .*$\15
     )
 )
@@ -55,10 +52,7 @@
         (
             .*(?=\5$)\17             (?# only require the alternative to be true if \17 > \5 )
         |
-            (?=
-                (\17*)               (?# \20 )
-                \6\18+$
-            )
+            (?=(\17*)\6\18+$)        (?# \20 = must be zero for multiplication to be true )
             .*$\20
         )
     )
@@ -131,7 +125,7 @@
     (?=
         .*(?=\35$)
         (x(x*))                      (?# \36 = {\35 - 1} / {\27 - 1}; \37 = \36-1 )
-        (?=(\36*)\29\37*$)
+        (?=(\36*)\29\37*$)           (?# \38 = must be zero for multiplication to be true )
         \36*$\38
     )
     (?=
@@ -153,10 +147,7 @@
             (
                 .*(?=\39$)\42                (?# only require the alternative to be true if \42 > \39 )
             |
-                (?=
-                    (\42*)                   (?# \45 )
-                    \40\43+$
-                )
+                (?=(\42*)\40\43+$)           (?# \45 = must be zero for multiplication to be true )
                 .*$\45
             )
         )
@@ -165,7 +156,7 @@
         (?=.*    (\17|\27)       )           (?# \48 = the smaller of \17 and \27 )
         .*(?=
             \42
-            (?=(\46*)\48\47+$)
+            (?=(\46*)\48\47+$)               (?# \49 = must be zero for multiplication to be true )
             \46*$\49
         )
     )
