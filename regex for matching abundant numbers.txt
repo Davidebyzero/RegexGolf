@@ -20,7 +20,7 @@
     (x(x*))                          (?# \7 = {\5 - 1} / \4; \8 = \7-1 )
     .*(?=\6$)
     (?# it is guaranteed that either \7 > \4 or \7 == 1, which allows the following division-by-multiplication to work )
-    .*(?=\7*$)
+    (?=\7*$)
     \4\8+$
 )
 (?=
