@@ -146,8 +146,7 @@
                                                  then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*(?=\22$)
-            .*?(?=\39*$)
+            .*?(?!x\22)(?=\39*$)
             (x(x*))                          (?# \42 = N / \39; \43 = \42-1 )
             (?=\42*$)
             (?=\40+$)                        (?# iff \42 > \39, this can have a false positive, but never a false negative )
