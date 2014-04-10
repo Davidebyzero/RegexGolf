@@ -38,12 +38,11 @@
     (?=\10+$)                        (?# must match if \12 <  \9; otherwise doesn't matter )
     \10\13+$                         (?# must match if \12 >= \9; otherwise doesn't matter )
 )
-(?# Calculate \14 = N / \5 )
+(?# Calculate \14 = N / \5. The division by \5 can be done quite simply, because the divisor is a prime power. )
 (?=
     (x(x*))                          (?# \14 = N / \5; \15 = \14-1 )
     (?=\14*$)
-    (?=\6+$)                         (?# must match if \14 <  \5; otherwise doesn't matter )
-    \6\15+$                          (?# must match if \14 >= \5; otherwise doesn't matter )
+    \6\15+$
 )
 (?# Seed a loop which will start with Q and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
     factor of \14. The state is encoded as \14 * P + R, where the initial value of R is Q, and P is
