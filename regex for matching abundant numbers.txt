@@ -151,13 +151,11 @@
                 .*$\45
             )
         )
-        (?# Encode the state for the next iteration of the loop )
-        (?=.*?(?=(\17|\27)$)x(x*))           (?# \46 = the larger  of \17 and \27; \47 = \46-1 )
-        (?=.*    (\17|\27)       )           (?# \48 = the smaller of \17 and \27 )
+        (?# Encode the state for the next iteration of the loop, as \17 * \27 + \42 )
         .*(?=
             \42
-            (?=(\46*)\48\47+$)               (?# \49 = must be zero for multiplication to be true )
-            \46*$\49
+            (?=(\17*)\27\18+$)               (?# \46 = must be zero for multiplication to be true )
+            \17*$\46
         )
     )
 )+$
