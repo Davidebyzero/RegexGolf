@@ -49,7 +49,7 @@
         (x(x*))                      (?# \17 = N / \5; \18 = \17-1 )
         (?=\17*$)
         (?=\6+$)                     (?# must match if \17 < \5; otherwise doesn't matter )
-        (\17*)\18+(?=\6$)            (?# \19 = must be zero for multiplication to be true iff \17 >= \5; otherwise doesn't matter )
+        (\17*)\18+(?=\6$)            (?# \19 = must be zero for multiplication to be true if \17 >= \5; otherwise doesn't matter )
         (
             \17                      (?# only require the alternative to be true if \17 >= \5 )
         |
@@ -144,7 +144,7 @@
             (x(x*))                  (?# \42 = N / \39; \43 = \42-1 )
             (?=\42*$)
             (?=\40+$)                (?# must match if \42 < \39; otherwise doesn't matter )
-            (\42*)\43+(?=\40$)       (?# \44 = must be zero for multiplication to be true iff \42 >= \39; otherwise doesn't matter )
+            (\42*)\43+(?=\40$)       (?# \44 = must be zero for multiplication to be true if \42 >= \39; otherwise doesn't matter )
             (
                 \42                  (?# only require the alternative to be true if \42 >= \39 )
             |
