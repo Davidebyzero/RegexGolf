@@ -136,17 +136,17 @@
     )
     (?# Calculate \42 = floor{\22 / \39} )
     (
-        .*(?=\40$)\22.*$                     (?# if dividing \22 / \39 would result in a number less than 1,
-                                                 then N is abundant and we can exit the loop successfully )
+        .*(?=\40$)\22.*$             (?# if dividing \22 / \39 would result in a number less than 1,
+                                         then N is abundant and we can exit the loop successfully )
     |
         (?=
             .*?(?!x\22)(?=\39*$)
-            (x(x*))                          (?# \42 = N / \39; \43 = \42-1 )
+            (x(x*))                  (?# \42 = N / \39; \43 = \42-1 )
             (?=\42*$)
-            (?=\40+$)                        (?# must match if \42 < \39; otherwise doesn't matter )
-            (\42*)\43+(?=\40$)               (?# \44 = must be zero for multiplication to be true iff \42 >= \39; otherwise doesn't matter )
+            (?=\40+$)                (?# must match if \42 < \39; otherwise doesn't matter )
+            (\42*)\43+(?=\40$)       (?# \44 = must be zero for multiplication to be true iff \42 >= \39; otherwise doesn't matter )
             (
-                \42                          (?# only require the alternative to be true if \42 >= \39 )
+                \42                  (?# only require the alternative to be true if \42 >= \39 )
             |
                 .*$\44
             )
@@ -154,7 +154,7 @@
         (?# Encode the state for the next iteration of the loop, as \17 * \27 + \42 )
         .*(?=
             \42
-            (?=(\17*)\27\18+$)               (?# \46 = must be zero for multiplication to be true )
+            (?=(\17*)\27\18+$)       (?# \46 = must be zero for multiplication to be true )
             \17*$\46
         )
     )
