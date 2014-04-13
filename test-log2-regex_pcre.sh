@@ -13,6 +13,7 @@ echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)
 echo
 
+listen=1
 out='no match'
 
 perl -E '
@@ -29,7 +30,9 @@ do
 	if [[ ${a:0:1} = '@' ]]; then
 	    echo ${a:1} '->' $out
         out='no match'
-    else
+        listen=1
+    elif [[ $listen = 1 ]]; then
         out=${#a}
+        listen=0
     fi
 done
