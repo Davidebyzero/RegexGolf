@@ -23,10 +23,10 @@ perl -E '
 	}
 	' |
 # too small a --buffer-size will result in falsely detected false positives and negatives
-pcregrep -H -o --buffer-size=2M --line-buffered --match-limit=1000000000 -e"$regex" -e'^@.*' |
+pcregrep -H --label=':' -o --buffer-size=2M --line-buffered --match-limit=1000000000 -e"$regex" -e'^@.*' |
 while read -r a
 do
-    a=${a#*:}
+    a=${a:2}
 	if [[ ${a:0:1} = '@' ]]; then
 	    echo ${a:1} '->' $out
         out='no match'
