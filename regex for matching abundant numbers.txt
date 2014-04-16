@@ -88,12 +88,13 @@
         (x(x(x*)))                   (?# \22 = next value of P to work with; \23 = \22-1; \24 = \23-1 )
         .*(?=\14$)
         (?=
-            \22*(?=\22$)             (?# assert that \22 is a factor of \14 )
+            \22*                     (?# along with the "\22$" below, assert that \22 is a factor of \14 )
             (?!
                 \18                  (?# assert that \22 is less than the previous P )
             |
                 (xx+)\25+$           (?# assert that \22 is prime )
             )
+            \22$                     (?# along with the "\22*" above, assert that \22 is a factor of \14 )
         )
         (?# Find the largest power of \22 that is a factor of \14 )
         (
