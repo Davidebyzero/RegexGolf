@@ -124,7 +124,7 @@
     |
         (?=
             .*?(?!x\17)(?=\30*$)
-            (x(x*))                  (?# \33 = N / \30; \34 = \33-1 )
+            (x(x*))                  (?# \33 = \17 / \30; \34 = \33-1 )
             (?=\33*$)
             (?=\31+$)                (?# must match if \33 <  \30; otherwise doesn't matter )
             \31\34+$                 (?# must match if \33 >= \30; otherwise doesn't matter )
