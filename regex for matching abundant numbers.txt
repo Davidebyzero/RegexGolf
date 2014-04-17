@@ -85,60 +85,60 @@
         )
     )
     (?=
-        (x(x(x*)))                   (?# \22 = next value of P to work with; \23 = \22-1; \24 = \23-1 )
+        (xx(x*))                     (?# \22 = next value of P to work with; \23 = {\22-1}-1 )
         .*(?=\14$)
         (?=
             \22*                     (?# along with the "\22$" below, assert that \22 is a factor of \14 )
             (?!
                 \18                  (?# assert that \22 is less than the previous P )
             |
-                (xx+)\25+$           (?# assert that \22 is prime )
+                (xx+)\24+$           (?# assert that \22 is prime )
             )
             \22$                     (?# along with the "\22*" above, assert that \22 is a factor of \14 )
         )
         (?# Find the largest power of \22 that is a factor of \14 )
         (
         |
-            (x+)\27*(?=\27$)
+            (x+)\26*(?=\26$)
         )
         (?!
-            (xx+)\28*
+            (xx+)\27*
             (?!\22+$)
-            \28$
+            \27$
         )
-        (\22+$)                      (?# \29 = the largest power of \22 that is a factor of \14 )
+        (\22+$)                      (?# \28 = the largest power of \22 that is a factor of \14 )
     )
-    (?# Calculate \33 = {\29 - 1} / {\22 - 1} * \22 + 1 )
+    (?# Calculate \32 = {\28 - 1} / {\22 - 1} * \22 + 1 )
     (?=
-        .*(?=\29$)x
-        (x(x*))                      (?# \30 = {\29 - 1} / {\22 - 1}; \31 = \30-1 )
-        (?=(\30*)\24\31*$)           (?# \32 = must be zero for multiplication to be true )
-        \30*$\32
+        .*(?=\28$)x
+        (x(x*))                      (?# \29 = {\28 - 1} / {\22 - 1}; \30 = \29-1 )
+        (?=(\29*)\23\30*$)           (?# \31 = must be zero for multiplication to be true )
+        \29*$\31
     )
     (?=
-        .*(x(                        (?# \33 = 1 + \30 * \22 = {\30 - 1} / {\22 - 1} * \22 + 1; \34 = \33-1 )
-            (?=\30*$)
-            \22\31+$
+        .*(x(                        (?# \32 = 1 + \29 * \22 = {\29 - 1} / {\22 - 1} * \22 + 1; \33 = \32-1 )
+            (?=\29*$)
+            \22\30+$
         ))
     )
-    (?# Calculate \36 = floor{\17 / \33} )
+    (?# Calculate \35 = floor{\17 / \32} )
     (
-        .*(?=\34$)\17.*$             (?# if dividing \17 / \33 would result in a number less than 1,
+        .*(?=\33$)\17.*$             (?# if dividing \17 / \32 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\17)(?=\33*$)
-            (x(x*))                  (?# \36 = N / \33; \37 = \36-1 )
-            (?=\36*$)
-            (?=\34+$)                (?# must match if \36 <  \33; otherwise doesn't matter )
-            \34\37+$                 (?# must match if \36 >= \33; otherwise doesn't matter )
+            .*?(?!x\17)(?=\32*$)
+            (x(x*))                  (?# \35 = N / \32; \36 = \35-1 )
+            (?=\35*$)
+            (?=\33+$)                (?# must match if \35 <  \32; otherwise doesn't matter )
+            \33\36+$                 (?# must match if \35 >= \32; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \14 * \22 + \36 )
+        (?# Encode the state for the next iteration of the loop, as \14 * \22 + \35 )
         (?=
-            \36
-            (x*)(?=\14*$)            (?# \38 )
+            \35
+            (x*)(?=\14*$)            (?# \37 )
             \22\15+$
         )
-        \38
+        \37
     )
 )+$
