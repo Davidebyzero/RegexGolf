@@ -1,0 +1,133 @@
+(?# Match abundant numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality. )
+(?# N = main number )
+^
+(?# Capture the largest prime factor of N, and the largest power of that factor that is also a factor of N. Note that the
+    algorithm used will fail if N itself is a prime power, but that's fine, because prime powers are never abundant. )
+(?=
+    (?:                              (?# Repeatedly divide current number by its smallest factor )
+        (?=(xx+?)\1+$)
+        (x+)\2*(?=\2$)
+    )+                               (?# A "+" is intentionally used instead of a "*", to fail if N is prime. This saves the rest
+                                         of the regex from having to do needless work, because prime numbers are never abundant. )
+    (?!\1+$)                         (?# require that the last factor divided out is a different prime )
+    (?=(x(x+?))\3*$)                 (?# \3 = the largest prime factor of N; \4 = \3-1 )
+    (x(x+))                          (?# \5 = the largest power of \3 that is a factor of N; \6 = \5-1 )
+)
+(?# We want to capture \5 + \5/\3 + \5/\3^2 + ... + \3^2 + \3 + 1 = {\5 * \3 - 1} / {\3 - 1}, but
+    in case \5 * \3 > N we need to calculate it as {\5 - 1} / {\3 - 1} * \3 + 1. )
+(?# The following division will fail if \5 == N, but that's fine, because no prime power is abundant. )
+(?=
+    (x(x*))                          (?# \7 = {\5 - 1} / \4; \8 = \7-1 )
+    .*(?=\6$)
+    (?# it is guaranteed that either \7 > \4 or \7 == 1, which allows the following division-by-multiplication to work )
+    (?=\7*$)
+    \4\8+$
+)
+(?=
+    .*(x(                            (?# \9 = 1 + \7 * \3  =  {\5 - 1} / {\3 - 1} * \3 + 1;  \10 = \9-1 )
+        (?=\7*$)
+        \3\8+$
+    ))
+)
+(?# Calculate Q = \12{2} + Q_R = floor{2 * N / \9}. Since we don't have space for 2 * N, we need to calculate N / \9 first,
+    including the fractional part {i.e. the remainder}, and then multiply the result, including the fractional part, by 2. )
+(?=
+    (x*?)(?=\9*$)                    (?# \11 = N % \9 )
+    (x(x*))                          (?# \12 = N / \9; \13 = \12-1 )
+    (?=\12*$)
+    (?=\10+$)                        (?# must match if \12 <  \9; otherwise doesn't matter )
+    \10\13+$                         (?# must match if \12 >= \9; otherwise doesn't matter )
+)
+(?# Calculate \14 = N / \5. The division by \5 can be done quite simply, because the divisor is a prime power. )
+(?=
+    (x(x*))                          (?# \14 = N / \5; \15 = \14-1 )
+    (?=\14*$)
+    \6\15+$
+)
+(?# Seed a loop which will start with Q and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
+    factor of \14. The state is encoded as \14 * P + R, where the initial value of R is Q, and P is
+    the last prime factor of N to have been already processed.
+    
+    However, since the initial R would be larger than \14 {and for that matter there would be no room
+    for any nonzero R since with the initial value of P, it is possible for \14 * P to equal N}, treat
+    it as a special case, and let the initial value of R be 0, signalling the first iteration to
+    pretend R=Q. This way we can avoid having to divide Q and \14 again outside the loop.
+    
+    While we're at it, there's really no reason to do anything extra to seed this loop. To seed it
+    with an initial value of P=\3, we'd have to do some multiplication. If we don't do anything to
+    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \14
+    is divisible by will still be the same, as \3 cannot be a factor of \14. )
+
+(?# Start the loop. )
+(
+    (?=
+        (                            (?# \17 = actual value of R )
+            x*?(?=\14+$)             (?# move forward by directly decoded value of R, which can be zero )
+            (?# The division by \14 can be done quite simply, because it is known that the quotient is prime. )
+            (?=
+                \14+?                (?# tail = \14 * {a prime which divides into \14} )
+                (?=
+                    (x(x(x*)))       (?# \18 = decoded value of next smaller P; \19 = \18-1; \20 = \19-1 )
+                    (?=\15+$)        (?# iff \18 > \14, this can have a false positive, but never a false negative )
+                    \18*$            (?# iff \18 < \14, this can have a false positive, but never a false negative )
+                )
+                (?# Find the largest power of \18 that is a factor of \14, while also asserting that \18 is prime )
+                (x+)                 (?# \21 = the largest power of \18 that is a factor of \14 )
+                .*(?=\14$)
+                \21*(?=\21$)
+                (?!
+                    (xx+)\22*
+                    (?!\18+$)
+                    \22$
+                )
+                \18+$
+            )
+            (
+                (?=\5+$)             (?# true iff this is the first iteration of the loop )
+                \12{2}
+                (                    (?# add Q_R = floor{\11 * 2 / \9} )
+                    (?=
+                        .*(?=\9$)
+                        \11{2}x
+                    )
+                |
+                    x
+                )
+            |
+            )
+        )
+    )
+    (?# Calculate \28 = {\21 - 1} / {\18 - 1} * \18 + 1 )
+    (?=
+        .*(?=\21$)x
+        (x(x*))                      (?# \25 = {\21 - 1} / {\18 - 1}; \26 = \25-1 )
+        (?=(\25*)\20\26*$)           (?# \27 = must be zero for multiplication to be true )
+        \25*$\27
+    )
+    (?=
+        .*(x(                        (?# \28 = 1 + \25 * \18 = {\25 - 1} / {\18 - 1} * \18 + 1; \29 = \28-1 )
+            (?=\25*$)
+            \18\26+$
+        ))
+    )
+    (?# Calculate \31 = floor{\17 / \28} )
+    (
+        .*(?=\29$)\17.*$             (?# if dividing \17 / \28 would result in a number less than 1,
+                                         then N is abundant and we can exit the loop successfully )
+    |
+        (?=
+            .*?(?!x\17)(?=\28*$)
+            (x(x*))                  (?# \31 = N / \28; \32 = \31-1 )
+            (?=\31*$)
+            (?=\29+$)                (?# must match if \31 <  \28; otherwise doesn't matter )
+            \29\32+$                 (?# must match if \31 >= \28; otherwise doesn't matter )
+        )
+        (?# Encode the state for the next iteration of the loop, as \14 * \18 + \31 )
+        (?=
+            \31
+            (x*)(?=\14*$)            (?# \33 )
+            \18\15+$
+        )
+        \33
+    )
+)+$
