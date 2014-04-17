@@ -110,7 +110,7 @@
     )
     (?# Calculate \32 = {\28 - 1} / {\22 - 1} * \22 + 1 )
     (?=
-        .*(?=\28$)x
+        .*(?=\28)x                   (?# tail = \28 - 1 )
         (x(x*))                      (?# \29 = {\28 - 1} / {\22 - 1}; \30 = \29-1 )
         (?=(\29*)\23\30*$)           (?# \31 = must be zero for multiplication to be true )
         \29*$\31
@@ -123,7 +123,7 @@
     )
     (?# Calculate \35 = floor{\17 / \32} )
     (
-        .*(?=\33$)\17.*$             (?# if dividing \17 / \32 would result in a number less than 1,
+        .*(?!\32)\17                 (?# if dividing \17 / \32 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
