@@ -73,7 +73,6 @@
                     \20*$            (?# iff \20 < \14, this can have a false positive, but never a false negative )
                 )
                 \19(?=\14$)
-                (?=\20+$)
                 (?# Find the largest power of \20 that is a factor of \14 )
                 (
                 |
