@@ -66,24 +66,23 @@
             (?# The division by \14 can be done quite simply, because it is known that the quotient is prime. )
             (?=
                 \14+?                (?# tail = \14 * {a prime which divides into \14} )
-                (?=(\14+)(\18+)$)    (?# \18 = must equal to \14 to be valid; \19 = tool to make tail equal \14 )
+                (?=(\14+)\18+$)      (?# \18 = must equal to \14 to be valid )
                 (?=
-                    (x(x(x*)))       (?# \20 = decoded value of next smaller P; \21 = \20-1; \22 = \21-1 )
-                    (?=\15+$)        (?# iff \20 > \14, this can have a false positive, but never a false negative )
-                    \20*$            (?# iff \20 < \14, this can have a false positive, but never a false negative )
+                    (x(x(x*)))       (?# \19 = decoded value of next smaller P; \20 = \19-1; \21 = \20-1 )
+                    (?=\15+$)        (?# iff \19 > \14, this can have a false positive, but never a false negative )
+                    \19*$            (?# iff \19 < \14, this can have a false positive, but never a false negative )
                 )
-                \19(?=\14$)
-                (?# Find the largest power of \20 that is a factor of \14 )
-                (
-                |
-                    (x+)\24*(?=\24$)
-                )
+                (?# Find the largest power of \19 that is a factor of \14 )
+                (x+)                 (?# \22 = the largest power of \19 that is a factor of \14 )
+                .*(?=\14$)
+                (?=\18)
+                \22*(?=\22$)
                 (?!
-                    (xx+)\25*
-                    (?!\20+$)
-                    \25$
+                    (xx+)\23*
+                    (?!\19+$)
+                    \23$
                 )
-                (\20+$)              (?# \26 = the largest power of \20 that is a factor of \14 )
+                \19+$
             )
             (
                 (?=\5+$)             (?# true iff this is the first iteration of the loop )
@@ -100,37 +99,37 @@
             )
         )
     )
-    (?# Calculate \32 = {\26 - 1} / {\20 - 1} * \20 + 1 )
+    (?# Calculate \29 = {\22 - 1} / {\19 - 1} * \19 + 1 )
     (?=
-        .*(?=\26$)x
-        (x(x*))                      (?# \29 = {\26 - 1} / {\20 - 1}; \30 = \29-1 )
-        (?=(\29*)\22\30*$)           (?# \31 = must be zero for multiplication to be true )
-        \29*$\31
+        .*(?=\22$)x
+        (x(x*))                      (?# \26 = {\22 - 1} / {\19 - 1}; \27 = \26-1 )
+        (?=(\26*)\21\27*$)           (?# \28 = must be zero for multiplication to be true )
+        \26*$\28
     )
     (?=
-        .*(x(                        (?# \32 = 1 + \29 * \20 = {\29 - 1} / {\20 - 1} * \20 + 1; \33 = \32-1 )
-            (?=\29*$)
-            \20\30+$
+        .*(x(                        (?# \29 = 1 + \26 * \19 = {\26 - 1} / {\19 - 1} * \19 + 1; \30 = \29-1 )
+            (?=\26*$)
+            \19\27+$
         ))
     )
-    (?# Calculate \35 = floor{\17 / \32} )
+    (?# Calculate \32 = floor{\17 / \29} )
     (
-        .*(?=\33$)\17.*$             (?# if dividing \17 / \32 would result in a number less than 1,
+        .*(?=\30$)\17.*$             (?# if dividing \17 / \29 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\17)(?=\32*$)
-            (x(x*))                  (?# \35 = N / \32; \36 = \35-1 )
-            (?=\35*$)
-            (?=\33+$)                (?# must match if \35 <  \32; otherwise doesn't matter )
-            \33\36+$                 (?# must match if \35 >= \32; otherwise doesn't matter )
+            .*?(?!x\17)(?=\29*$)
+            (x(x*))                  (?# \32 = N / \29; \33 = \32-1 )
+            (?=\32*$)
+            (?=\30+$)                (?# must match if \32 <  \29; otherwise doesn't matter )
+            \30\33+$                 (?# must match if \32 >= \29; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \14 * \20 + \35 )
+        (?# Encode the state for the next iteration of the loop, as \14 * \19 + \32 )
         (?=
-            \35
-            (x*)(?=\14*$)            (?# \37 )
-            \20\15+$
+            \32
+            (x*)(?=\14*$)            (?# \34 )
+            \19\15+$
         )
-        \37
+        \34
     )
 )+$
