@@ -66,7 +66,7 @@
             (?# The division by \14 can be done quite simply, because it is known that the quotient is prime. )
             (?=
                 \14+?                (?# tail = \14 * {a prime which divides into \14} )
-                (?=(\14+)\18+$)      (?# \18 = must equal to \14 to be valid )
+                (?=(\14+)\18+$)      (?# \18 = must be equal to \14 to be valid )
                 (?=
                     (x(x(x*)))       (?# \19 = decoded value of next smaller P; \20 = \19-1; \21 = \20-1 )
                     (?=\15+$)        (?# iff \19 > \14, this can have a false positive, but never a false negative )
