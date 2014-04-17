@@ -104,37 +104,37 @@
         )
         (\21+$)                      (?# \26 = the largest power of \21 that is a factor of \14 )
     )
-    (?# Calculate \30 = {\26 - 1} / {\21 - 1} * \21 + 1 )
+    (?# Calculate \29 = {\26 - 1} / {\21 - 1} * \21 + 1 )
     (?=
         .*(?=\26)x                   (?# tail = \26 - 1 )
         (x(x*))                      (?# \27 = {\26 - 1} / {\21 - 1}; \28 = \27-1 )
-        (?=(\27*)\22\28*$)           (?# \29 = must be zero for multiplication to be true )
-        \27*$\29
+        (?=\27*$)
+        \22\28*$
     )
     (?=
-        .*(x(                        (?# \30 = 1 + \27 * \21 = {\27 - 1} / {\21 - 1} * \21 + 1; \31 = \30-1 )
+        .*(x(                        (?# \29 = 1 + \27 * \21 = {\27 - 1} / {\21 - 1} * \21 + 1; \30 = \29-1 )
             (?=\27*$)
             \21\28+$
         ))
     )
-    (?# Calculate \33 = floor{\17 / \30} )
+    (?# Calculate \32 = floor{\17 / \29} )
     (
-        .*(?!\30)\17                 (?# if dividing \17 / \30 would result in a number less than 1,
+        .*(?!\29)\17                 (?# if dividing \17 / \29 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\17)(?=\30*$)
-            (x(x*))                  (?# \33 = \17 / \30; \34 = \33-1 )
-            (?=\33*$)
-            (?=\31+$)                (?# must match if \33 <  \30; otherwise doesn't matter )
-            \31\34+$                 (?# must match if \33 >= \30; otherwise doesn't matter )
+            .*?(?!x\17)(?=\29*$)
+            (x(x*))                  (?# \32 = \17 / \29; \33 = \32-1 )
+            (?=\32*$)
+            (?=\30+$)                (?# must match if \32 <  \29; otherwise doesn't matter )
+            \30\33+$                 (?# must match if \32 >= \29; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \14 * \21 + \33 )
+        (?# Encode the state for the next iteration of the loop, as \14 * \21 + \32 )
         (?=
-            \33
-            (x*)(?=\14*$)            (?# \35 )
+            \32
+            (x*)(?=\14*$)            (?# \34 )
             \21\15+$
         )
-        \35
+        \34
     )
 )+$
