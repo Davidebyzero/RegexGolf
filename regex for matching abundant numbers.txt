@@ -65,7 +65,7 @@
             x*?(?=\14*$)             (?# move forward by directly decoded value of R, which can be zero )
             (?# The division by \14 can be done quite simply, because it is known that the quotient is prime. )
             (?=
-                .+?
+                .+?                  (?# tail = \14 * {a prime which divides into \14} )
                 (?=(\14+)(\18+)$)    (?# \18 = must equal to \14 to be valid; \19 = tool to make tail equal \14 )
                 (?=
                     (x(x(x*)))       (?# \20 = decoded value of next smaller P; \21 = \20-1; \22 = \21-1 )
