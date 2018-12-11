@@ -1,0 +1,33 @@
+^
+(?:
+	(?# Find the largest prime factor of N, and capture it in \3 )
+	(?=
+		(
+			(x+)\2*(?=\2$)
+		)*
+		(xx+)
+	)
+	(?# Divide: x\6 = N / \3 )
+	(?=
+		(?=\3(x*$))
+		(?=
+			x((x*)x*(?=\4$))
+			(\3*)\6\5*$
+		)
+		\3*$\7
+	)
+	(?# Find the next smaller prime than \3 and capture it in \9, with \10 = \9 - 1 )
+	(?=
+		.*(?=\3$).+?
+		(?!(xx+)\8+$)(x(x+))
+	)
+	(?=
+		.*(?=\6$)(?!\9|$)     (?# Assert that \6 < \9 and \6 >= 0 )
+	)
+	(?# Multiply: tail = \9 * \6 )
+	.*
+	(?=\9+$)
+	\9*
+	(?=\6\10+$)
+)*
+xx$
