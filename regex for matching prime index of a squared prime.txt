@@ -1,0 +1,34 @@
+^
+(?# require that this number is a square, and put its square root in \1)
+(?=
+    (x(x*))         (?# \1 = potential square root; \2 = \1 - 1 )
+    (?=
+        (\1*)\2+$   (?# iff \1 * \1 == our number, then the first match here must result in \3 == 0 )
+    )
+    \1*$\3          (?# test for divisibility by \1 and for \3 == 0 simultaneously )
+)
+(?# require that the square root of this number is prime)
+(?!.*(?=\1$)(xx+)\4+$)
+
+(?=
+	(?# seed the loop with the initial prime index of 0 - this is a no-op )
+
+	(?# main loop )
+	(
+		(x*?)(?=\1+$)      (?# capture current index into \6 )
+
+		(?# increment index )
+		\1*?
+		(?=
+			\1
+			(?=(x+)(\7+$))\8
+			(?!(xx+)\9+$)
+		)
+		.*?
+		(?=
+			x\6(?=\1+$)
+		)
+	)*
+)
+
+x\6
