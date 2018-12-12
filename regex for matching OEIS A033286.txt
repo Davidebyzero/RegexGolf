@@ -1,6 +1,6 @@
 ^
 (
-	(?# Find the largest prime factor of N, and capture it in \4 )
+	(?# Find the largest prime factor of N, and capture it in \4, with \5 = \4-1 )
 	(?=
 		(
 			(x+)\3*(?=\3$)
