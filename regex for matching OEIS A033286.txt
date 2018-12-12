@@ -13,13 +13,13 @@
 		(?=\6*$)
 		\5\7*$
 	)
+	(?!.*$\7)                 (?# Assert that \7 > 0 )
 	(?# Find the next smaller prime than \4 and capture it in \9, with \10 = \9-1 )
 	(?=
 		.*(?=\4$).+?
-		(?!(xx+)\8+$)(x(x+))
-	)
-	(?=
-		.*(?=\7$)(?!\9|$)     (?# Assert that 0 < \7 < \9 )
+		(?!(xx+)\8+$)
+		(?=x\7)               (?# Assert that \7 < \9 )
+		(x(x+))
 	)
 	(?# Multiply: tail = \9 * \7 )
 	.*
