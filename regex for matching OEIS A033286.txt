@@ -17,8 +17,7 @@
 	(?=
 		.*(?=\4$).+?
 		(?!(xx+)\8+$)
-		(?=x\7)               (?# Assert that \7 < \9 )
-		(x(x+))
+		(x(x*\7))             (?# Simultaneously capture \9 and enforce that \7 < \9 )
 	)
 	(?# Multiply: tail = \9 * \7 )
 	.*
