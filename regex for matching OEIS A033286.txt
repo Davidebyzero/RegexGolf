@@ -7,13 +7,12 @@
 		)*
 		(x(x+))
 	)
-	(?# Divide: \6 = N / \4, with \7 = \6-1 )
+	(?# Divide: \6 = N / \4, with \7 = \6-1, enforcing that \7 > 0 )
 	(?=
-		(x(x*))
+		(x(x+))
 		(?=\6*$)
 		\5\7*$
 	)
-	(?!.*$\7)                 (?# Assert that \7 > 0 )
 	(?# Find the next smaller prime than \4 and capture it in \9, with \10 = \9-1 )
 	(?=
 		.*(?=\4$).+?
