@@ -32,154 +32,149 @@
 	)
 )
 (?=
-	.*
-	(?=\7*$)
-	(\7\8+$)                   (?# \12 = \7 * \7 )
-)
-(?=
 	.*(?=\10$)
-	(x*?)(?=\4*$)              (?# \13 = \10 % \4, the base-\4 digit in place 0 of the result for N*N )
-	(x?(x*))                   (?# \14 = floor{\10 / \4}; \15 = \14-1, or 0 if \14==0 )
-	(?=\14*$)
+	(x*?)(?=\4*$)              (?# \12 = \10 % \4, the base-\4 digit in place 0 of the result for N*N )
+	(x?(x*))                   (?# \13 = floor{\10 / \4}; \14 = \13-1, or 0 if \13==0 )
+	(?=\13*$)
 	(
 		(?=\9+$)
-		\9\15*$
+		\9\14*$
 	|
-		$\14                   (?# must make a special case for \14==0, because \9 is nonzero )
+		$\13                   (?# must make a special case for \13==0, because \9 is nonzero )
 	)
 )
 (?=
 	.*(?=\11$)
-	(x*?)(?=\4*$)              (?# \17 = \11 % \4 )
-	(x?(x*))                   (?# \18 = floor{\11 / \4}; \19 = \18-1, or 0 if \18==0 )
-	(?=\18*$)
+	(x*?)(?=\4*$)              (?# \16 = \11 % \4 )
+	(x?(x*))                   (?# \17 = floor{\11 / \4}; \18 = \17-1, or 0 if \17==0 )
+	(?=\17*$)
 	(
 		(?=\9+$)
-		\9\19*$
+		\9\18*$
 	|
-		$\18                   (?# must make a special case for \18==0, because \9 is nonzero )
+		$\17                   (?# must make a special case for \17==0, because \9 is nonzero )
 	)
 )
 (?=
-	.*(?=\17\17\14$)           (?# tail = 2 * \17 + \14 )
-	(x*?)(?=\4*$)              (?# \21 = \21 % \4, the base-\4 digit in place 1 of the result for N*N )
-	(x?(x*))                   (?# \22 = floor{\21 / \4}; \23 = \22-1, or 0 if \22==0 )
-	(?=\22*$)
+	.*(?=\16\16\13$)           (?# tail = 2 * \16 + \13 )
+	(x*?)(?=\4*$)              (?# \20 = \20 % \4, the base-\4 digit in place 1 of the result for N*N )
+	(x?(x*))                   (?# \21 = floor{\20 / \4}; \22 = \21-1, or 0 if \21==0 )
+	(?=\21*$)
 	(
 		(?=\9+$)
-		\9\23*$
+		\9\22*$
 	|
-		$\22                   (?# must make a special case for \22==0, because \9 is nonzero )
+		$\21                   (?# must make a special case for \21==0, because \9 is nonzero )
 	)
-)                              (?# {\12 + 2*\18 + \22} = the base-\4 digit in place 2 of the result for N*N, which is allowed to exceed \4 and will always do so;
+)                              (?# {\7*\7 + 2*\17 + \21} = the base-\4 digit in place 2 of the result for N*N, which is allowed to exceed \4 and will always do so;
                                    Note that it will be equal to N iff N is a perfect square, because of the choice of number base. )
 
 (?# Step 2: Find the largest M such that 2*M*M is not greater than N*N )
 
-(?*(x*))                       (?# \25 = M )
+(?*(x*))                       (?# \24 = M )
 
 (?# Step 2a: Calculate M*M in base \4 )
 (?=
-	.*(?=\25$)
-	(?=\4*(x?(x*)))\26         (?# \26 = M % \4; \27 = \26-1, or 0 if \26==0 )
-	(x(x*))                    (?# \28 = floor{M / \4}; \29 = \28-1 )
-	(?=\28*$)
+	.*(?=\24$)
+	(?=\4*(x?(x*)))\25         (?# \25 = M % \4; \26 = \25-1, or 0 if \25==0 )
+	(x(x*))                    (?# \27 = floor{M / \4}; \28 = \27-1 )
+	(?=\27*$)
 	(?=\9+$)
-	\9\29*$
+	\9\28*$
 )
 (?=
 	.*
-	(?=\26*$)
-	(\26\27+$)                 (?# \30 = \26 * \26 )
+	(?=\25*$)
+	(\25\26+$)                 (?# \29 = \25 * \25 )
 )
 (?=
 	.*
-	(                          (?# \31 = \26 * \28; must do symmetric multiplication, because \26 is occasionally 1 larger than \28 )
-		(?=\26*$)
-		(?=\28*$)
-		(?=\26\29+$)
-		   \28\27+$
+	(                          (?# \30 = \25 * \27; must do symmetric multiplication, because \25 is occasionally 1 larger than \27 )
+		(?=\25*$)
+		(?=\27*$)
+		(?=\25\28+$)
+		   \27\26+$
 	|
-		$\26                   (?# must make a special case for \26==0, because \28 might not be 0 )
+		$\25                   (?# must make a special case for \25==0, because \27 might not be 0 )
 	)
 )
 (?=
 	.*
-	(?=\28*$)
-	(\28\29+$)                 (?# \32 = \28 * \28 )
+	(?=\27*$)
+	(\27\28+$)                 (?# \31 = \27 * \27 )
+)
+(?=
+	.*(?=\29$)
+	(x*?)(?=\4*$)              (?# \32 = \29 % \4, the base-\4 digit in place 0 of the result for M*M )
+	(x?(x*))                   (?# \33 = floor{\29 / \4}; \34 = \33-1, or 0 if \33==0 )
+	(?=\33*$)
+	(
+		(?=\9+$)
+		\9\34*$
+	|
+		$\33                   (?# must make a special case for \33==0, because \9 is nonzero )
+	)
 )
 (?=
 	.*(?=\30$)
-	(x*?)(?=\4*$)              (?# \33 = \30 % \4, the base-\4 digit in place 0 of the result for M*M )
-	(x?(x*))                   (?# \34 = floor{\30 / \4}; \35 = \34-1, or 0 if \34==0 )
-	(?=\34*$)
+	(x*?)(?=\4*$)              (?# \36 = \30 % \4 )
+	(x?(x*))                   (?# \37 = floor{\30 / \4}; \38 = \37-1, or 0 if \37==0 )
+	(?=\37*$)
 	(
 		(?=\9+$)
-		\9\35*$
+		\9\38*$
 	|
-		$\34                   (?# must make a special case for \34==0, because \9 is nonzero )
+		$\37                   (?# must make a special case for \37==0, because \9 is nonzero )
 	)
 )
 (?=
-	.*(?=\31$)
-	(x*?)(?=\4*$)              (?# \37 = \31 % \4 )
-	(x?(x*))                   (?# \38 = floor{\31 / \4}; \39 = \38-1, or 0 if \38==0 )
-	(?=\38*$)
+	.*(?=\36\36\33$)           (?# tail = 2 * \36 + \33 )
+	(x*?)(?=\4*$)              (?# \40 = \40 % \4, the base-\4 digit in place 1 of the result for M*M )
+	(x?(x*))                   (?# \41 = floor{\40 / \4}; \42 = \41-1, or 0 if \41==0 )
+	(?=\41*$)
 	(
 		(?=\9+$)
-		\9\39*$
+		\9\42*$
 	|
-		$\38                   (?# must make a special case for \38==0, because \9 is nonzero )
+		$\41                   (?# must make a special case for \41==0, because \9 is nonzero )
 	)
-)
-(?=
-	.*(?=\37\37\34$)           (?# tail = 2 * \37 + \34 )
-	(x*?)(?=\4*$)              (?# \41 = \41 % \4, the base-\4 digit in place 1 of the result for M*M )
-	(x?(x*))                   (?# \42 = floor{\41 / \4}; \43 = \42-1, or 0 if \42==0 )
-	(?=\42*$)
-	(
-		(?=\9+$)
-		\9\43*$
-	|
-		$\42                   (?# must make a special case for \42==0, because \9 is nonzero )
-	)
-)                              (?# {\32 + 2*\38 + \42} = the base-\4 digit in place 2 of the result for M*M, which is allowed to exceed \4 and will always do so )
+)                              (?# {\31 + 2*\37 + \41} = the base-\4 digit in place 2 of the result for M*M, which is allowed to exceed \4 and will always do so )
 
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
-	(?=(\33\33))               (?# \45 = 2*\33 )
+	(?=(\32\32))               (?# \44 = 2*\32 )
 	.*(?=\4$)
-	(x\45|)                    (?# \46 = \45+1 if it fits in a base \4 digit, or 0 otherwise )
+	(x\44|)                    (?# \45 = \44+1 if it fits in a base \4 digit, or 0 otherwise )
 )
 (?=
-	.*(?=\45)
-	\4*(x*)                    (?# \47 = \45 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
+	.*(?=\44)
+	\4*(x*)                    (?# \46 = \44 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
 )
 (?=  
-	(                          (?# \48 = 2*\41 + {\45 / \4} )
-		\41\41
+	(                          (?# \47 = 2*\40 + {\44 / \4} )
+		\40\40
 		(
-			(?!.*$\46)
+			(?!.*$\45)
 		|
-			(?=.*$\46)x
+			(?=.*$\45)x
 		)
 	)
 )
 (?=
 	.*(?=\4$)
-	(x\48|)                    (?# \50 = \48+1 if it fits in a base \4 digit, or 0 otherwise )
+	(x\47|)                    (?# \49 = \47+1 if it fits in a base \4 digit, or 0 otherwise )
 )
 (?=
-	.*(?=\48)
-	\4*(x*)                    (?# \51 = \48 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
+	.*(?=\47)
+	\4*(x*)                    (?# \50 = \47 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
 )
 (?=
-	(                          (?# \52 = 2*{\32 + 2*\38 + \42} + {\48 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
-		(\32\38\38\42){2}
+	(                          (?# \51 = 2*{\31 + 2*\37 + \41} + {\47 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
+		(\31\37\37\41){2}
 		(
-			(?!.*$\50)
+			(?!.*$\49)
 		|
-			(?=.*$\50)x
+			(?=.*$\49)x
 		)
 	)
 )
@@ -187,24 +182,30 @@
 (?# Step 2c: Require that 2*M*M <= N*N )
 
 (?=
-	.*(?=\12\18\18\22$)        (?# tail = {\12 + 2*\18 + \22}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
+	(?=
+		(.*)                   (?# \54 )
+		\17\17\21
+		(?=\7*$)               (?# tail = \7 * \7 )
+		\7\8+$
+	)
+	\54                        (?# tail = {\7*\7 + 2*\17 + \21}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
 	(
-		x\52
+		x\51
 	|
-		(?=\52$)
+		(?=\51$)
 		(?=
-			.*(?=\21$)x\51
+			.*(?=\20$)x\50
 		|
 			(?=
-				.*(?=\21$)\51$
+				.*(?=\20$)\50$
 			)
 			(?=
-				.*(?=\13$)\47
+				.*(?=\12$)\46
 			)
 		)
 	)
 )
 
-\25
+\24
 
 |x(?=x)|                       (?# handle inputs in the domain ^x{0,2}$ )
