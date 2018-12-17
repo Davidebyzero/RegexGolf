@@ -28,7 +28,7 @@
 		(?=\5\8+$)
 		   \7\6+$
 	|
-		$\5                    (?# must make a special case for \5==0, because we couldn't subtract 1 from it )
+		$\5                    (?# must make a special case for \5==0, because \7 might not be 0 )
 	)
 )
 (?=
@@ -45,7 +45,7 @@
 		(?=\9+$)
 		\9\15*$
 	|
-		$\14                   (?# must make a special case for \14==0, because we can't subtract 1 from it )
+		$\14                   (?# must make a special case for \14==0, because \9 is nonzero )
 	)
 )
 (?=
@@ -57,7 +57,7 @@
 		(?=\9+$)
 		\9\19*$
 	|
-		$\18                   (?# must make a special case for \18==0, because we can't subtract 1 from it )
+		$\18                   (?# must make a special case for \18==0, because \9 is nonzero )
 	)
 )
 (?=
@@ -69,7 +69,7 @@
 		(?=\9+$)
 		\9\23*$
 	|
-		$\22                   (?# must make a special case for \22==0, because we can't subtract 1 from it )
+		$\22                   (?# must make a special case for \22==0, because \9 is nonzero )
 	)
 )                              (?# {\12 + 2*\18 + \22} = the base-\4 digit in place 2 of the result for N*N; it is allowed to exceed \4 )
 
@@ -99,7 +99,7 @@
 		(?=\26\29+$)
 		   \28\27+$
 	|
-		$\26                   (?# must make a special case for \26==0, because we couldn't subtract 1 from it )
+		$\26                   (?# must make a special case for \26==0, because \28 might not be 0 )
 	)
 )
 (?=
@@ -116,7 +116,7 @@
 		(?=\9+$)
 		\9\35*$
 	|
-		$\34                   (?# must make a special case for \34==0, because we can't subtract 1 from it )
+		$\34                   (?# must make a special case for \34==0, because \9 is nonzero )
 	)
 )
 (?=
@@ -128,7 +128,7 @@
 		(?=\9+$)
 		\9\39*$
 	|
-		$\38                   (?# must make a special case for \38==0, because we can't subtract 1 from it )
+		$\38                   (?# must make a special case for \38==0, because \9 is nonzero )
 	)
 )
 (?=
@@ -140,7 +140,7 @@
 		(?=\9+$)
 		\9\43*$
 	|
-		$\42                   (?# must make a special case for \42==0, because we can't subtract 1 from it )
+		$\42                   (?# must make a special case for \42==0, because \9 is nonzero )
 	)
 )                              (?# {\32 + 2*\38 + \42} = the base-\4 digit in place 2 of the result for M*M; it is allowed to exceed \4 )
 
