@@ -227,4 +227,4 @@
 
 \27
 
-|xx?(?=x)|                  (?# handle inputs in the domain ^x{0,4}$ )
+|x(?=x)|                    (?# handle inputs in the domain ^x{0,2}$ )
