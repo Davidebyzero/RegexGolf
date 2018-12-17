@@ -138,10 +138,7 @@
 
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
-	(?=(\30\30))               (?# \42 = 2*\30 )
-)
-(?=
-	.*(?=\42)
+	.*(?=(\30\30))             (?# \42 = 2*\30; tail = \42 )
 	\4*(x*)                    (?# \43 = \42 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
 )
 (?=  
