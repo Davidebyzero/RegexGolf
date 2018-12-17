@@ -142,7 +142,7 @@
 (?=
 	(?=(\30\30))               (?# \42 = 2*\30 )
 	.*(?=\4$)
-	(x\42|)                    (?# \43 = \42+1 if it fits in a base \4 digit, or 0 otherwise )
+	(x\42|)                    (?# \43 = nonzero if it fits in a base \4 digit, or 0 otherwise )
 )
 (?=
 	.*(?=\42)
@@ -160,7 +160,7 @@
 )
 (?=
 	.*(?=\4$)
-	(x\45|)                    (?# \47 = \45+1 if it fits in a base \4 digit, or 0 otherwise )
+	(x\45|)                    (?# \47 = nonzero if it fits in a base \4 digit, or 0 otherwise )
 )
 (?=
 	.*(?=\45)
