@@ -139,39 +139,33 @@
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
 	(?=(\30\30))               (?# \42 = 2*\30 )
-	.*(?=\4$)
-	(x\42|)                    (?# \43 = nonzero if it fits in a base \4 digit, or 0 otherwise )
 )
 (?=
 	.*(?=\42)
-	\4*(x*)                    (?# \44 = \42 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
+	\4*(x*)                    (?# \43 = \42 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
 )
 (?=  
-	(                          (?# \45 = 2*\38 + {\42 / \4} )
+	(                          (?# \44 = 2*\38 + {\42 / \4} )
+		(                      (?# +1 carry if \42 does not fit in a base \4 digit )
+			(?!
+				.*(?=\9$)\42
+			)x
+		)?
 		\38\38
-		(
-			(?!.*$\43)
-		|
-			(?=.*$\43)x
-		)
 	)
 )
 (?=
-	.*(?=\4$)
-	(x\45|)                    (?# \47 = nonzero if it fits in a base \4 digit, or 0 otherwise )
+	.*(?=\44)
+	\4*(x*)                    (?# \46 = \44 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
 )
 (?=
-	.*(?=\45)
-	\4*(x*)                    (?# \48 = \45 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
-)
-(?=
-	(                          (?# \49 = 2*{\29 + 2*\35 + \39} + {\45 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
+	(                          (?# \47 = 2*{\29 + 2*\35 + \39} + {\44 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
+		(                      (?# +1 carry if \44 does not fit in a base \4 digit )
+			(?!
+				.*(?=\9$)\44
+			)x
+		)?
 		(\29\35\35\39){2}
-		(
-			(?!.*$\47)
-		|
-			(?=.*$\47)x
-		)
 	)
 )
 
@@ -179,24 +173,24 @@
 
 (?=
 	(?=
-		(.*)                   (?# \52 )
+		(.*)                   (?# \50 )
 		\16\16\20
 		(?=\7*$)               (?# tail = \7 * \7 )
 		\7\8+$
 	)
-	\52                        (?# tail = {\7*\7 + 2*\16 + \20}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
+	\50                        (?# tail = {\7*\7 + 2*\16 + \20}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
 	(
-		x\49
+		x\47
 	|
-		(?=\49$)
+		(?=\47$)
 		(?=
-			.*(?=\19$)x\48
+			.*(?=\19$)x\46
 		|
 			(?=
-				.*(?=\19$)\48$
+				.*(?=\19$)\46$
 			)
 			(?=
-				.*(?=\11$)\44
+				.*(?=\11$)\43
 			)
 		)
 	)
