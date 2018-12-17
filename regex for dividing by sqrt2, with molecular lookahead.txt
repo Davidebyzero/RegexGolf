@@ -71,7 +71,8 @@
 	|
 		$\22                   (?# must make a special case for \22==0, because \9 is nonzero )
 	)
-)                              (?# {\12 + 2*\18 + \22} = the base-\4 digit in place 2 of the result for N*N, which is allowed to exceed \4 and will always do so )
+)                              (?# {\12 + 2*\18 + \22} = the base-\4 digit in place 2 of the result for N*N, which is allowed to exceed \4 and will always do so;
+                                   Note that it will be equal to N iff N is a perfect square, because of the choice of number base. )
 
 (?# Step 2: Find the largest M such that 2*M*M is not greater than N*N )
 
