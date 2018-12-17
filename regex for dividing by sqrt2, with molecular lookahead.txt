@@ -11,9 +11,8 @@
 (?=
 	\5
 	(x(x*))                    (?# \7 = floor{N / \4}; \8 = \7-1 )
-	(?=\7*$)
-	(?=(\2\3)+$)               (?# \9 = \4 - 1 )
-	\9\8*$
+	(?=\7*$)                   (?# we can skip the test for divisibility by \9 because it's guaranteed that \9 <= \7 )
+	(\2\3)\8*$                 (?# \9 = \4 - 1 )
 )
 (?=
 	.*
@@ -77,8 +76,7 @@
 	.*(?=\23$)
 	(?=\4*(x?(x*)))\24         (?# \24 = M % \4; \25 = \24-1, or 0 if \24==0 )
 	(x(x*))                    (?# \26 = floor{M / \4}; \27 = \26-1 )
-	(?=\26*$)
-	(?=\9+$)
+	(?=\26*$)                  (?# we can skip the test for divisibility by \9, but I'm not sure why; TODO: figure out why this is )
 	\9\27*$
 )
 (?=
