@@ -1,4 +1,4 @@
-(?# Giving an input number N in the domain ^x*$, this regex returns floor{N / sqrt{2}} [UNFINISHED] )
+(?# Giving an input number N in the domain ^x*$, this regex returns floor{N / sqrt{2}} )
 ^
 (?=
     (x(x*))                 (?# \1 = will be the square root of the main number, rounded down; \2 = \1 - 1 )
@@ -164,14 +164,14 @@
 	)
 )
 (?=
-	(\32\38\38\43)          (?# \46 = \32 + 2*\38 + \43, the base-\3 digit in place 2 of the result for M*M )
+	(\32\38\38\43)          (?# \46 = \32 + 2*\38 + \43, the base-\3 digit in place 2 of the result for M*M; it is allowed to exceed \3 )
 )
 
 (?# Step 2b: Calculate 2*M*M in base \3 )
 (?=
 	(?=(\33\33))            (?# \47 = 2*\33 )
 	.*(?=\3$)
-	(\47?)                  (?# \48 = \47 if it fits in a base \3 digit, or 0 otherwise )
+	(x\47|)                 (?# \48 = \47+1 if it fits in a base \3 digit, or 0 otherwise )
 )
 (?=
 	.*(?=\47)
@@ -181,27 +181,27 @@
 	(                       (?# \50 = 2*\42 + {\47 / \3} )
 		\42\42
 		(
-			(?=.*$\48)
+			(?!.*$\48)
 		|
-			(?!.*$\48)x
+			(?=.*$\48)x
 		)
 	)
 )
 (?=
 	.*(?=\3$)
-	(\50?)                  (?# \52 = \50 if it fits in a base \3 digit, or 0 otherwise )
+	(x\50|)                 (?# \52 = \50+1 if it fits in a base \3 digit, or 0 otherwise )
 )
 (?=
 	.*(?=\50)
 	\3*(x*)                 (?# \53 = \50 % \3, the base-\3 digit in place 1 of the result for 2*M*M )
 )
 (?=
-	(                       (?# \54 = 2*\46 + {\50 / 3}, the base-\3 digit in place 2 of the result for 2*M*M )
+	(                       (?# \54 = 2*\46 + {\50 / 3}, the base-\3 digit in place 2 of the result for 2*M*M; it is allowed to exceed \3 )
 		\46\46\54
 		(
-			(?=.*$\52)
+			(?!.*$\52)
 		|
-			(?!.*$\52)x
+			(?=.*$\52)x
 		)
 	)
 )
@@ -221,7 +221,7 @@
 			.*(?=\20$)\53$
 		)
 		(?=
-			.*(?=\11$)\48
+			.*(?=\11$)\49
 		)
 	)
 )
