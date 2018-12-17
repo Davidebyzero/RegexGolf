@@ -174,7 +174,7 @@
 )
 (?=
 	(                          (?# \52 = 2*{\32 + 2*\38 + \42} + {\48 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
-		(\32\38\38\42){2}\52
+		(\32\38\38\42){2}
 		(
 			(?!.*$\50)
 		|
