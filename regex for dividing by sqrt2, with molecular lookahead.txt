@@ -1,4 +1,4 @@
-(?# Giving an input number N in the domain ^x{5,}$, this regex returns floor{N / sqrt{2}} )
+(?# Giving an input number N in the domain ^x*$, this regex returns floor{N / sqrt{2}} )
 ^
 (?=
     (x(x*))                 (?# \1 = will be the square root of the main number, rounded down; \2 = \1 - 1 )
@@ -227,3 +227,5 @@
 )
 
 \25
+
+|xx?(?=x)|                  (?# handle inputs in the domain ^x{0,4}$ )
