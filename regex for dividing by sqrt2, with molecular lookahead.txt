@@ -27,10 +27,10 @@
 	(                          (?# \11 = \5 * \7; must do symmetric multiplication, because \5 is occasionally 1 larger than \7 )
 		(?=\5*$)
 		(?=\7*$)
-		(?=\5 \8+$)
-		   \7\6+$(?!\5)        (?# must make a special case for \5==0, because we couldn't subtract 1 from it )
+		(?=\5\8+$)
+		   \7\6+$
 	|
-		$\5
+		$\5                    (?# must make a special case for \5==0, because we couldn't subtract 1 from it )
 	)
 )
 (?=
@@ -45,9 +45,9 @@
 	(?=\14*$)
 	(
 		(?=\9+$)
-		\9\15*$(?!\14)         (?# must make a special case for \14==0, because we can't subtract 1 from it )
+		\9\15*$
 	|
-		$\14
+		$\14                   (?# must make a special case for \14==0, because we can't subtract 1 from it )
 	)
 )
 (?=
@@ -57,9 +57,9 @@
 	(?=\18*$)
 	(
 		(?=\9+$)
-		\9\19*$(?!\18)         (?# must make a special case for \18==0, because we can't subtract 1 from it )
+		\9\19*$
 	|
-		$\18
+		$\18                   (?# must make a special case for \18==0, because we can't subtract 1 from it )
 	)
 )
 (?=
@@ -72,9 +72,9 @@
 	(?=\23*$)
 	(
 		(?=\9+$)
-		\9\24*$(?!\23)         (?# must make a special case for \23==0, because we can't subtract 1 from it )
+		\9\24*$
 	|
-		$\23
+		$\23                   (?# must make a special case for \23==0, because we can't subtract 1 from it )
 	)
 )
 (?=
@@ -107,9 +107,9 @@
 		(?=\28*$)
 		(?=\30*$)
 		(?=\28\31+$)
-		   \30\29+$(?!\28)     (?# must make a special case for \28==0, because we couldn't subtract 1 from it )
+		   \30\29+$
 	|
-		$\28
+		$\28                   (?# must make a special case for \28==0, because we couldn't subtract 1 from it )
 	)
 )
 (?=
@@ -124,9 +124,9 @@
 	(?=\36*$)
 	(
 		(?=\9+$)
-		\9\37*$(?!\36)         (?# must make a special case for \36==0, because we can't subtract 1 from it )
+		\9\37*$
 	|
-		$\36
+		$\36                   (?# must make a special case for \36==0, because we can't subtract 1 from it )
 	)
 )
 (?=
@@ -136,9 +136,9 @@
 	(?=\40*$)
 	(
 		(?=\9+$)
-		\9\41*$(?!\40)         (?# must make a special case for \40==0, because we can't subtract 1 from it )
+		\9\41*$
 	|
-		$\40
+		$\40                   (?# must make a special case for \40==0, because we can't subtract 1 from it )
 	)
 )
 (?=
@@ -151,9 +151,9 @@
 	(?=\45*$)
 	(
 		(?=\9+$)
-		\9\46*$(?!\45)         (?# must make a special case for \45==0, because we can't subtract 1 from it )
+		\9\46*$
 	|
-		$\45
+		$\45                   (?# must make a special case for \45==0, because we can't subtract 1 from it )
 	)
 )
 (?=
