@@ -8,15 +8,13 @@
 	)
 	(
 		(?=
-			(?=(x(x(x*?)))\5+$)                       (?# \5 = smallest prime factor; \6 = \5-1; \7 = \6-1 )
-			(?=
-				(?*(x(x+)))                           (?# \8 = largest prime power factor corresponding to \5; \9 = \8-1 )
-				\8*(?=\8$)
-				(?# Assert that there is no prime \11 that divides \8 and isn't equal to \5, and that it's also not true that \8 is prime and isn't equal to \5)
-				(?!
-					((xx+)\11*(?=\11$))?
-					(?!(xx+)\12+$|\5$)
-				)
+			(?=(x(x(x*?)))\5+$)         (?# \5 = smallest prime factor; \6 = \5-1; \7 = \6-1 )
+			(?*(x(x+)))                 (?# \8 = largest prime power factor corresponding to \5; \9 = \8-1 )
+			\8*(?=\8$)
+			(?# Assert that there is no prime \11 that divides \8 and isn't equal to \5, and that it's also not true that \8 is prime and isn't equal to \5)
+			(?!
+				((xx+)\11*(?=\11$))?
+				(?!(xx+)\12+$|\5$)
 			)
 		)
 		(?=
@@ -101,13 +99,11 @@
 							x?\B                                (?# If B>1 return a value of 1, otherwise return a value of 0 )
 						)
 					)
-					(?=
-						.*(?=\33$)\24$                          (?# Assert that \33, the logarithm, equals \24 )
-					)
+					.*(?=\33$)\24$                          (?# Assert that \33, the logarithm, equals \24 )
 				)
 				(?=
 					.*(?=\23$)
-					(x(x*))                               (?# \44 = \23 / {\30+1}; \45 = \44-1 )
+					(x(x*))                               (?# \44 = \23 / {\30+1 == \5^\24}; \45 = \44-1 )
 					(?=\44*$)
 					(?=\30+$)
 					\30\45*$
