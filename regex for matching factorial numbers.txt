@@ -115,8 +115,7 @@
 				(?=
 					.*(?=\19$)
 					(x(x*))                               (?# \47 = \19 / \5; \48 = \47-1 )
-					(?=\47*$)
-					(?=\6+$)
+					(?=\47*$)                             (?# Testing for divisibility by \6 here isn't necessary, as tail is a power of \5 )
 					\6\48*$
 				)
 				.*(?=\45\47$)
