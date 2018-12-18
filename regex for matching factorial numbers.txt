@@ -126,13 +126,8 @@
 			)*
 			xx$
 		)
-		(?=
-			(x(x*))                           (?# \52 = tail / \15; \53 = \50-1 )
-			(?=\52*$)
-			(?=\16+$)
-			(\16\53*$)                         (?# \54 = tool for making tail equal \52 )
-		)\54
+		.*(?=x\14$)
 	)*
-	(?!\1.|(xx+)\55+$)                        (?# Assert that the remaining factor is <= \1 and is prime )
+	(?!\1.|(xx+)\52+$)                        (?# Assert that the remaining factor is <= \1 and is prime )
 )
 \1
