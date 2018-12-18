@@ -144,8 +144,8 @@
 (?=  
 	(                          (?# \44 = 2*\38 + {\42 / \4} )
 		(                      (?# +1 carry if \42 does not fit in a base \4 digit )
-			(?!
-				.*(?=\5$)\42
+			(?=
+				.*(?!\42)\5
 			)x
 		)?
 		\38\38
@@ -158,8 +158,8 @@
 (?=
 	(                          (?# \47 = 2*{\29 + 2*\35 + \39} + {\44 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
 		(                      (?# +1 carry if \44 does not fit in a base \4 digit )
-			(?!
-				.*(?=\5$)\44
+			(?=
+				.*(?!\44)\5
 			)x
 		)?
 		(\29\35\35\39){2}
