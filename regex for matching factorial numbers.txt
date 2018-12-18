@@ -1,129 +1,138 @@
 (?# Match factorial numbers in the domain ^x*$ )
 ^
 (?=
-	(?*(x(x*))(x*$))                    (?# \1 = conjectured for which \1! == tail; \2 = \1-1; \3 = tool to compare against \1 )
+	(?*(x(x*))(x*$))                        (?# \1 = conjectured for which \1! == tail; \2 = \1-1; \3 = tool to compare against \1 )
 	(?!
-		(x+)(?=\3)                      (?# \4 = any number <= \1 )
-		(?!\4*$)                        (?# there is no \4 that doesn't divide tail )
+		(x+)(?=\3)                          (?# \4 = any number <= \1 )
+		(?!\4*$)                            (?# there is no \4 that doesn't divide tail )
 	)
 	(
 		(?=
-			(?=(x(x(x*?)))\6+$)         (?# \6 = smallest prime factor; \7 = \6-1; \8 = \7-1 )
-			(?*(x(x+)))                 (?# \9 = largest prime power factor corresponding to \6; \10 = \9-1 )
-			\9*(?=\9$)
-			(?# Assert that there is no prime \12 that divides \9 and isn't equal to \6, and that it's also not true that \9 is prime and isn't equal to \6)
-			(?!
-				((xx+)\12*(?=\12$))?
-				(?!(xx+)\13+$|\6$)
+			(?=(x(x(x*?)))(\6+)$)           (?# \6 = smallest prime factor; \7 = \6-1; \8 = \7-1; \9 = tool to compare against \6 )
+			(?=
+				(                           (?# Divide tail by \6 as many times as possible )
+					(?=
+						(?=\6+$)
+						(x(x*))             (?# Divide: \11 = tail / \6, with \12 = \11-1 )
+						(?=\11*$)
+						(?=\7+$)
+						(\7\12+$)           (?# \13 = tool to make the tail equal \11 )
+					)\13
+				)*
+				x(x*)                       (?# \14 = {largest factor that is not divisible by \6} - 1 )
 			)
+			(x(x+))                         (?# \15 = tail / {\14+1} == largest prime power factor corresponding to \6; \16 = \15-1 )
+			(?=\15*$)
+			(?=\14+$)
+			\14\16+$
 		)
 		(?=
 			.*?(?!\1.)
-			(                           (?# \14 = largest power of \6 less than or greater than \1 )
-				(                       (?# Assert that tail is a power of \6 )
-					(?=                 (?# Divide: \16 = tail / \6, with \17 = \16-1 )
+			(                               (?# \17 = largest power of \6 less than or greater than \1 )
+				(                           (?# Assert that tail is a power of \6 )
+					(?=                     (?# Divide: \19 = tail / \6, with \20 = \19-1 )
 						(x(x*))
-						(?=\16*$)       (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
-						(\7\17+$)       (?# \18 = tool to make the tail equal \16 )
-					)\18
+						(?=\19*$)           (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
+						(\7\20+$)           (?# \21 = tool to make the tail equal \19 )
+					)\21
 				)*x$
 			)
 		)
 		(?=
-			.*(?=\9\14$)                                    (?# Seed the loop )
+			.*(?=\15\17$)                                    (?# Seed the loop )
 			(
 				(?# The first thing we need to do every iteration is decode the current number back into two prime powers,
-					\20 and \24, where \20 is the smaller one, if they are different )
+					\23 and \27, where \23 is the smaller one, if they are different )
 				(?=
-					(x(x*?))                                (?# \20 = smaller prime power; \21 = \20-1 )
-					(?!((x+)(?=\23+$)x+)\22*(?!\23+$)\22$)  (?# Assert that tail is a prime power)
-					(\6+|x)$                                (?# \24 = larger prime power )
+					(x(x*?))                                (?# \23 = smaller prime power; \24 = \23-1 )
+					(?!((x+)(?=\26+$)x+)\25*(?!\26+$)\25$)  (?# Assert that tail is a prime power)
+					(\6+|x)$                                (?# \27 = larger prime power )
 				)
 				(?=
 					.*?(?!\1.)                              (?# discard the remainder )
-					(?=\20*$)                               (?# discard the remainder )
-					(x(x*))                                 (?# \25 = floor{\1 / \20}; \26 = \25-1 )
-					(?=\25*$)
-					(?=\21+$)
-					\21\26*$
+					(?=\23*$)                               (?# discard the remainder )
+					(x(x*))                                 (?# \28 = floor{\1 / \23}; \29 = \28-1 )
+					(?=\28*$)
+					(?=\24+$)
+					\24\29*$
 				)
-				(?# construct \6 ^ \25 by taking logarithm in base \6 and matching it against \25 )
+				(?# construct \6 ^ \28 by taking logarithm in base \6 and matching it against \28 )
 				(?=
 					.*
 					(?=
 						(                                   (?# Assert that tail is a power of \6 )
-							(?=                             (?# Divide: \28 = tail / \6, with \29 = \28-1 )
+							(?=                             (?# Divide: \31 = tail / \6, with \32 = \31-1 )
 								(x(x*))
-								(?=\28*$)                   (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
-								(\7\29+$)                   (?# \30 = tool to make the tail equal \28 )
-							)\30
+								(?=\31*$)                   (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
+								(\7\32+$)                   (?# \33 = tool to make the tail equal \31 )
+							)\33
 						)*x$
 					)
-					(?=x(x*))                               (?# tail will be \6 ^ \25; \31 = tail-1 )
-					(?=(x*)\32(x?))                         (?# \32 = floor{tail / 2}, \33\32 = ceil{tail / 2}, \33 = tail % 2 )
+					(?=x(x*))                               (?# tail will be \6 ^ \28; \34 = tail-1 )
+					(?=(x*)\35(x?))                         (?# \35 = floor{tail / 2}, \36\35 = ceil{tail / 2}, \36 = tail % 2 )
 					(?=
-						(                                       (?# \34 = logarithm in base \6 of tail )
+						(                                       (?# \37 = logarithm in base \6 of tail )
 							x                                   (?# seed the loop )
 							(?=
 								(
 									(?=
-										(x*)\33(?=\32)          (?# tail = \32;  \36 = tool for decoding current state )
-										\36                     (?# tail = current encoded state )
-										(x*?)                   (?# \37 = iteration count )
+										(x*)\36(?=\35)          (?# tail = \35;  \39 = tool for decoding current state )
+										\39                     (?# tail = current encoded state )
+										(x*?)                   (?# \40 = iteration count )
 										(?=
 											(                   (?# Assert that tail is a power of \6 )
-												(?=             (?# Divide: \39 = tail / \6, with \40 = \39-1 )
+												(?=             (?# Divide: \42 = tail / \6, with \43 = \42-1 )
 													(x(x*))
-													(?=\39*$)   (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
-													(\7\40+$)   (?# \41 = tool to make the tail equal \39 )
-												)\41
+													(?=\42*$)   (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
+													(\7\43+$)   (?# \44 = tool to make the tail equal \42 )
+												)\44
 											)*x$
 										)
-										(x(x*))                 (?# \42 = tail = A ^ {iteration count + 1}; \43 = \42-1 )
+										(x(x*))                 (?# \45 = tail = A ^ {iteration count + 1}; \46 = \45-1 )
 									)
-									(?# encode state for next loop iteration, so that \37 will be incremented and \42 will be doubled )
+									(?# encode state for next loop iteration, so that \40 will be incremented and \45 will be doubled )
 									(?=
-										(?# commence multiplication of \42 * \7; since we don't know which
-											of \7 and \42 is larger/smaller, do two symmetric tests )
+										(?# commence multiplication of \45 * \7; since we don't know which
+											of \7 and \45 is larger/smaller, do two symmetric tests )
 										.*
-										(?=\42*$)
-										(?= \7*$)
-										(?=\42\8+$)
-										(  \7\43+$)             (?# \44 = \42 * \7 )
+										(?=\45*$)
+										(?=\7*$)
+										(?=\45\8+$)
+										(\7\46+$)               (?# \47 = \45 * \7 )
 									)
-									x\44                        (?# tail -= \42 * \7 + 1 )
+									x\47                        (?# tail -= \45 * \7 + 1 )
 								)+
 							)
-							x\37                                (?# Return logarithm in base A of B )
+							x\40                                (?# Return logarithm in base A of B )
 						|                                       (?# The main algorithm can't handle B<=A, so handle that below )
 							x?\B                                (?# If B>1 return a value of 1, otherwise return a value of 0 )
 						)
 					)
-					.*(?=\34$)\25$            (?# Assert that \34, the logarithm, equals \25 )
+					.*(?=\37$)\28$            (?# Assert that \37, the logarithm, equals \28 )
 				)
 				(?=
-					.*(?=\24$)
-					(x(x*))                   (?# \45 = \24 / {\31+1 == \6^\25}; \46 = \45-1 )
-					(?=\45*$)                 (?# Testing for divisibility by \31 here isn't necessary, as dividend and divisor are both powers of \6 )
-					\31\46*$
+					.*(?=\27$)
+					(x(x*))                   (?# \48 = \27 / {\34+1 == \6^\28}; \49 = \48-1 )
+					(?=\48*$)                 (?# Testing for divisibility by \34 here isn't necessary, as dividend and divisor are both powers of \6 )
+					\34\49*$
 				)
 				(?=
-					.*(?=\20$)
-					(x(x*))                   (?# \47 = \20 / \6; \48 = \47-1 )
-					(?=\47*$)                 (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
-					\7\48*$
+					.*(?=\23$)
+					(x(x*))                   (?# \50 = \23 / \6; \51 = \50-1 )
+					(?=\50*$)                 (?# Testing for divisibility by \7 here isn't necessary, as tail is a power of \6 )
+					\7\51*$
 				)
-				.*(?=\45\47$)
+				.*(?=\48\50$)
 			)*
 			xx$
 		)
 		(?=
-			(x(x*))                           (?# \49 = tail / \9; \50 = \47-1 )
-			(?=\49*$)
-			(?=\10+$)
-			(\10\50*$)                         (?# \51 = tool for making tail equal \49 )
-		)\51
+			(x(x*))                           (?# \52 = tail / \15; \53 = \50-1 )
+			(?=\52*$)
+			(?=\16+$)
+			(\16\53*$)                         (?# \54 = tool for making tail equal \52 )
+		)\54
 	)*
-	(?!\1.|(xx+)\52+$)                        (?# Assert that the remaining factor is <= \1 and is prime )
+	(?!\1.|(xx+)\55+$)                        (?# Assert that the remaining factor is <= \1 and is prime )
 )
 \1
