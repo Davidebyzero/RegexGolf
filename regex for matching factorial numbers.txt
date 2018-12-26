@@ -2,8 +2,8 @@
 	^
 	(?=
 		(?=(x+)\1$)                     (?# \1 = tail / 2 )
-		(x*)                            (?# \2 = conjectured N for which tail == {3+N}! )
-		.*(?=xxx(?=\1$)(xxx\2)+$)       (?# Seed the loop: X = \1; I = 3; tail = X + I; \3 = 3+\2; Assert that \1 is divisible by \3 )
+		(x*)                            (?# \2 = {conjectured N for which tail == N!} - 3 )
+		.*(?=xxx(?=\1$)(xxx\2)+$)       (?# Seed the loop: X = \1; I = 3; tail = X + I; \3 = 3+\2 == N; Assert that \1 is divisible by \3 )
 		(
 			(?=
 				\3+
