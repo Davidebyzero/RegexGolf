@@ -3,22 +3,19 @@
 	(?=
 		(?=(x+)\1$)                     (?# \1 = tail / 2 )
 		(x*)                            (?# \2 = {conjectured N for which tail == N!} - 3 )
-		.*(?=xxx(?=\1$)(xxx\2)+$)       (?# Seed the loop: X = \1; I = 3; tail = X + I; \3 = 3+\2 == N; Assert that \1 is divisible by \3 )
+		.*(?=(?=\1$)(xxx\2)+$)          (?# Seed the loop: X = \1; I = 3; tail = X + I-3; \3 = \2+3 == N; Assert that \1 is divisible by \3 )
 		(
-			(?=
-				\3+
-				(x(x+$))                (?# \5 = I; \6 = \5-1 )
-			)
+			(?=\3+(x*$))                (?# \5 = I-3 )
 			\5                          (?# tail = X )
-			(?=\5*(?!x\3)\5$)           (?# Assert that tail is divisible by \5; Assert that \5 <= \3 )
+			(?=(xxx\5)+(?!x\3)\6$)      (?# \6 = \5+3 == I; Assert that tail is divisible by \6 at least twice; Assert that \6 <= \3 )
 			(?=
-				(x(x*))                 (?# \7 = tail / \5; \8 = \7-1)
-				(?=\7*$)                (?# Testing for divisibility by \6 here isn't necessary )
-				\6\8*$
+				(x(x*))                 (?# \7 = tail / \6; \8 = \7-1)
+				(?=\7*$)                (?# Testing for divisibility by \6-1 here isn't necessary )
+				xx\5\8*$
 			)
 			.*(?=x\5(?=\7$)\3+$)        (?# Prepare the next iteration of the loop: X = \7; I += 1; Assert that \7 is divisible by \3 )
 		)*
-		\3\3$
+		\2\3$
 	)
 	\3
 |
