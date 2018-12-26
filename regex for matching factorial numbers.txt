@@ -11,9 +11,10 @@
 			(?=
 				(x(x*))                 (?# \7 = tail / \6; \8 = \7-1)
 				(?=\7*$)                (?# Testing for divisibility by \6-1 here isn't necessary )
-				xx\5\8*$
+				x\5(x\8*$)              (?# \9 = tool for making tail = x\5\7 )
 			)
-			.*(?=x\5(?=\7$)\3+$)        (?# Prepare the next iteration of the loop: X = \7; I += 1; Assert that \7 is divisible by \3 )
+			\9                          (?# Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3 )
+			(?=x\5\3+$)                 (?# Assert that \7 is divisible by \3 )
 		)*
 		\2\3$
 	)
