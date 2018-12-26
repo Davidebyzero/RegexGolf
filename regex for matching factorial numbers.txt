@@ -1,0 +1,19 @@
+(?# Match factorial numbers in the domain ^x*$ )
+^
+(?*(x+)\1*$)                    (?# conjectured N for which tail == N! )
+(?=(x+)(?=\1+$)\2$)             (?# \2 = tail / 2; Assert that \2 is divisible by \1 )
+.*(?=xxx\2$)                    (?# Seed the loop: tail = \2 + 3 )
+(
+	(?=(x(x+?))\1+$)\4          (?# \4; \5 = \4-1; tail -= \4 )
+	(?!.*(?!\4)\1)              (?# Assert that \4 <= \1 )
+	(?=
+		(?=\4+$)
+		(x(x*))                 (?# \6 = tail / \4; \7 = \6-1)
+		(?=\6*$)
+		(?=\5+$)
+		\5\7*$
+	)
+	(?=.*(?=\6$)\1+$)           (?# Assert that \6 is divisible by \1 )
+	.*(?=x\4\6$)
+)*
+\1{2}$
