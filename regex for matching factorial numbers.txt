@@ -22,5 +22,4 @@
 	)
 	\3
 |
-	^
-	xx?$                                (?# Match 1 and 2, which the main algorithm can't handle )
+	^xx?$                               (?# Match 1 and 2, which the main algorithm can't handle )
