@@ -22,5 +22,5 @@
 	)
 	\4
 |
-	(?!xxx)x+
+	(?!xxx)x+                           (?# Match 1 and 2, which the main algorithm can't handle )
 )
