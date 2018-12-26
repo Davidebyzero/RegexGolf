@@ -1,9 +1,9 @@
 (?# Match factorial numbers in the domain ^x*$ )
 	^
 	(?=
-		(?=(x+)\1$)                     (?# \1 = tail / 2 )
-		(x*)                            (?# \2 = {conjectured N for which tail == N!} - 3 )
-		.*(?=(?=\1$)(xxx\2)+$)          (?# Seed the loop: X = \1; I = 3; tail = X + I-3; \3 = \2+3 == N; Assert that \1 is divisible by \3 )
+		((x*)x*)(?=\1$)                 (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1 )
+		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
+		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
 		(
 			(?=\3+(x*$))                (?# \5 = I-3 )
 			\5                          (?# tail = X )
