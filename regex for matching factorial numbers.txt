@@ -14,8 +14,7 @@
 				(?=\6+$)
 				\6\8*$
 			)
-			(?=.*(?=\7$)\3+$)           (?# Assert that \7 is divisible by \3 )
-			.*(?=x\5\7$)
+			.*(?=x\5(?=\3+$)\7$)        (?# Prepare the next iteration of the loop; Assert that \7 is divisible by \3 )
 		)*
 		\3\3$
 	)
