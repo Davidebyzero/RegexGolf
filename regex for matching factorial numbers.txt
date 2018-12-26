@@ -5,7 +5,11 @@
 		(x*)                            (?# \2 = conjectured N for which tail == {3+N}! )
 		.*(?=xxx(?=\1$)(xxx\2)+$)       (?# Seed the loop: X = \1; I = 3; tail = X + I; \3 = 3+\2; Assert that \1 is divisible by \3 )
 		(
-			(?=(x(x+?))\3+$)\5          (?# \5 = I; \6 = \5-1; tail -= \5; tail = X )
+			(?=
+				\3+
+				(x(x+$))                (?# \5 = I; \6 = \5-1 )
+			)
+			\5                          (?# tail = X )
 			(?=\5*(?!x\3)\5$)           (?# Assert that tail is divisible by \5; Assert that \5 <= \3 )
 			(?=
 				(x(x*))                 (?# \7 = tail / \5; \8 = \7-1)
