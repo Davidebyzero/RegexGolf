@@ -6,9 +6,8 @@
 		.*(?=xxx(?=\1$)(xxx\2)+$)       (?# Seed the loop: tail = \1 + 3; \3 = 3+\2; Assert that \1 is divisible by \3 )
 		(
 			(?=(x(x+?))\3+$)\5          (?# \5; \6 = \5-1; tail -= \5 )
-			(?!.*(?!\5)\3)              (?# Assert that \5 <= \3 )
+			(?=\5*(?=\5$)(?!x\3))       (?# Assert that tail is divisible by \5; Assert that \5 <= \3 )
 			(?=
-				(?=\5+$)
 				(x(x*))                 (?# \7 = tail / \5; \8 = \7-1)
 				(?=\7*$)
 				(?=\6+$)
