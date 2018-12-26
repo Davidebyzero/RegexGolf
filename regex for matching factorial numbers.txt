@@ -5,15 +5,16 @@
 		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
 		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
 		(
-			(x*)(?=\3+$)                (?# \5 = I-3; tail = X )
-			(?=(xxx\5)+(?!x\3)\6$)      (?# \6 = \5+3 == I; Assert that tail is divisible by \6 at least twice; Assert that \6 <= \3 )
+			(?=\2\3*(x(?!\3)xx(x*)))    (?# \5 = I; \6 = I-3; Assert that \5 <= \3 )
+			\6                          (?# tail = X )
+			(?=\5+$)                    (?# Assert that tail is divisible by \5 )
 			(?=
-				(x(x*))                 (?# \7 = tail / \6; \8 = \7-1)
-				(?=\7*$)                (?# Testing for divisibility by \6-1 here isn't necessary )
-				x\5(x\8*$)              (?# \9 = tool for making tail = x\5\7 )
+				(x(x*))                 (?# \7 = tail / \5; \8 = \7-1)
+				(?=\7*$)                (?# Testing for divisibility by \5-1 here isn't necessary )
+				x\6(x\8*$)              (?# \9 = tool for making tail = x\6\7 )
 			)
 			\9                          (?# Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3 )
-			(?=x\5\3+$)                 (?# Assert that \7 is divisible by \3 )
+			(?=x\6\3+$)                 (?# Assert that \7 is divisible by \3 )
 		)*
 		\2\3$
 	)
