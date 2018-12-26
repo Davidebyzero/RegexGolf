@@ -1,7 +1,7 @@
 (?# Match factorial numbers in the domain ^x*$ )
 	^
 	(?=
-		((x*)x*)(?=\1$)                 (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1 )
+		((x*)+)(?=\1$)                  (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1 )
 		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
 		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
 		(
