@@ -1,8 +1,8 @@
 (?# Match factorial numbers in the domain ^x*$ )
 	^
 	(?=
-		((x*)x*)(?=\1$)                 (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1 )
-		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
+		((x*)x*)(?=\1$)                 (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!}; tail = \1 )
+		(?=(\2)+$)                      (?# \3 = \2 == N; Assert that tail is divisible by \3 )
 		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
 		(
 			(?=\3+(x*$))                (?# \5 = I-3 )
@@ -15,7 +15,9 @@
 			)
 			.*(?=x\5(?=\7$)\3+$)        (?# Prepare the next iteration of the loop: X = \7; I += 1; Assert that \7 is divisible by \3 )
 		)*
-		\2\3$
+		x\5
+		(?=x\6$)
+		\3$
 	)
 	\3
 |
