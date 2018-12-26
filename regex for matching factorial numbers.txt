@@ -5,7 +5,7 @@
 		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
 		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
 		(
-			(x*?)(?=\3+$)               (?# \5 = I-3; tail = X )
+			(x*)(?=\3+$)                (?# \5 = I-3; tail = X )
 			(?=(xxx\5)+(?!x\3)\6$)      (?# \6 = \5+3 == I; Assert that tail is divisible by \6 at least twice; Assert that \6 <= \3 )
 			(?=
 				(x(x*))                 (?# \7 = tail / \6; \8 = \7-1)
