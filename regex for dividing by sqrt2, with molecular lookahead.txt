@@ -79,20 +79,9 @@
 	)
 )
 (?=
-	(.*)                       (?# \28 = tool to make tail = \29 )
-	(                          (?# \29 = \24 * \26; must do symmetric multiplication, because \24 is occasionally 1 larger than \26 )
-		(?=\24*$)
-		(?=\26*$)
-		(?=\24\27+$)
-		   \26\25+$
-	|
-		$\24                   (?# must make a special case for \24==0, because \26 might not be 0 )
-	)
-)
-(?=
 	.*
 	(?=\26*$)
-	(\26\27+$)                 (?# \30 = \26 * \26 )
+	(\26\27+$)                 (?# \28 = \26 * \26 )
 )
 (?=
 	.*
@@ -100,69 +89,77 @@
 		(?=\24*$)              (?# tail = \24 * \24 )
 		\24\25+$
 	)
-	(x*?)(?=\4*$)              (?# \31 =       {\24 * \24} % \4, the base-\4 digit in place 0 of the result for M*M )
-	(x?(x*))                   (?# \32 = floor{{\24 * \24} / \4}; \33 = \32-1, or 0 if \32==0 )
-	(?=\32*$)
+	(x*?)(?=\4*$)              (?# \29 =       {\24 * \24} % \4, the base-\4 digit in place 0 of the result for M*M )
+	(x?(x*))                   (?# \30 = floor{{\24 * \24} / \4}; \31 = \30-1, or 0 if \30==0 )
+	(?=\30*$)
 	(
 		(?=\5+$)
-		\5\33*$
+		\5\31*$
 	|
-		$\32                   (?# must make a special case for \32==0, because \5 is nonzero )
+		$\30                   (?# must make a special case for \30==0, because \5 is nonzero )
 	)
 )
 (?=
-	\28                        (?# tail = \29 )
-	(x*?)(?=\4*$)              (?# \35 =       \29 % \4 )
-	(x?(x*))                   (?# \36 = floor{\29 / \4}; \37 = \36-1, or 0 if \36==0 )
-	(?=\36*$)
+	.*
+	(?=
+		(?=\24*$)              (?# tail = \24 * \26; must do symmetric multiplication, because \24 is occasionally 1 larger than \26 )
+		(?=\26*$)
+		(?=\24\27+$)
+		   \26\25+$
+	|
+		$\24                   (?# must make a special case for \24==0, because \26 might not be 0 )
+	)
+	(x*?)(?=\4*$)              (?# \33 =       {\24 * \26} % \4 )
+	(x?(x*))                   (?# \34 = floor{{\24 * \26} / \4}; \35 = \34-1, or 0 if \34==0 )
+	(?=\34*$)
 	(
 		(?=\5+$)
-		\5\37*$
+		\5\35*$
 	|
-		$\36                   (?# must make a special case for \36==0, because \5 is nonzero )
+		$\34                   (?# must make a special case for \34==0, because \5 is nonzero )
 	)
 )
 (?=
-	.*(?=\35\35\32$)           (?# tail = 2 * \35 + \32 )
-	(x*?)(?=\4*$)              (?# \39 =       {2 * \35 + \32} % \4, the base-\4 digit in place 1 of the result for M*M )
-	(x?(x*))                   (?# \40 = floor{{2 * \35 + \32} / \4}; \41 = \40-1, or 0 if \40==0 )
-	(?=\40*$)
+	.*(?=\33\33\30$)           (?# tail = 2 * \33 + \30 )
+	(x*?)(?=\4*$)              (?# \37 =       {2 * \33 + \30} % \4, the base-\4 digit in place 1 of the result for M*M )
+	(x?(x*))                   (?# \38 = floor{{2 * \33 + \30} / \4}; \39 = \38-1, or 0 if \38==0 )
+	(?=\38*$)
 	(
 		(?=\5+$)
-		\5\41*$
+		\5\39*$
 	|
-		$\40                   (?# must make a special case for \40==0, because \5 is nonzero )
+		$\38                   (?# must make a special case for \38==0, because \5 is nonzero )
 	)
-)                              (?# {\30 + 2*\36 + \40} = the base-\4 digit in place 2 of the result for M*M, which is allowed to exceed \4 and will always do so )
+)                              (?# {\28 + 2*\34 + \38} = the base-\4 digit in place 2 of the result for M*M, which is allowed to exceed \4 and will always do so )
 
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
-	.*(?=(\31\31))             (?# \43 = 2*\31; tail = \43 )
-	\4*(x*)                    (?# \44 = \43 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
+	.*(?=(\29\29))             (?# \41 = 2*\29; tail = \41 )
+	\4*(x*)                    (?# \42 = \41 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
 )
 (?=  
-	(                          (?# \45 = 2*\39 + {\43 / \4} )
+	(                          (?# \43 = 2*\37 + {\41 / \4} )
+		(                      (?# +1 carry if \41 does not fit in a base \4 digit )
+			(?=
+				.*(?!\41)\5
+			)x
+		)?
+		\37\37
+	)
+	(.*)                       (?# \45 = tool to make tail = \43 )
+)
+(?=
+	\45                        (?# tail = \43 )
+	\4*(x*)                    (?# \46 = \43 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
+)
+(?=
+	(                          (?# \47 = 2*{\28 + 2*\34 + \38} + {\43 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
 		(                      (?# +1 carry if \43 does not fit in a base \4 digit )
 			(?=
 				.*(?!\43)\5
 			)x
 		)?
-		\39\39
-	)
-	(.*)                       (?# \47 = tool to make tail = \45 )
-)
-(?=
-	\47                        (?# tail = \45 )
-	\4*(x*)                    (?# \48 = \45 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
-)
-(?=
-	(                          (?# \49 = 2*{\30 + 2*\36 + \40} + {\45 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
-		(                      (?# +1 carry if \45 does not fit in a base \4 digit )
-			(?=
-				.*(?!\45)\5
-			)x
-		)?
-		(\30\36\36\40){2}
+		(\28\34\34\38){2}
 	)
 )
 
@@ -170,26 +167,26 @@
 
 (?=
 	(?=
-		(.*)                   (?# \52 )
+		(.*)                   (?# \50 )
 		\15\15\19
 		(?=\8*$)               (?# tail = \8 * \8 )
 		\8\9+$
 	)
-	\52                        (?# tail = {\8*\8 + 2*\15 + \19}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
+	\50                        (?# tail = {\8*\8 + 2*\15 + \19}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
 	(
-		x\49
+		x\47
 	|
 		(?=
-			.*(?!\18)\48
+			.*(?!\18)\46
 		|
 			(?=
-				.*(?=\18$)\48$
+				.*(?=\18$)\46$
 			)
 			(?=
-				.*(?=\10$)\44
+				.*(?=\10$)\42
 			)
 		)
-		\49$
+		\47$
 	)
 )
 
