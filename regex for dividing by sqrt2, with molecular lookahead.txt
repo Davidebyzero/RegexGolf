@@ -156,7 +156,7 @@
 	(                          (?# \47 = 2*{\28 + 2*\34 + \38} + {\43 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
 		(                      (?# +1 carry if \43 does not fit in a base \4 digit )
 			(?=
-				.*(?!\43)\5
+				\45\4
 			)x
 		)?
 		(\28\34\34\38){2}
