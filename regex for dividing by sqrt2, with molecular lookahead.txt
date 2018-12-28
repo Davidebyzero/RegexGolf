@@ -134,14 +134,15 @@
 
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
-	.*(?=(\29\29))             (?# \41 = 2*\29; tail = \41 )
-	\4*(x*)                    (?# \42 = \41 % \4, the base-\4 digit in place 0 of the result for 2*M*M )
+	(.*)                       (?# \41 = tool to make tail = 2*\29 )
+	(?=\29\29)                 (?# tail = 2*\29 )
+	\4*(x*)                    (?# \42 = {2*\29} % \4, the base-\4 digit in place 0 of the result for 2*M*M )
 )
 (?=  
-	(                          (?# \43 = 2*\37 + {\41 / \4} )
-		(                      (?# +1 carry if \41 does not fit in a base \4 digit )
+	(                          (?# \43 = 2*\37 + {{2*\29} / \4} )
+		(                      (?# +1 carry if {2*\29} does not fit in a base \4 digit )
 			(?=
-				.*(?!\41)\5
+				\41\5
 			)x
 		)?
 		\37\37
