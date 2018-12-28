@@ -174,7 +174,7 @@
 	)
 	\50                        (?# tail = {\8*\8 + 2*\15 + \19}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
 	(
-		x\47
+		x+
 	|
 		(?=
 			.*(?!\18)\46
@@ -182,8 +182,8 @@
 			(?!.*(?!\42)\10)
 			.*(?=\18$)\46$
 		)
-		\47$
 	)
+	\47$
 )
 
 \23
