@@ -152,13 +152,14 @@
 		)?
 		\40\40
 	)
+	(.*)                       (?# \48 = tool to make tail = \46 )
 )
 (?=
-	.*(?=\46)
-	\4*(x*)                    (?# \48 = \46 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
+	\48                        (?# tail = \46 )
+	\4*(x*)                    (?# \49 = \46 % \4, the base-\4 digit in place 1 of the result for 2*M*M )
 )
 (?=
-	(                          (?# \49 = 2*{\31 + 2*\37 + \41} + {\46 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
+	(                          (?# \50 = 2*{\31 + 2*\37 + \41} + {\46 / 3}, the base-\4 digit in place 2 of the result for 2*M*M, which is allowed to exceed \4 and will always do so )
 		(                      (?# +1 carry if \46 does not fit in a base \4 digit )
 			(?=
 				.*(?!\46)\5
@@ -172,21 +173,21 @@
 
 (?=
 	(?=
-		(.*)                   (?# \52 )
+		(.*)                   (?# \53 )
 		\16\16\20
 		(?=\8*$)               (?# tail = \8 * \8 )
 		\8\9+$
 	)
-	\52                        (?# tail = {\8*\8 + 2*\16 + \20}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
+	\53                        (?# tail = {\8*\8 + 2*\16 + \20}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1 )
 	(
-		x\49
+		x\50
 	|
-		(?=\49$)
+		(?=\50$)
 		(?=
-			.*(?!\19)\48
+			.*(?!\19)\49
 		|
 			(?=
-				.*(?=\19$)\48$
+				.*(?=\19$)\49$
 			)
 			(?=
 				.*(?=\11$)\45
