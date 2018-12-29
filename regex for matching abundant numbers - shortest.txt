@@ -24,107 +24,101 @@
     \4\8+$
 )
 (?=
-    .*(x(                            (?# \9 = 1 + \7 * \3  =  {\5 - 1} / {\3 - 1} * \3 + 1;  \10 = \9-1 )
+    (.*)                             (?# \9 = tool to compare against \10 )
+    (                                (?# \10 = \7 * \3  =  {\5 - 1} / {\3 - 1} * \3; later, \12 = \10 + 1 )
         (?=\7*$)
         \3\8+$
-    ))
+    )
 )
-(?# Calculate Q = \12{2} + Q_R = floor{2 * N / \9}. Since we don't have space for 2 * N, we need to calculate N / \9 first,
+(?# Calculate Q = \14{2} + Q_R = floor{2 * N / \12}. Since we don't have space for 2 * N, we need to calculate N / \12 first,
     including the fractional part {i.e. the remainder}, and then multiply the result, including the fractional part, by 2. )
 (?=
-    (x*?)(?=\9*$)                    (?# \11 = N % \9 )
-    (x(x*))                          (?# \12 = N / \9; \13 = \12-1 )
-    (?=\12*$)
-    (?=\10+$)                        (?# must match if \12 <  \9; otherwise doesn't matter )
-    \10\13+$                         (?# must match if \12 >= \9; otherwise doesn't matter )
-)
-(?# Calculate \14 = N / \5. The division by \5 can be done quite simply, because the divisor is a prime power. )
-(?=
-    (x(x*))                          (?# \14 = N / \5; \15 = \14-1 )
+    (x*?)(?=(x\10)+$)                (?# \11 = N % \12; \12 = \10 + 1 )
+    (?=\11\9|(x))                    (?# \13 = Q_R = floor{\11 * 2 / \12} == +1 carry if \11 * 2 > \10, or NPCG otherwise )
+    (x(x*))                          (?# \14 = N / \12; \15 = \14-1 )
     (?=\14*$)
-    \6\15+$
+    (?=\10+$)                        (?# must match if \14 <  \12; otherwise doesn't matter )
+    \10\15+$                         (?# must match if \14 >= \12; otherwise doesn't matter )
+)
+(?# Calculate \16 = N / \5. The division by \5 can be done quite simply, because the divisor is a prime power. )
+(?=
+    (x(x*))                          (?# \16 = N / \5; \17 = \16-1 )
+    (?=\16*$)
+    \6\17+$
 )
 (?# Seed a loop which will start with Q and divide it by {P^{K+1}-1}/{P-1} for every P^K that is a
-    factor of \14. The state is encoded as \14 * P + R, where the initial value of R is Q, and P is
+    factor of \16. The state is encoded as \16 * P + R, where the initial value of R is Q, and P is
     the last prime factor of N to have been already processed.
     
-    However, since the initial R would be larger than \14 {and for that matter there would be no room
-    for any nonzero R since with the initial value of P, it is possible for \14 * P to equal N}, treat
+    However, since the initial R would be larger than \16 {and for that matter there would be no room
+    for any nonzero R since with the initial value of P, it is possible for \16 * P to equal N}, treat
     it as a special case, and let the initial value of R be 0, signalling the first iteration to
-    pretend R=Q. This way we can avoid having to divide Q and \14 again outside the loop.
+    pretend R=Q. This way we can avoid having to divide Q and \16 again outside the loop.
     
     While we're at it, there's really no reason to do anything extra to seed this loop. To seed it
     with an initial value of P=\3, we'd have to do some multiplication. If we don't do anything to
-    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \14
-    is divisible by will still be the same, as \3 cannot be a factor of \14. )
+    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \16
+    is divisible by will still be the same, as \3 cannot be a factor of \16. )
 
 (?# Start the loop. )
 (
     (?=
-        (                            (?# \17 = actual value of R )
-            x*?(?=\14+$)             (?# move forward by directly decoded value of R, which can be zero )
-            (?# The division by \14 can be done quite simply, because it is known that the quotient is prime. )
+        (                            (?# \19 = actual value of R )
+            x*?(?=\16+$)             (?# move forward by directly decoded value of R, which can be zero )
+            (?# The division by \16 can be done quite simply, because it is known that the quotient is prime. )
             (?=
-                \14+?                (?# tail = \14 * {a prime which divides into \14} )
+                \16+?                (?# tail = \16 * {a prime which divides into \16} )
                 (?=
-                    (                (?# \18 = encoded value for next loop iteration )
-                        (xx(x*))     (?# \19 = decoded value of next smaller P; \20 = {\19-1}-1 )
-                        (?=\15+$)    (?# iff \19 > \14, this can have a false positive, but never a false negative )
-                        \19*$        (?# iff \19 < \14, this can have a false positive, but never a false negative )
+                    (                (?# \20 = encoded value for next loop iteration )
+                        (xx(x*))     (?# \21 = decoded value of next smaller P; \22 = {\21-1}-1 )
+                        (?=\17+$)    (?# iff \21 > \16, this can have a false positive, but never a false negative )
+                        \21*$        (?# iff \21 < \16, this can have a false positive, but never a false negative )
                     )
                 )
-                (?# Find the largest power of \19 that is a factor of \14, while also asserting that \19 is prime )
-                (x+)                 (?# \21 = the largest power of \19 that is a factor of \14 )
-                .*(?=\14$)
-                \21*(?=\21$)
+                (?# Find the largest power of \21 that is a factor of \16, while also asserting that \21 is prime )
+                (x+)                 (?# \23 = the largest power of \21 that is a factor of \16 )
+                .*(?=\16$)
+                \23*(?=\23$)
                 (?!
-                    (xx+)\22*
-                    (?!\19+$)
-                    \22$
+                    (xx+)\24*
+                    (?!\21+$)
+                    \24$
                 )
-                \19+$
+                \21+$
             )
             (
                 (?=\5+$)             (?# true iff this is the first iteration of the loop )
-                \12{2}
-                (                    (?# add Q_R = floor{\11 * 2 / \9} )
-                    (?=
-                        .*(?!\9)
-                        \11{2}
-                    )
-                |
-                    x
-                )
+                \14{2}\13?           (?# "\13?" so that iff it's a NPCG it acts as empty with both ECMAScript and PCRE behavior )
             |
             )
         )
     )
-    (?# Calculate \27 = {\21 - 1} / {\19 - 1} * \19 + 1 )
+    (?# Calculate \28 = {\23 - 1} / {\21 - 1} * \21 + 1 )
     (?=
-        .*(?=\21)x                   (?# tail = \21 - 1 )
-        (x(x*))                      (?# \25 = {\21 - 1} / {\19 - 1}; \26 = \25-1 )
-        (?=\25*$)
-        \20\26*$
+        .*(?=\23)x                   (?# tail = \23 - 1 )
+        (x(x*))                      (?# \26 = {\23 - 1} / {\21 - 1}; \27 = \26-1 )
+        (?=\26*$)
+        \22\27*$
     )
     (?=
-        .*(x(                        (?# \27 = 1 + \25 * \19 = {\25 - 1} / {\19 - 1} * \19 + 1; \28 = \27-1 )
-            (?=\25*$)
-            \19\26+$
+        .*(x(                        (?# \28 = 1 + \26 * \21 = {\26 - 1} / {\21 - 1} * \21 + 1; \29 = \28-1 )
+            (?=\26*$)
+            \21\27+$
         ))
     )
-    (?# Calculate \30 = floor{\17 / \27} )
+    (?# Calculate \31 = floor{\19 / \28} )
     (
-        .*(?!\27)\17                 (?# if dividing \17 / \27 would result in a number less than 1,
+        .*(?!\28)\19                 (?# if dividing \19 / \28 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\17)(?=\27*$)
-            (x(x*))                  (?# \30 = \17 / \27; \31 = \30-1 )
-            (?=\30*$)
-            (?=\28+$)                (?# must match if \30 <  \27; otherwise doesn't matter )
-            \28\31+$                 (?# must match if \30 >= \27; otherwise doesn't matter )
+            .*?(?!x\19)(?=\28*$)
+            (x(x*))                  (?# \31 = \19 / \28; \32 = \31-1 )
+            (?=\31*$)
+            (?=\29+$)                (?# must match if \31 <  \28; otherwise doesn't matter )
+            \29\32+$                 (?# must match if \31 >= \28; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \14 * \19 + \30 )
-        .*(?=\30\18$)
+        (?# Encode the state for the next iteration of the loop, as \16 * \21 + \31 )
+        .*(?=\31\20$)
     )
 )+$
