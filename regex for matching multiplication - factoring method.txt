@@ -33,7 +33,7 @@
 				(
 					(
 						(?# The first thing we need to do every iteration is decode the current number back into two prime powers, \27 and \30, where \27 is the smaller one, if they are different )
-						(?=(x|\3+?)(?!((x+)(?=\29+$)x+)\28*(?!\29+$)\28$)(\3+|x)$)
+						(?=(x+?)(?!((x+)(?=\29+$)x+)\28*(?!\29+$)\28$)(\3+|x)$)
 						(
 							(?=.*(?=\27$)(x+)\32+$)  (?# \32 = \27 divided by its smallest factor, which implicitly must be \3 )
 							(?=.*(?=\30$)(x+)\33+$)  (?# \33 = \30 divided by its smallest factor, which implicitly must be \3 )
