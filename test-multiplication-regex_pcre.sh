@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 	exit
 fi
 
-regex=$(tr -d '[:space:]' < "$1" | sed -e 's/(?#[^)]*)//g')
+regex=$(perl -0pe 's/(?<!\\)\s*|\(\?#[^)]*\)|(?<!\(\?)#.*$//gm' < "$1")
 
 echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)

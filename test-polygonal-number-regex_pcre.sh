@@ -12,7 +12,7 @@ if [ "$1" -lt 2 ]; then
     exit
 fi
 
-regex=$(tr -d '[:space:]' < "$2" | sed -e 's/(?#[^)]*)//g')
+regex=$(perl -0pe 's/(?<!\\)\s*|\(\?#[^)]*\)|(?<!\(\?)#.*$//gm' < "$1")
 
 echo Regex length = $(echo -n "$regex"|wc -c)
 echo Regex md5sum = $(echo -n "$regex"|md5sum)
