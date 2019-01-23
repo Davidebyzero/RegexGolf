@@ -1,5 +1,5 @@
 (?# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality )
-(?# Returns the Fibonacci index as a match, except for 2 and 3, which would have the indexes 3 and 4. )
+(?# Returns the Fibonacci index minus 1 as a match )
 (?# Optimized for RegexMathEngine )
 ^
 (?:
@@ -97,13 +97,14 @@
         \7{4}
     )
     \38
-    x{4}
+    xxx
 |
+    (?# Return the Fibonacci index minus 1 as a match )
     (?=(xx?x?|(x{5})?(x{8})?)$)                  (?# the Fibonacci numbers 0, 1, 2, 3, 5, 8, 13 cannot be handled by our main algorithm, so match them here )
     (
-        x{6}
-        (x(?=xx))?
+        x{4}
+        (xx?(?=xxx))?                            (?# return index for 5, 8, 13 )
     |
-        x*(?=$)                                  (?# this returns an incorrect result for 2 and 3, but that is unavoidable, because there isn't enough room )
+        x*                                       (?# return index for 0, 1, 2, 3 )
     )
 )
