@@ -4,30 +4,33 @@
 (?# Capture the largest prime factor of N, and the largest power of that factor that is also a factor of N. Note that the
     algorithm used will fail if N itself is a prime power, but that's fine, because prime powers are never abundant. )
 (?=
-    (?:                              (?# Repeatedly divide current number by its smallest factor )
-        (?=(xx+?)\1+$)
-        (x+)\2*(?=\2$)
-    )+                               (?# A "+" is intentionally used instead of a "*", to fail if N is prime. This saves the rest
+    (                                (?# \1 = tool to make tail = Z-1 )
+        (?:                          (?# Repeatedly divide current number by its smallest factor )
+            (?=(xx+?)\2+$)
+            (x+)\3*(?=\3$)
+        )+                           (?# A "+" is intentionally used instead of a "*", to fail if N is prime. This saves the rest
                                          of the regex from having to do needless work, because prime numbers are never abundant. )
-    (?!\1+$)                         (?# require that the last factor divided out is a different prime )
-    (?=(x(x+?))\3*$)                 (?# \3 = the largest prime factor of N; \4 = \3-1 )
-    (x(x+))                          (?# \5 = the largest power of \3 that is a factor of N; \6 = \5-1 )
+        (?!\2+$)                     (?# require that the last factor divided out is a different prime )
+        (?=(xx(x*?))\4*$)            (?# \4 = the largest prime factor of N; \5 = \4-2 )
+        x                            (?# an extra 1 so that the tool \1 can make tail = Z-1 instead of just Z )
+    )
+    (x+)                             (?# Z = the largest power of \4 that is a factor of N; \6 = Z-1 )
 )
-(?# We want to capture \5 + \5/\3 + \5/\3^2 + ... + \3^2 + \3 + 1 = {\5 * \3 - 1} / {\3 - 1}, but
-    in case \5 * \3 > N we need to calculate it as {\5 - 1} / {\3 - 1} * \3 + 1. )
-(?# The following division will fail if \5 == N, but that's fine, because no prime power is abundant. )
+(?# We want to capture Z + Z/\4 + Z/\4^2 + ... + \4^2 + \4 + 1 = {Z * \4 - 1} / {\4 - 1}, but
+    in case Z * \4 > N we need to calculate it as {Z - 1} / {\4 - 1} * \4 + 1. )
+(?# The following division will fail if Z == N, but that's fine, because no prime power is abundant. )
 (?=
-    (x(x*))                          (?# \7 = {\5 - 1} / \4; \8 = \7-1 )
-    .*(?=\6$)
-    (?# it is guaranteed that either \7 > \4 or \7 == 1, which allows the following division-by-multiplication to work )
+    \1                               (?# tail = {Z - 1} )
+    (x(x*))                          (?# \7   = {Z - 1} / {\4 - 1}; \8 = \7-1 )
+    (?# it is guaranteed that either \7 > \4-1 or \7 == 1, which allows the following division-by-multiplication to work )
     (?=\7*$)
-    \4\8+$
+    \5\8+$
 )
 (?=
     (.*)                             (?# \9 = tool to compare against \10 )
-    (                                (?# \10 = \7 * \3  =  {\5 - 1} / {\3 - 1} * \3; later, \12 = \10 + 1 )
+    (                                (?# \10 = \7 * \4  =  {Z - 1} / {\4 - 1} * \4; later, \12 = \10 + 1 )
         (?=\7*$)
-        \3\8+$
+        \4\8+$
     )
 )
 (?# Calculate Q = \14{2} + Q_R = floor{2 * N / \12}. Since we don't have space for 2 * N, we need to calculate N / \12 first,
@@ -40,9 +43,9 @@
     (?=\10+$)                        (?# must match if \14 <  \12; otherwise doesn't matter )
     \10\15+$                         (?# must match if \14 >= \12; otherwise doesn't matter )
 )
-(?# Calculate \16 = N / \5. The division by \5 can be done quite simply, because the divisor is a prime power. )
+(?# Calculate \16 = N / Z. The division by Z can be done quite simply, because the divisor is a prime power. )
 (?=
-    (x(x*))                          (?# \16 = N / \5; \17 = \16-1 )
+    (x(x*))                          (?# \16 = N / Z; \17 = \16-1 )
     (?=\16*$)
     \6\17+$
 )
@@ -56,9 +59,9 @@
     pretend R=Q. This way we can avoid having to divide Q and \16 again outside the loop.
     
     While we're at it, there's really no reason to do anything extra to seed this loop. To seed it
-    with an initial value of P=\3, we'd have to do some multiplication. If we don't do anything to
-    seed it, it will decode P=\5. That is wrong, but harmless, since the next lower prime that \16
-    is divisible by will still be the same, as \3 cannot be a factor of \16. )
+    with an initial value of P=\4, we'd have to do some multiplication. If we don't do anything to
+    seed it, it will decode P=Z. That is wrong, but harmless, since the next lower prime that \16
+    is divisible by will still be the same, as \4 cannot be a factor of \16. )
 
 (?# Start the loop. )
 (
@@ -72,65 +75,65 @@
                 \20*$                (?# iff \20 < \16, this can have a false positive, but never a false negative )
             )
             (
-                (?=\5+$)             (?# true iff this is the first iteration of the loop )
+                (?=(x\6)+$)          (?# true iff this is the first iteration of the loop )
                 \14{2}\13?           (?# "\13?" so that iff it's a NPCG it acts as empty with both ECMAScript and PCRE behavior )
             |
             )
         )
     )
     (?=
-        (                            (?# \22 = tool to make tail = {the largest power of \23 that is a factor of \16} )
-            (xx(x*))                 (?# \23 = next value of P to work with; \24 = {\23-1}-1 )
+        (                            (?# \23 = tool to make tail = {the largest power of \24 that is a factor of \16} )
+            (xx(x*))                 (?# \24 = next value of P to work with; \25 = {\24-1}-1 )
             .*(?=\16$)
             (?=
-                \23*                 (?# along with the "\23$" below, assert that \23 is a factor of \16 )
-                (?!\20)              (?# assert that \23 is less than the previous P )
-                \23$                 (?# along with the "\23*" above, assert that \23 is a factor of \16 )
+                \24*                 (?# along with the "\24$" below, assert that \24 is a factor of \16 )
+                (?!\20)              (?# assert that \24 is less than the previous P )
+                \24$                 (?# along with the "\24*" above, assert that \24 is a factor of \16 )
             )
-            (?# Find the largest power of \23 that is a factor of \16, while also asserting that \20 is prime )
+            (?# Find the largest power of \24 that is a factor of \16, while also asserting that \20 is prime )
             (
             |
-                (x+)\26*(?=\26$)
+                (x+)\27*(?=\27$)
             )
             (?!
-                (xx+)\27*
-                (?!\23+$)
-                \27$
+                (xx+)\28*
+                (?!\24+$)
+                \28$
             )
         )
-        \23+$                        (?# assert that tail == the largest power of \23 that is a factor of \16 )
+        \24+$                        (?# assert that tail == the largest power of \24 that is a factor of \16 )
     )
-    (?# Calculate \30 = {{the largest power of \23 that is a factor of \16} - 1} / {\23 - 1} * \23 + 1 )
+    (?# Calculate \31 = {{the largest power of \24 that is a factor of \16} - 1} / {\24 - 1} * \24 + 1 )
     (?=
-        \22x                         (?# tail = {the largest power of \23 that is a factor of \16} - 1 )
-        (x(x*))                      (?# \28 = {{the largest power of \23 that is a factor of \16} - 1} / {\23 - 1}; \29 = \28-1 )
-        (?=\28*$)
-        \24\29*$
+        \23x                         (?# tail = {the largest power of \24 that is a factor of \16} - 1 )
+        (x(x*))                      (?# \29 = {{the largest power of \24 that is a factor of \16} - 1} / {\24 - 1}; \30 = \29-1 )
+        (?=\29*$)
+        \25\30*$
     )
     (?=
-        .*(x(                        (?# \30 = 1 + \28 * \23 = {\28 - 1} / {\23 - 1} * \23 + 1; \31 = \30-1 )
-            (?=\28*$)
-            \23\29+$
+        .*(x(                        (?# \31 = 1 + \29 * \24 = {\29 - 1} / {\24 - 1} * \24 + 1; \32 = \31-1 )
+            (?=\29*$)
+            \24\30+$
         ))
     )
-    (?# Calculate \33 = floor{\19 / \30} )
+    (?# Calculate \34 = floor{\19 / \31} )
     (
-        .*(?!\30)\19                 (?# if dividing \19 / \30 would result in a number less than 1,
+        .*(?!\31)\19                 (?# if dividing \19 / \31 would result in a number less than 1,
                                          then N is abundant and we can exit the loop successfully )
     |
         (?=
-            .*?(?!x\19)(?=\30*$)
-            (x(x*))                  (?# \33 = \19 / \30; \34 = \33-1 )
-            (?=\33*$)
-            (?=\31+$)                (?# must match if \33 <  \30; otherwise doesn't matter )
-            \31\34+$                 (?# must match if \33 >= \30; otherwise doesn't matter )
+            .*?(?!x\19)(?=\31*$)
+            (x(x*))                  (?# \34 = \19 / \31; \35 = \34-1 )
+            (?=\34*$)
+            (?=\32+$)                (?# must match if \34 <  \31; otherwise doesn't matter )
+            \32\35+$                 (?# must match if \34 >= \31; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \16 * \23 + \33 )
+        (?# Encode the state for the next iteration of the loop, as \16 * \24 + \34 )
         (?=
-            \33
-            (x*)(?=\16*$)            (?# \35 )
-            \23\17+$
+            \34
+            (x*)(?=\16*$)            (?# \36 )
+            \24\17+$
         )
-        \35
+        \36
     )
 )+$
