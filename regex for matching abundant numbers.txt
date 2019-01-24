@@ -25,7 +25,7 @@
 )
 (?=
     (.*)                             (?# \9 = tool to compare against \10 )
-	(                                (?# \10 = \7 * \3  =  {\5 - 1} / {\3 - 1} * \3; later, \12 = \10 + 1 )
+    (                                (?# \10 = \7 * \3  =  {\5 - 1} / {\3 - 1} * \3; later, \12 = \10 + 1 )
         (?=\7*$)
         \3\8+$
     )
@@ -79,36 +79,38 @@
         )
     )
     (?=
-        (xx(x*))                     (?# \22 = next value of P to work with; \23 = {\22-1}-1 )
-        .*(?=\16$)
-        (?=
-            \22*                     (?# along with the "\22$" below, assert that \22 is a factor of \16 )
-            (?!\20)                  (?# assert that \22 is less than the previous P )
-            \22$                     (?# along with the "\22*" above, assert that \22 is a factor of \16 )
+        (                            (?# \22 = tool to make tail = {the largest power of \23 that is a factor of \16} )
+            (xx(x*))                 (?# \23 = next value of P to work with; \24 = {\23-1}-1 )
+            .*(?=\16$)
+            (?=
+                \23*                 (?# along with the "\23$" below, assert that \23 is a factor of \16 )
+                (?!\20)              (?# assert that \23 is less than the previous P )
+                \23$                 (?# along with the "\23*" above, assert that \23 is a factor of \16 )
+            )
+            (?# Find the largest power of \23 that is a factor of \16, while also asserting that \20 is prime )
+            (
+            |
+                (x+)\26*(?=\26$)
+            )
+            (?!
+                (xx+)\27*
+                (?!\23+$)
+                \27$
+            )
         )
-        (?# Find the largest power of \22 that is a factor of \16, while also asserting that \20 is prime )
-        (
-        |
-            (x+)\25*(?=\25$)
-        )
-        (?!
-            (xx+)\26*
-            (?!\22+$)
-            \26$
-        )
-        (\22+$)                      (?# \27 = the largest power of \22 that is a factor of \16 )
+        \23+$                        (?# assert that tail == the largest power of \23 that is a factor of \16 )
     )
-    (?# Calculate \30 = {\27 - 1} / {\22 - 1} * \22 + 1 )
+    (?# Calculate \30 = {{the largest power of \23 that is a factor of \16} - 1} / {\23 - 1} * \23 + 1 )
     (?=
-        .*(?=\27)x                   (?# tail = \27 - 1 )
-        (x(x*))                      (?# \28 = {\27 - 1} / {\22 - 1}; \29 = \28-1 )
+        \22x                         (?# tail = {the largest power of \23 that is a factor of \16} - 1 )
+        (x(x*))                      (?# \28 = {{the largest power of \23 that is a factor of \16} - 1} / {\23 - 1}; \29 = \28-1 )
         (?=\28*$)
-        \23\29*$
+        \24\29*$
     )
     (?=
-        .*(x(                        (?# \30 = 1 + \28 * \22 = {\28 - 1} / {\22 - 1} * \22 + 1; \31 = \30-1 )
+        .*(x(                        (?# \30 = 1 + \28 * \23 = {\28 - 1} / {\23 - 1} * \23 + 1; \31 = \30-1 )
             (?=\28*$)
-            \22\29+$
+            \23\29+$
         ))
     )
     (?# Calculate \33 = floor{\19 / \30} )
@@ -123,11 +125,11 @@
             (?=\31+$)                (?# must match if \33 <  \30; otherwise doesn't matter )
             \31\34+$                 (?# must match if \33 >= \30; otherwise doesn't matter )
         )
-        (?# Encode the state for the next iteration of the loop, as \16 * \22 + \33 )
+        (?# Encode the state for the next iteration of the loop, as \16 * \23 + \33 )
         (?=
             \33
             (x*)(?=\16*$)            (?# \35 )
-            \22\17+$
+            \23\17+$
         )
         \35
     )
