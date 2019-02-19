@@ -51,7 +51,7 @@
 	)
 )
 (?=
-	.*(?=\14\14\11$)           (?# tail = 2 * \14 + \11 )
+	.*(?=\14\14\11$)           (?# tail =       2 * \14 + \11 )
 	(x*?)(?=\4*$)              (?# \18 =       {2 * \14 + \11} % \4, the base-\4 digit in place 1 of the result for N*N )
 	(x?(x*))                   (?# \19 = floor{{2 * \14 + \11} / \4}; \20 = \19-1, or 0 if \19==0 )
 	(?=\19*$)
@@ -70,7 +70,7 @@
 (?*
 	.*?                        (?# Determine value of M with backtracking, starting with largest values first )
 	(?=
-		(                      (?# \22 = M )
+		(                      (?# \22 =       M )
 			(?=\4*(x?(x*)))\23 (?# \23 =       M % \4; \24 = \23-1, or 0 if \23==0 )
 			(x(x*))            (?# \25 = floor{M / \4}; \26 = \25-1 )
 			(?=\25*$)          (?# we can skip the test for divisibility by \5, but I'm not sure why; TODO: figure out why this is )
@@ -120,7 +120,7 @@
 	)
 )
 (?=
-	.*(?=\32\32\29$)           (?# tail = 2 * \32 + \29 )
+	.*(?=\32\32\29$)           (?# tail =       2 * \32 + \29 )
 	(x*?)(?=\4*$)              (?# \36 =       {2 * \32 + \29} % \4, the base-\4 digit in place 1 of the result for M*M )
 	(x?(x*))                   (?# \37 = floor{{2 * \32 + \29} / \4}; \38 = \37-1, or 0 if \37==0 )
 	(?=\37*$)
@@ -135,9 +135,9 @@
 (?# Step 2b: Calculate 2*M*M in base \4 )
 (?=
 	.*
-	(?=\28\28)                 (?# tail = 2*\28 )
-	(?=\4*(x*))                (?# \40 = {2*\28} % \4, the base-\4 digit in place 0 of the result for 2*M*M )
-	(                          (?# \41 = {2*\28} / \4 == +1 carry if {2*\28} does not fit in a base \4 digit )
+	(?=\28\28)                 (?# tail =       2*\28 )
+	(?=\4*(x*))                (?# \40 =       {2*\28} % \4, the base-\4 digit in place 0 of the result for 2*M*M )
+	(                          (?# \41 = floor{{2*\28} / \4} == +1 carry if {2*\28} does not fit in a base \4 digit )
 		(?=
 			\4
 		)x
@@ -147,9 +147,9 @@
 )
 (?=
 	.*
-	(?=\36\36\41)              (?# tail = 2*\36 + \41 )
-	(?=\4*(x*))                (?# \42 = {2*\36 + \41} % \4, the base-\4 digit in place 1 of the result for 2*M*M )
-	(                          (?# \43 = {2*\36 + \41} / \4 == +1 carry if {2*\36 + \41} does not fit in a base \4 digit )
+	(?=\36\36\41)              (?# tail =       2*\36 + \41 )
+	(?=\4*(x*))                (?# \42 =       {2*\36 + \41} % \4, the base-\4 digit in place 1 of the result for 2*M*M )
+	(                          (?# \43 = floor{{2*\36 + \41} / \4} == +1 carry if {2*\36 + \41} does not fit in a base \4 digit )
 		(?=
 			\4
 		)x
