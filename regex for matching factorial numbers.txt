@@ -9,11 +9,14 @@
 			\6                          (?# tail = X )
 			(?=\5+$)                    (?# Assert that tail is divisible by \5 )
 			(?=
-				(x(x*))                 (?# \7 = tail / \5; \8 = \7-1)
-				(?=\7*$)                (?# Testing for divisibility by \5-1 here isn't necessary )
-				x\6(x\8*$)              (?# \9 = tool for making tail = x\6\7 )
+				(                       (?# \7 = tail / \5 )
+					(x*)                (?# \8 = \7-1 )
+					(?=\5(\8*$))        (?# \9 = tool for making tail = \5\8 )
+					x
+				)
+				\7*$
 			)
-			\9                          (?# Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3 )
+			x\9                         (?# Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3 )
 			(?=x\6\3+$)                 (?# Assert that \7 is divisible by \3 )
 		)*
 		\2\3$
