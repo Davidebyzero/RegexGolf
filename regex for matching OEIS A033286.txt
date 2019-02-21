@@ -11,6 +11,7 @@
 		)+
 	)
 	# Divide: \4 = N / \2, with \5 = \4-1, enforcing that \5 > 0
+	# We can skip the capture of and test for divisibility by \2-1 because \2 is prime.
 	(?=
 		(                     # \4 = N / \2
 			(x+)              # \5 = \4-1
