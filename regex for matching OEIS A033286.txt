@@ -1,25 +1,25 @@
 ^
 (
-	(?# Find the largest prime factor of N, and capture it in \4, with \5 = \4-1 )
+	# Find the largest prime factor of N, and capture it in \4, with \5 = \4-1
 	(?=
 		(
 			(x+)\3*(?=\3$)
 		)*
 		(x(x+))
 	)
-	(?# Divide: \6 = N / \4, with \7 = \6-1, enforcing that \7 > 0 )
+	# Divide: \6 = N / \4, with \7 = \6-1, enforcing that \7 > 0
 	(?=
 		(x(x+))
 		(?=\6*$)
 		\5\7*$
 	)
-	(?# Find the next smaller prime than \4 and capture it in \9, with \10 = \9-1 )
+	# Find the next smaller prime than \4 and capture it in \9, with \10 = \9-1
 	(?=
 		.*(?=\4$).+?
 		(?!(xx+)\8+$)
-		(x(x*\7))             (?# Simultaneously capture \9 and enforce that \7 < \9 )
+		(x(x*\7))             # Simultaneously capture \9 and enforce that \7 < \9
 	)
-	(?# Multiply: tail = \9 * \7 )
+	# Multiply: tail = \9 * \7
 	.*
 	(?=\9+$)
 	(?=\7\10+$)
