@@ -129,9 +129,9 @@
         # Encode the state for the next iteration of the loop, as \16 * \24 + \34
         (?=
             \34
-            (x*)(?=\16*$)            # \36
+            (x*)(?=\16*$)            # tail = \16 * \24; \36 = tool to make tail = \16 * \24 + \34
             \24\17+$
         )
-        \36
+        \36                          # tail = \16 * \24 + \34
     )
 )+$
