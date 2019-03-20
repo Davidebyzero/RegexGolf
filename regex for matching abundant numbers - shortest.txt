@@ -23,57 +23,57 @@
         \5\8+$
     )
 )
-# Calculate Q = \12{2} + Q_R = floor(2 * N / Y). Since we don't have space for 2 * N, we need to calculate N / Y first,
+# Calculate \9 = N / Z. The division by Z can be done quite simply, because the divisor is a prime power.
+(?=
+    (x(x*))                          # \9 = N / Z; \10 = \9-1
+    (?=\9*$)
+    \6\10+$
+)
+# Calculate Q = \14{2} + Q_R = floor(2 * N / Y). Since we don't have space for 2 * N, we need to calculate N / Y first,
 # including the fractional part (i.e. the remainder), and then multiply the result, including the fractional part, by 2.
 (?=
-    (x*?)                            # \9  = N % Y
-    (?=(x(\6\7))+$)                  # \11 = Z-1 + (Z - 1) / (\4 - 1) == (Z - 1) / (\4 - 1) * \4 == Y-1
-    (x(x*))                          # \12 = N / Y; \13 = \12-1
-    (?=\12*$)
-    (?=\11+$)                        # must match if \12 <  Y; otherwise doesn't matter
-    \13+
-    (?=\9\9|(x))                     # \14 = Q_R = floor(\9 * 2 / Y) == +1 carry if \9 * 2 > \11, or NPCG otherwise
-    \11$                             # must match if \12 >= Y; otherwise doesn't matter (except to set tail for the
+    (x*?)                            # \11  = N % Y
+    (?=(x(\6\7))+$)                  # \13 = Z-1 + (Z - 1) / (\4 - 1) == (Z - 1) / (\4 - 1) * \4 == Y-1
+    (x(x*))                          # \14 = N / Y; \15 = \14-1
+    (?=\14*$)
+    (?=\13+$)                        # must match if \14 <  Y; otherwise doesn't matter
+    \15+
+    (?=\11\11|(x))                   # \16 = Q_R = floor(\11 * 2 / Y) == +1 carry if \11 * 2 > \13, or NPCG otherwise
+    \13$                             # must match if \14 >= Y; otherwise doesn't matter (except to set tail for the
                                      #  Q_R calculation above)
 )
-# Calculate \15 = N / Z. The division by Z can be done quite simply, because the divisor is a prime power.
-(?=
-    (x(x*))                          # \15 = N / Z; \16 = \15-1
-    (?=\15*$)
-    \6\16+$
-)
 # Seed a loop which will start with Q and divide it by (P^(K+1)-1)/(P-1) for every P^K that is a
-# factor of \15. The state is encoded as \15 * P + R, where the initial value of R is Q, and P is
+# factor of \9. The state is encoded as \9 * P + R, where the initial value of R is Q, and P is
 # the last prime factor of N to have been already processed.
 #
-# However, since the initial R would be larger than \15 (and for that matter there would be no room
-# for any nonzero R since with the initial value of P, it is possible for \15 * P to equal N), treat
+# However, since the initial R would be larger than \9 (and for that matter there would be no room
+# for any nonzero R since with the initial value of P, it is possible for \9 * P to equal N), treat
 # it as a special case, and let the initial value of R be 0, signalling the first iteration to
-# pretend R=Q. This way we can avoid having to divide Q and \15 again outside the loop.
+# pretend R=Q. This way we can avoid having to divide Q and \9 again outside the loop.
 #
 # While we're at it, there's really no reason to do anything extra to seed this loop. To seed it
 # with an initial value of P=\4, we'd have to do some multiplication. If we don't do anything to
-# seed it, it will decode P=Z. That is wrong, but harmless, since the next lower prime that \15
-# is divisible by will still be the same, as \4 cannot be a factor of \15.
+# seed it, it will decode P=Z. That is wrong, but harmless, since the next lower prime that \9
+# is divisible by will still be the same, as \4 cannot be a factor of \9.
 
 # Start the loop.
 (
     (?=
         (                            # \18 = actual value of R
-            x*?(?=\15+$)             # move forward by directly decoded value of R, which can be zero
-            # The division by \15 can be done quite simply, because it is known that the quotient is prime.
+            x*?(?=\9+$)              # move forward by directly decoded value of R, which can be zero
+            # The division by \9 can be done quite simply, because it is known that the quotient is prime.
             (?=
-                \15+?                # tail = \15 * {a prime which divides into \15}
+                \9+?                 # tail = \9 * {a prime which divides into \9}
                 (?=
                     (                # \19 = encoded value for next loop iteration
                         (xx(x*))     # \20 = decoded value of next smaller P; \21 = (\20-1)-1
-                        (?=\16+$)    # iff \20 > \15, this can have a false positive, but never a false negative
-                        \20*$        # iff \20 < \15, this can have a false positive, but never a false negative
+                        (?=\10+$)    # iff \20 > \9, this can have a false positive, but never a false negative
+                        \20*$        # iff \20 < \9, this can have a false positive, but never a false negative
                     )
                 )
-                # Find the largest power of \20 that is a factor of \15, while also asserting that \20 is prime
-                (x+)                 # \22 = the largest power of \20 that is a factor of \15
-                .*(?=\15$)
+                # Find the largest power of \20 that is a factor of \9, while also asserting that \20 is prime
+                (x+)                 # \22 = the largest power of \20 that is a factor of \9
+                .*(?=\9$)
                 \22*(?=\22$)
                 (?!
                     (xx+)\23*
@@ -84,8 +84,8 @@
             )
             (
                 (?=(x\6)+$)          # true iff this is the first iteration of the loop
-                \12{2}
-                \14                  # potentially unset capture, and thus dependent on ECMAScript behavior
+                \14{2}
+                \16                  # potentially unset capture, and thus dependent on ECMAScript behavior
             |
             )
         )
@@ -114,7 +114,7 @@
                                      # then N is abundant and we can exit the loop successfully.
                                      # We signal this by leaving \30 unset (this relies on ECMAScript behavior)
     )
-    # Encode the state for the next iteration of the loop, as \15 * \20 + \30
+    # Encode the state for the next iteration of the loop, as \9 * \20 + \30
     .*(?=\30\19$)                    # If \30 is unset, it will act as zero here. This will cause the next
                                      # iteration of the loop to advance by zero, thus causing the loop to
                                      # exit and reach the end condition successfully.
