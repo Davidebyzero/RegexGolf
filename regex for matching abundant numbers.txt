@@ -89,9 +89,9 @@
             (x+)\25*(?=\25$)
         )
         (?!
-            (xx+)\26*
+            (xx+)
             (?!\22+$)
-            \26$
+            \26+$
         )
         (?=
             x                    # tail = tail-1 == {the largest power of \22 that is a factor of \9} - 1
