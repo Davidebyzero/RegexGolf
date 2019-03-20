@@ -25,10 +25,7 @@
 )
 (?=
     (.*)                             # \9 = tool to compare against \10
-    (                                # \10 = \7 * \4  =  (Z - 1) / (\4 - 1) * \4; later, \12 = \10 + 1
-        (?=\7*$)
-        \4\8+$
-    )
+    (\6\7)                           # \10 = Z-1 + (Z - 1) / (\4 - 1) == (Z - 1) / (\4 - 1) * \4; later, \12 = \10 + 1
 )
 # Calculate Q = \14{2} + Q_R = floor(2 * N / \12). Since we don't have space for 2 * N, we need to calculate N / \12 first,
 # including the fractional part (i.e. the remainder), and then multiply the result, including the fractional part, by 2.
