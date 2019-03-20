@@ -17,7 +17,7 @@
   x                      # tail -= 1
   (                      # \6 = tail == Z-1
     # We want to capture Z + Z/\4 + Z/\4^2 + ... + \4^2 + \4 + 1 = (Z * \4 - 1) / (\4 - 1),
-    # but in case Z * \4 > N we need to calculate it as (Z - 1) / (\4 - 1) * \4 + 1.
+    # but in case Z * \4 > N we need to calculate it as Y = (Z - 1) / (\4 - 1) * \4 + 1.
     # The following division will fail if Z == N, but that's fine, because no prime power is
     # abundant.
     (x(x*))              # \7 = (Z - 1) / (\4 - 1); \8 = \7-1
@@ -27,109 +27,107 @@
     \5\8+$
   )
 )
-(?=
-  (.*)                   # \9 = tool to compare against \10
-  (\6\7)                 # \10 = Z-1 + (Z - 1) / (\4 - 1) == (Z - 1) / (\4 - 1) * \4;
-                         # later, \12 = \10+1
-)
-# Calculate Q = \14{2} + Q_R = floor(2 * N / \12). Since we don't have space for 2*N, we
-# need to calculate N / \12 first, including the fractional part (i.e. the remainder),
+# Calculate Q = \12{2} + Q_R = floor(2 * N / Y). Since we don't have space for 2*N, we
+# need to calculate N / Y first, including the fractional part (i.e. the remainder),
 # and then multiply the result, including the fractional part, by 2.
 (?=
-  (x*?)(?=(x\10)+$)      # \11 = N % \12; \12 = \10 + 1
-  (?=\11\9|(x))          # \13 = Q_R = floor(\11 * 2 / \12)
-                         #     = +1 carry if \11 * 2 > \10, or NPCG otherwise
-  (x(x*))                # \14 = N / \12; \15 = \14-1
-  (?=\14*$)
-  (?=\10+$)              # must match if \14 <  \12; otherwise doesn't matter
-  \10\15+$               # must match if \14 >= \12; otherwise doesn't matter
+  (x*?)                  # \9  = N % Y
+  (?=(x(\6\7))+$)        # \11 = Z-1 + (Z - 1) / (\4 - 1) == (Z - 1) / (\4 - 1) * \4 == Y-1
+  (x(x*))                # \12 = N / Y; \13 = \12-1
+  (?=\12*$)
+  (?=\11+$)              # must match if \12 <  Y; otherwise doesn't matter
+  \13+
+  (?=\9\9|(x))           # \14 = Q_R = floor(\9 * 2 / Y)
+                         #     = +1 carry if \9 * 2 > \11, or NPCG otherwise
+  \11$                   # must match if \12 >= Y; otherwise doesn't matter
+                         # (except to set tail for the Q_R calculation above)
 )
-# Calculate \16 = N / Z. The division by Z can be done quite simply, because the divisor
+# Calculate \15 = N / Z. The division by Z can be done quite simply, because the divisor
 # is a prime power.
 (?=
-  (x(x*))                # \16 = N / Z; \17 = \16-1
-  (?=\16*$)
-  \6\17+$
+  (x(x*))                # \15 = N / Z; \16 = \15-1
+  (?=\15*$)
+  \6\16+$
 )
 # Seed a loop which will start with Q and divide it by (P^(K+1)-1)/(P-1) for every P^K
-# that is a factor of \16. The state is encoded as \16 * P + R, where the initial value
+# that is a factor of \15. The state is encoded as \15 * P + R, where the initial value
 # of R is Q, and P is the last prime factor of N to have been already processed.
 #
-# However, since the initial R would be larger than \16 (and for that matter there would
+# However, since the initial R would be larger than \15 (and for that matter there would
 # be no room for any nonzero R since with the initial value of P, it is possible for
-# \16 * P to equal N), treat it as a special case, and let the initial value of R be 0,
+# \15 * P to equal N), treat it as a special case, and let the initial value of R be 0,
 # signalling the first iteration to pretend R=Q. This way we can avoid having to divide Q
-# and \16 again outside the loop.
+# and \15 again outside the loop.
 #
 # While we're at it, there's really no reason to do anything to seed this loop. To seed
 # it with an initial value of P=\4, we'd have to do some multiplication. If we don't do
 # anything to seed it, it will decode P=Z. That is wrong, but harmless, since the next
-# lower prime that \16 is divisible by will still be the same, as \4 cannot be a factor
-# of \16.
+# lower prime that \15 is divisible by will still be the same, as \4 cannot be a factor
+# of \15.
 
 # Start the loop.
 (
   (?=
-    (                    # \19 = actual value of R
-      x*?(?=\16+$)       # move forward by directly decoded value of R, which can be zero
-      # The division by \16 can be done quite simply, because it is known that
+    (                    # \18 = actual value of R
+      x*?(?=\15+$)       # move forward by directly decoded value of R, which can be zero
+      # The division by \15 can be done quite simply, because it is known that
       # the quotient is prime.
       (?=
-        \16+?            # tail = \16 * (a prime which divides into \16)
+        \15+?            # tail = \15 * (a prime which divides into \15)
         (?=
-          (              # \20 = encoded value for next loop iteration
-            (xx(x*))     # \21 = decoded value of next smaller P; \22 = (\21-1)-1
-            (?=\17+$)    # iff \21 > \16, this can have a false positive, but never a false negative
-            \21*$        # iff \21 < \16, this can have a false positive, but never a false negative
+          (              # \19 = encoded value for next loop iteration
+            (xx(x*))     # \20 = decoded value of next smaller P; \21 = (\20-1)-1
+            (?=\16+$)    # iff \20 > \15, this can have a false positive, but never a false negative
+            \20*$        # iff \20 < \15, this can have a false positive, but never a false negative
           )
         )
-        # Find the largest power of \21 that is a factor of \16, while also asserting
-        # that \21 is prime.
-        (x+)             # \23 = the largest power of \21 that is a factor of \16
-        .*(?=\16$)
-        \23*(?=\23$)
+        # Find the largest power of \20 that is a factor of \15, while also asserting
+        # that \20 is prime.
+        (x+)             # \22 = the largest power of \20 that is a factor of \15
+        .*(?=\15$)
+        \22*(?=\22$)
         (?!
-          (xx+)\24*
-          (?!\21+$)
-          \24$
+          (xx+)\23*
+          (?!\20+$)
+          \23$
         )
-        \21+$
+        \20+$
       )
       (
         (?=(x\6)+$)      # True iff this is the first iteration of the loop.
-        \14{2}
-        \13              # Potentially unset capture, and thus dependent on ECMAScript behavior.
+        \12{2}
+        \14              # Potentially unset capture, and thus dependent on ECMAScript behavior.
       |
       )
     )
   )
-  # Calculate \29 = (\23 - 1) / (\21 - 1) * \21 + 1
+  # Calculate \28 = (\22 - 1) / (\20 - 1) * \20 + 1
   (?=
-    .*(?=\23)x           # tail = \23 - 1
-    (x(x*))              # \27 = (\23 - 1) / (\21 - 1); \28 = \27-1
-    (?=\27*$)
-    \22\28*$
+    .*(?=\22)x           # tail = \22 - 1
+    (x(x*))              # \26 = (\22 - 1) / (\20 - 1); \27 = \26-1
+    (?=\26*$)
+    \21\27*$
   )
   (?=
-    .*(x(                # \29 = 1 + \27 * \21 = (\27 - 1) / (\21 - 1) * \21 + 1; \30 = \29-1
-      (?=\27*$)
-      \21\28+$
+    .*(x(                # \28 = 1 + \26 * \20 = (\26 - 1) / (\20 - 1) * \20 + 1; \29 = \28-1
+      (?=\26*$)
+      \20\27+$
     ))
   )
-  # Calculate \31 = floor(\19 / \29)
+  # Calculate \30 = floor(\18 / \28)
   (?=
-    .*?(?!x\19)(?=\29*$)
-    (x(x*))              # \31 = \19 / \29; \32 = \31-1
-    (?=\31*$)
-    (?=\30+$)            # must match if \31 <  \29; otherwise doesn't matter
-    \30\32+$             # must match if \31 >= \29; otherwise doesn't matter
-  |                      # If dividing \19 / \29 would result in a number less than 1,
+    .*?(?!x\18)(?=\28*$)
+    (x(x*))              # \30 = \18 / \28; \31 = \30-1
+    (?=\30*$)
+    (?=\29+$)            # must match if \30 <  \28; otherwise doesn't matter
+    \29\31+$             # must match if \30 >= \28; otherwise doesn't matter
+  |                      # If dividing \18 / \28 would result in a number less than 1,
                          # then N is abundant and we can exit the loop successfully.
-                         # We signal this by leaving \31 unset (this relies on ECMAScript behavior)
+                         # We signal this by leaving \30 unset (this relies on ECMAScript behavior)
   )
-  # Encode the state for the next iteration of the loop, as \16 * \21 + \31
-  .*(?=\31\20$)          # If \31 is unset, it will act as zero here. This will cause the next
+  # Encode the state for the next iteration of the loop, as \15 * \20 + \30
+  .*(?=\30\19$)          # If \30 is unset, it will act as zero here. This will cause the next
                          # iteration of the loop to advance by zero, thus causing the loop to
                          # exit and reach the end condition successfully.
 )+
-\20$                     # N is abundant iff \31 was effectively zero in the last iteration.
+\19$                     # N is abundant iff \30 was effectively zero in the last iteration.
