@@ -76,26 +76,25 @@
         \9+?             # tail = \9 * (a prime which divides into \9)
         (?=
           (              # \19 = encoded value for next loop iteration
-            (xx(x*))     # \20 = decoded value of next smaller P; \21 = (\20-1)-1
+            (x+)         # \20 = decoded value of next smaller P
             (?=\10+$)    # iff \20 > \9, this can have a false positive, but never a false negative
             \20*$        # iff \20 < \9, this can have a false positive, but never a false negative
           )
         )
         # Find the largest power of \20 that is a factor of \9, while also asserting
         # that \20 is prime.
-        (\20+)           # \22 = the largest power of \20 that is a factor of \9;
-                         # assert \22 is divisible by \20
+        (\20+)           # \21 = the largest power of \20 that is a factor of \9;
+                         # assert \21 is divisible by \20
         .*(?=\9$)
-        \22*(?=\22$)     # tail = \22
+        \21*(?=\21$)     # tail = \21
         (?!
           (xx+)
           (?!\20+$)
-          \23+$
+          \22+$
         )
-        x                # tail = tail-1 == \22 - 1
-        (x(x*))          # \24 = (\22 - 1) / (\20 - 1); \25 = \24-1
-        (?=\24*$)
-        \21\25*$
+        (x*)             # \23 = (\21 - 1) / (\20 - 1) - 1
+        (?=xx(x\23)*$)
+        \20\23*$
       )
       (
         ^                # True iff this is the first iteration of the loop.
@@ -105,23 +104,23 @@
       )
     )
   )
-  # Calculate \29 = floor(\18 / ((\22 - 1) / (\20 - 1) * \20 + 1))
+  # Calculate \28 = floor(\18 / ((\21 - 1) / (\20 - 1) * \20 + 1))
   (?=
     .*?(?!x\18)
-    (?=(x(\22\25))+$)    # \28 = \22 + \24-1 == \22-1 + \24;
-                         # \27 = \28+1 == \22-1 + (\22 - 1) / (\20 - 1) + 1
-                         #             == (\22 - 1) / (\20 - 1) * \20 + 1
-    (x(x*))              # \29 = \18 / \27; \30 = \29-1
-    (?=\29*$)
-    (?=\28+$)            # must match if \29 <  \27; otherwise doesn't matter
-    \28\30+$             # must match if \29 >= \27; otherwise doesn't matter
-  |                      # If dividing \18 / \27 would result in a number less than 1,
+    (?=(x(\21\23))+$)    # \27 = \21 + \23 == \21-1 + (\21 - 1) / (\20 - 1);
+                         # \26 = \27+1     == \21-1 + (\21 - 1) / (\20 - 1) + 1
+                         #                 ==         (\21 - 1) / (\20 - 1) * \20 + 1
+    (x(x*))              # \28 = \18 / \26; \29 = \28-1
+    (?=\28*$)
+    (?=\27+$)            # must match if \28 <  \26; otherwise doesn't matter
+    \27\29+$             # must match if \28 >= \26; otherwise doesn't matter
+  |                      # If dividing \18 / \26 would result in a number less than 1,
                          # then N is abundant and we can exit the loop successfully.
-                         # We signal this by leaving \29 unset (this relies on ECMAScript behavior)
+                         # We signal this by leaving \28 unset (this relies on ECMAScript behavior)
   )
-  # Encode the state for the next iteration of the loop, as \9 * \20 + \29
-  .*(?=\29\19$)          # If \29 is unset, it will act as zero here. This will cause the next
+  # Encode the state for the next iteration of the loop, as \9 * \20 + \28
+  .*(?=\28\19$)          # If \28 is unset, it will act as zero here. This will cause the next
                          # iteration of the loop to advance by zero, thus causing the loop to
                          # exit and reach the end condition successfully.
 )+
-\19$                     # N is abundant iff \29 was effectively zero in the last iteration.
+\19$                     # N is abundant iff \28 was effectively zero in the last iteration.
