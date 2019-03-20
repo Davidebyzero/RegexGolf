@@ -99,30 +99,25 @@
             (?=\27*$)
             \23\28*$
         )
-        \22+$                    # assert that tail == the largest power of \22 that is a factor of \9
+        (\22+$)                  # assert that tail == the largest power of \22 that is a factor of \9; \29 = tail
     )
-    # Calculate \29 = ({the largest power of \22 that is a factor of \9} - 1) / (\22 - 1) * \22 + 1
+    # Calculate \30 = \29-1 + (\29 - 1) / (\22 - 1) + 1 == (\29 - 1) / (\22 - 1) * \22 + 1
+    (?=(x(\29\28)))              # \31 = \29 + \27-1 == \29-1 + \27; \30 = \31+1
+    # Calculate \32 = floor(\18 / \30)
     (?=
-        .*(x(                    # \29 = 1 + \27 * \22 = (\27 - 1) / (\22 - 1) * \22 + 1; \30 = \29-1
-            (?=\27*$)
-            \22\28+$
-        ))
-    )
-    # Calculate \31 = floor(\18 / \29)
-    (?=
-        .*?(?!x\18)(?=\29*$)
-        (x(x*))                  # \31 = \18 / \29; \32 = \31-1
-        (?=\31*$)
-        (?=\30+$)                # must match if \31 <  \29; otherwise doesn't matter
-        \30\32+$                 # must match if \31 >= \29; otherwise doesn't matter
+        .*?(?!x\18)(?=\30*$)
+        (x(x*))                  # \32 = \18 / \30; \33 = \32-1
+        (?=\32*$)
+        (?=\31+$)                # must match if \32 <  \30; otherwise doesn't matter
+        \31\33+$                 # must match if \32 >= \30; otherwise doesn't matter
     |
     )
-    # Encode the state for the next iteration of the loop, as \9 * \22 + \31
+    # Encode the state for the next iteration of the loop, as \9 * \22 + \32
     (?=
-        \31
-        (x*)(?=\9*$)             # tail = \9 * \22; \33 = tool to make tail = \9 * \22 + \31
-        (\22\10+$)               # \34 = tail
+        \32
+        (x*)(?=\9*$)             # tail = \9 * \22; \34 = tool to make tail = \9 * \22 + \32
+        (\22\10+$)               # \35 = tail
     )
-    \33                          # tail = \9 * \22 + \31
+    \34                          # tail = \9 * \22 + \32
 )+
-\34$
+\35$
