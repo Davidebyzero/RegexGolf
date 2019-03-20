@@ -99,10 +99,8 @@
       )
       (
         (?=(x\6)+$)      # True iff this is the first iteration of the loop.
-        \14{2}\13        # Potentially unset capture, and thus dependent on ECMAScript
-                         # behavior. Change "\13" to "\13?" for compatibility with non-
-                         # ECMAScript engines, so that it will act as an empty capture
-                         # with engines in which unset backrefs always fail to match.
+        \14{2}
+        \13              # Potentially unset capture, and thus dependent on ECMAScript behavior.
       |
       )
     )

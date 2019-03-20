@@ -73,7 +73,8 @@
             )
             (
                 (?=(x\6)+$)          # true iff this is the first iteration of the loop
-                \14{2}\13?           # "\13?" so that iff it's a NPCG it acts as empty with both ECMAScript and PCRE behavior
+                \14{2}
+                \13                  # potentially unset capture, and thus dependent on ECMAScript behavior
             |
             )
         )
