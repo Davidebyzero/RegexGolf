@@ -107,19 +107,20 @@
             \21\28+$
         ))
     )
-    # Calculate \32 = floor(\19 / \29)
-    (
-        .*(?!\29)\19                 # If dividing \19 / \29 would result in a number less than 1,
+    # Calculate \31 = floor(\19 / \29)
+    (?=
+        .*?(?!x\19)(?=\29*$)
+        (x(x*))                      # \31 = \19 / \29; \32 = \31-1
+        (?=\31*$)
+        (?=\30+$)                    # must match if \31 <  \29; otherwise doesn't matter
+        \30\32+$                     # must match if \31 >= \29; otherwise doesn't matter
+    |                                # If dividing \19 / \29 would result in a number less than 1,
                                      # then N is abundant and we can exit the loop successfully.
-    |
-        (?=
-            .*?(?!x\19)(?=\29*$)
-            (x(x*))                  # \32 = \19 / \29; \33 = \32-1
-            (?=\32*$)
-            (?=\30+$)                # must match if \32 <  \29; otherwise doesn't matter
-            \30\33+$                 # must match if \32 >= \29; otherwise doesn't matter
-        )
-        # Encode the state for the next iteration of the loop, as \16 * \21 + \32
-        .*(?=\32\20$)
+                                     # We signal this by leaving \31 unset (this relies on ECMAScript behavior)
     )
-)+$
+    # Encode the state for the next iteration of the loop, as \16 * \21 + \31
+    .*(?=\31\20$)                    # If \31 is unset, it will act as zero here. This will cause the next
+                                     # iteration of the loop to advance by zero, thus causing the loop to
+                                     # exit and reach the end condition successfully.
+)+
+\20$                                 # N is abundant iff \31 was effectively zero in the last iteration.
