@@ -83,7 +83,7 @@
             (?!\19)              # assert that \22 is less than the previous P
             \22$                 # along with the "\22*" above, assert that \22 is a factor of \9
         )
-        # Find the largest power of \22 that is a factor of \9, while also asserting that \19 is prime
+        # Find the largest power of \22 that is a factor of \9, while also asserting that \22 is prime
         (
         |
             (x+)\25*(?=\25$)
