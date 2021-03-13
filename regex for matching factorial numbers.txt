@@ -1,26 +1,26 @@
-(?# Match factorial numbers in the domain ^x*$ )
+# Match factorial numbers in the domain ^x*$
 	^
 	(?=
-		((x*)x*)(?=\1$)                 (?# Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1 )
-		(?=(xxx\2)+$)                   (?# \3 = \2+3 == N; Assert that tail is divisible by \3 )
-		(?# The loop is seeded: X = \1; I = 3; tail = X + I-3 )
+		((x*)x*)(?=\1$)                 # Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1
+		(?=(xxx\2)+$)                   # \3 = \2+3 == N; Assert that tail is divisible by \3
+		# The loop is seeded: X = \1; I = 3; tail = X + I-3
 		(
-			(?=\2\3*(x(?!\3)xx(x*)))    (?# \5 = I; \6 = I-3; Assert that \5 <= \3 )
-			\6                          (?# tail = X )
-			(?=\5+$)                    (?# Assert that tail is divisible by \5 )
+			(?=\2\3*(x(?!\3)xx(x*)))    # \5 = I; \6 = I-3; Assert that \5 <= \3
+			\6                          # tail = X
+			(?=\5+$)                    # Assert that tail is divisible by \5
 			(?=
-				(                       (?# \7 = tail / \5 )
-					(x*)                (?# \8 = \7-1 )
-					(?=\5(\8*$))        (?# \9 = tool for making tail = \5\8 )
+				(                       # \7 = tail / \5
+					(x*)                # \8 = \7-1
+					(?=\5(\8*$))        # \9 = tool for making tail = \5\8
 					x
 				)
 				\7*$
 			)
-			x\9                         (?# Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3 )
-			(?=x\6\3+$)                 (?# Assert that \7 is divisible by \3 )
+			x\9                         # Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3
+			(?=x\6\3+$)                 # Assert that \7 is divisible by \3
 		)*
 		\2\3$
 	)
 	\3
 |
-	^xx?$                               (?# Match 1 and 2, which the main algorithm can't handle )
+	^xx?$                               # Match 1 and 2, which the main algorithm can't handle
