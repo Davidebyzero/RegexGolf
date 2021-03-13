@@ -1,26 +1,55 @@
 # Match factorial numbers in the domain ^x*$
-    ^
-    (?=
-        ((x*)x*)(?=\1$)                 # Assert that tail is even; \1 = tail / 2; \2 = {conjectured N for which tail == N!} - 3; tail = \1
-        (?=(xxx\2)+$)                   # \3 = \2+3 == N; Assert that tail is divisible by \3
-        # The loop is seeded: X = \1; I = 3; tail = X + I-3
-        (
-            (?=\2\3*(x(?!\3)xx(x*)))    # \5 = I; \6 = I-3; Assert that \5 <= \3
-            \6                          # tail = X
-            (?=\5+$)                    # Assert that tail is divisible by \5
-            (?=
-                (                       # \7 = tail / \5
-                    (x*)                # \8 = \7-1
-                    (?=\5(\8*$))        # \9 = tool for making tail = \5\8
-                    x
-                )
-                \7*$
+^                           # N = tail = input
+(
+    ((x+)\3+)(?=\3\3\2$)    # \3 = conjectured inverse factorial of N if N >= 4! = 24;
+                            # \2 = N/2 - \3; assert tail is divisible by \3 and by 2;
+                            # assert tail is divisible by a number >= 6;
+                            # tail = N/2 + \3;
+                            # Note that if N = 3! = 6, \3 will behave differently,
+                            # because sticking to the pattern, we'd need \2=0, which
+                            # is of course impossible, because we must have \2 >= \3.
+                            # However, when N=6, \3=1 happens to result in a match after
+                            # zero loop iterations.
+    # The loop is seeded: X = N/2; I = \3 - 1; tail = X + I + 1
+    # The loop will divide X by the numbers in the range \3-1 downward to 3, inclusive.
+    # Since we don't divide by \3 itself, and already divided by 2, if N is factorial,
+    # the end result of these divisions will be X = \3.
+    (                       # Main loop
+        x                   # tail = tail-1 = X + I
+        (?=\3+(x*))         # \5 = tail % \3 = I; assert X >= \3
+        (?=\5+$)            # assert X is divisible by I; if \3=1, then \5=0,
+                            # and the main loop will exit after zero iterations
+        (?=
+            (               # \6 = tail / \5 = (X+I)/I = X/I + 1
+                (x+)        # \7 = \6-1 = X/I; assert X/I >= 1
+                (?=\5\7*$)
+                x
             )
-            x\9                         # Prepare the next iteration of the loop: X = \7; I += 1; tail = X + I-3
-            (?=x\6\3+$)                 # Assert that \7 is divisible by \3
-        )*
-        \2\3$
-    )
-    \3
+            \6*$
+        )
+        \3+(?=\5\7$)        # Prepare the next iteration of the loop: X = \7; I -= 1;
+                            # tail = X + I + 1;
+                            # Assert that the tail difference is divisible by \3, i.e.
+                            # that, with our previous values of X and I:
+                            #      X + I - (X/I + I-1 + 1)
+                            #    = X/I*(I-1) is divisible by \3
+                            # Since I is coprime with I-1, if X was divisible by \3
+                            # but X/I is not, then X/I*(I-1) will not be either, so this
+                            # indirectly asserts that X/I, our new X, is divisible by \3.
+                            # The initial value of X was asserted to be divisible by \3
+                            # before the loop started, so by induction, every new value
+                            # of X will be asserted to be divisible by \3. This is
+                            # important because we use modulo by \3 to recover the value
+                            # of I at the beginning of each loop iteration.
+                            # And if N = \3! and the previous of I=2 and X was able to be
+                            # divided by 2, this will force this iteration of the loop to
+                            # fail, and the loop will exit with the values of X and I
+                            # backtracked to their values before this iteration, i.e.
+                            # with X = \3 and I = 2.
+    )*
+    \3xx                    # assert tail = \3 + 2 + 1, meaning when the loop finished
+                            # we ended up with X = \3 and I = 2
 |
-    ^xx?$                               # Match 1 and 2, which the main algorithm can't handle
+    x?                      # match N=1 and N=2, which the main algorithm can't
+)
+x$
