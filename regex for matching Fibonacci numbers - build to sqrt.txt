@@ -1,0 +1,57 @@
+# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality
+
+    ^                             # N = tail
+    (?=
+        x?(?=(x+)\1$)             # \1 = floor(N / 2); tail = \1 * 2
+                                  # seed the loop with A=0, B=0; tail = \1*2 - (A + B*B);
+                                  # but note that although we're literally seeding A=0, B=0,
+                                  # the first iteration will actually extract A=0, B=1
+        (
+            (?=\1(x*))            # \3 = tail - \1
+            (?=
+                .*(?=\1)\3        # tail = \1 - \3 = \1*2 - tail
+                                  # since the $ is omitted from (?=\1$), if we've freshly
+                                  # started the loop, the square root algorithm won't be
+                                  # able to take the square root of 0, and tail will retreat
+                                  # by 1, thus letting the loop effortlessly be seeded with
+                                  # an initial A=0, B=1
+                (x*?)             # \4 = A
+                (x(x*))           # \5 = potential square root = B; \6 = \5-1
+                (?=
+                    (\5*)\6+$     # iff \5 * \5 == our number, then the first match here must result in \7 == 0
+                )
+                \5*$\7            # test for divisibility by \1 and for \4 == 0 simultaneously
+            )
+            (?=
+                .*
+                (?=(x(\4\6))+$)   # \8 = \4 + \5 = A+B; \9 = \8-1; assert \8 divides tail
+                (\8\9+$)          # \10 = tail = \8 * \8
+            )
+            (?=
+                .*(?=\1)\10\5     # tail = \1 - (\5 + \10)
+                (x*)              # \11 = tail
+            )
+            .*(?=\11\1$)          # A = \5; B = \8; tail = \1*2 - (A + B*B)
+        )*
+    )
+    # At this point, F_{n-1} = \5 and F_n = \8
+    (?=
+        .*
+        (?=\5+$)
+        (\5\6+$)                  # \12 = \5 * \5
+    )
+    (?=
+        .*
+        (?=\8+$)
+        (\8\9+$)                  # \13 = \8 * \8
+    )
+    (?=
+        .*
+        (?=\8+$)
+        (\5\9+$)                  # \14 = \5 * \8
+    )
+    \13\14{2}                     # tail -= F_2n
+    (\12\13)?                     # tail -= F_{2n-1} optionally, if needed to match
+    $                             # assert tail=0
+|
+    ^x?x?$
