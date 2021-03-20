@@ -13,35 +13,36 @@
                 )
                 \2*$\4          # test for divisibility by \2 and for \4 == 0 simultaneously
             )
-            (?=
-                ((x)|x{4})      # \5 = tail % 5; tail -= \5; assert that \5==1 or \5==4, and set \6=1 if the former
-                (x*)\7{4}$      # \7 = tail / 5
-            )
-            .*(?=\6\7$)         # tail = \7, or \7+1 if \5==1 (relies on ECMAScript NPCG behavior)
+            # tail = (tail ± 4) / 5
+            (x*)\5{3}           # \5 = floor(tail / 5); tail = \5 + (tail % 5)
+            (?=\5(x|(x{4}))$)   # \7 = 4 if we had tail % 5 == 4 before the division, or unset (0) otherwise
+            \7
             # assert that tail is a perfect square, and take its square root
-            (x(x*))             # \8 = sqrt(tail); \9 = \8 - 1
-            (?=
-                (\8*)\9+$       # iff \8 * \8 == our number, then the first match here must result in \10 == 0
+            (                   # \8 = tail
+                (x(x*))         # \9 = sqrt(tail); \10 = \9 - 1
+                (?=
+                    (\9*)\10+$  # iff \9 * \9 == our number, then the first match here must result in \11 == 0
+                )
+                \9*$\11         # test for divisibility by \9 and for \11 == 0 simultaneously
             )
-            \8*$\10             # test for divisibility by \8 and for \10 == 0 simultaneously
         )
-        # At this point, \2 = the Lucas number L_n, and \8 = the Fibonacci number F_n
+        # At this point, \2 = the Lucas number L_n, and \9 = the Fibonacci number F_n
         \2*                     # tail = the minimum multiple of \2 for which the following matches
-        (?=(\8\3+$))            # \11 = F_{2n} = F_n*L_n = \8 * \2
+        (?=(\9\3+$))            # \12 = F_{2n} = F_n*L_n = \9 * \2
         \2*                     # tail = the minimum multiple of \2 with which the following will evaluate = \2
-        \8(x(x*))\12            # \12 = F_{n-1} = (L_n-F_n)/2 = (\2 - \8) / 2; \13 = \12-1
+        \9(x(x*))\13            # \13 = F_{n-1} = (L_n-F_n)/2 = (\2 - \9) / 2; \14 = \13-1
     )
     (?=
         .*
-        (                       # \14 = F_{2n+1} = F_{2n} + F_{2n-1} = F_{2n} + (F_{n-1}*F_{n-1} + F_n*F_n) = \11 + (\8*\8 + \12*\12) = \11 + ((\6+\7) + \12*\12)
-            \11\6\7
-            (?=\12+$)
-            \12\13+$            # \12 * \12
+        (                       # \15 = F_{2n+1} = F_{2n} + F_{2n-1} = F_{2n} + (F_{n-1}*F_{n-1} + F_n*F_n) = \12 + (\9*\9 + \13*\13) = \12 + (\8 + \13*\13)
+            \12\8
+            (?=\13+$)
+            \13\14+$            # \13 * \13
         )
     )
-    \11                         # head = F_{2n} = \11
-    \14                         # head = F_{2n+2} = F_{2n}   + F_{2n+1} = head + \14
-    \14?                        # head = F_{2n+3} = F_{2n+2} + F_{2n+1} = head + \14, optionally
+    \12                         # head = F_{2n} = \12
+    \15                         # head = F_{2n+2} = F_{2n}   + F_{2n+1} = head + \15
+    \15?                        # head = F_{2n+3} = F_{2n+2} + F_{2n+1} = head + \15, optionally
 |
     x{0,3}|x{5}|x{8}            # the Fibonacci numbers 0, 1, 2, 3, 5, 8 cannot be handled by our main algorithm, so match them here
 )$
