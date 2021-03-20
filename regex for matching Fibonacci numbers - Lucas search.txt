@@ -1,0 +1,56 @@
+# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality
+
+^                               # N = tail
+(
+    (?=
+        .*?                     # find the largest tail <= N that satisfies the following requirements
+        # assert that tail is a perfect square, and take its square root
+        (?=
+            (x(x+))             # \2 = sqrt(tail); \3 = \2 - 1; assert \2 >= 2, because the below algorithm fails with smaller values
+            (?=
+                (\2*)\3+$       # iff \2 * \2 == our number, then the first match here must result in \4 == 0
+            )
+            \2*$\4              # test for divisibility by \2 and for \4 == 0 simultaneously
+        )
+        (?=
+            ((x)|x{4})          # \5 = tail % 5; tail -= \5; assert that \5==1 or \5==4, and set \6=1 if the former
+            (x*)\7{4}$          # \7 = tail / 5
+        )
+        .*(?=\6\7$)             # tail = \7, or \7+1 if \5==1 (relies on ECMAScript NPCG behavior)
+        # assert that tail is a perfect square, and take its square root
+        (x(x*))                 # \8 = sqrt(tail); \9 = \8 - 1
+        (?=
+            (\8*)\9+$           # iff \8 * \8 == our number, then the first match here must result in \10 == 0
+        )
+        \8*$\10                 # test for divisibility by \8 and for \10 == 0 simultaneously
+    )
+    # At this point, \2 = the Lucas number L_n, and \8 = the Fibonacci number F_n
+    (?=
+        .*
+        (?=\2+$)
+        (\8\3+$)                # \11 = F_{2n} = F_n*L_n = \8 * \2
+    )
+    (?=
+        .*(?=\2)\8(x(x*))\12    # \12 = F_{n-1} = (L_n-F_n)/2 = (\2 - \8) / 2; \13 = \12-1
+    )
+    (?=
+        .*
+        (?=\12+$)
+        (\12\13+$)              # \14 = \12 * \12
+    )
+    (\14\6\7)                   # \15 = F_{2n-1} = F_{n-1}*F_{n-1} + F_n*F_n = \12*\12 + \8*\8 = \14 + (\6+\7)
+    \11{2}
+    (\15\11)?
+|
+    x{0,3}|x{5}|x{8}            # the Fibonacci numbers 0, 1, 2, 3, 5, 8 cannot be handled by our main algorithm, so match them here
+)$
+
+# F_{n-1} = (L_n-F_n)/2
+# F_{2n} = 2*F_{n-1}*F_n + F_n*F_n = (L_n-F_n+F_n)*F_n = L_n*F_n
+# F_{2n-1} = F_{n-1}^2 + F_n^2
+
+# a
+# b
+# a+b
+# a+2b <-
+# 2a+3b <-
