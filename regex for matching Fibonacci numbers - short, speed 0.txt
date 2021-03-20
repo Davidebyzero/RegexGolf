@@ -1,36 +1,43 @@
-(?# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality )
+# Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality
 
 ^
 (?=
-    (x*)                           (?# x\1 = potential number for which x\1 * x\1 * 5 plus or minus 4 is a perfect square;
-                                       this is true iff x\1 is a Fibonacci number. Outside the surrounding lookahead block,
-                                       x\1 is guaranteed to be the largest number for which this is true such that
-                                       \1 + {x\1 * x\1 * 5} + 4 fits into the main number. \1 = x\1 - 1 )
+    (x*)                   # \1+1 = potential number for which 5*(\1+1)^2 ± 4
+                           # is a perfect square; this is true iff \1+1 is a Fibonacci
+                           # number. Outside the surrounding lookahead block, \1+1 is
+                           # guaranteed to be the largest number for which this is true
+                           # such that \1 + 5*(\1+1)^2 + 4 fits into the main number.
     .*
-    (?=                            (?# leave a leftover equal to x\1 * x\1 * 5 + 4 )
+    (?=                    # tail = (\1+1) * (\1+1) * 5 + 4
         x{4}
-        (                          (?# \2 = x\1 * 5 )
+        (                  # \2 = (\1+1) * 5
             x{5}
-            (\1{5})                (?# \3 = \1 * 5 )
+            (\1{5})        # \3 = \1 * 5
         )
         (?=\2*$)
         \3+$
     )
-    (|x{4})                        (?# \4 = parity - is determined by whether the index of Fibonacci number x\1 is odd or even )
-    (?=xx (x*)(\5 x?))             (?# \5 = arithmetic mean of x\1 * x\1 * 5 and \7*\7, divided by 2; \6 = the other half, including remainder )
+    (|x{4})                # \4 = parity - determined by whether the index of Fibonacci
+                           #               number \1+1 is odd or even
+    (?=xx (x*)(\5 x?))     # \5 = arithmetic mean of (\1+1) * (\1+1) * 5 and \7 * \7,
+                           #      divided by 2
+                           # \6 = the other half, including remainder
     \4
-    (?# require that the current leftover number is a perfect square)
-    (x(x*))                        (?# \7 = potential square root, which will be the square root outside the surrounding lookahead; \8 = \7-1 )
-    (?=(\7*)\8+$)                  (?# \9 = must be zero for \7 to be a valid square root )
+    # require that the current tail is a perfect square
+    (x(x*))                # \7 = potential square root, which will be the square root
+                           #      outside the surrounding lookahead; \8 = \7-1
+    (?=(\7*)\8+$)          # \9 = must be zero for \7 to be a valid square root
     (?=\7*$\9)
     \7*
-    (?=(x\1\8+$))                  (?# \10 = result of multiplying \7 * x\1, where \7 is larger )
-    (x*)\11                        (?# \11 = \10 / 2; the remainder will always be the same as it is in \6, because \7 is odd iff x\1 is odd )
-|                                  (?# Allow everything above to be skipped, resulting in all capture groups being unset )
+    (?=(x\1\8+$))          # \10 = result of multiplying \7 * (\1+1), where \7 is larger
+    (x*)\11                # \11 = \10 / 2; the remainder will always be the same as it
+                           #       is in \6, because \7 is odd iff \1+1 is odd
+|                          # Allow everything above to be skipped, resulting in all
+                           # capture groups being unset.
 )
 (
-    (?# Note that if the above was skipped using the empty alternative in the lookahead,
-        the following will evaluate to 0. This relies on ECMAScript NPCG behavior. )
+    # Note that if the above was skipped using the empty alternative in the lookahead,
+    # the following will evaluate to 0. This relies on ECMAScript NPCG behavior.
     \6\10
     (
         \5\10
@@ -38,6 +45,8 @@
         \11
     )
 |
-    xx?x?|x{5}|x{8}|x{21}          (?# the Fibonacci numbers 1, 2, 3, 5, 8, 21 cannot be handled by our main algorithm, so match them here;
-                                       note, as it so happens the main algorithm does match 13, so that doesn't need to be handled here )
+    xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled
+                           # by our main algorithm, so match them here; note, as it so
+                           # happens the main algorithm does match 13, so that doesn't
+                           # need to be handled here.
 )$
