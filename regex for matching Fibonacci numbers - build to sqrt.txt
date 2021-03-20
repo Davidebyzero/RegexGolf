@@ -20,7 +20,7 @@
                 (?=
                     (\5*)\6+$     # iff \5 * \5 == our number, then the first match here must result in \7 == 0
                 )
-                \5*$\7            # test for divisibility by \1 and for \4 == 0 simultaneously
+                \5*$\7            # test for divisibility by \5 and for \7 == 0 simultaneously
             )
             (?=
                 .*
@@ -28,7 +28,9 @@
                 (\8\9+$)          # \10 = tail = \8 * \8
             )
             (?=
-                .*(?=\1)\10\5     # tail = \1 - (\5 + \10)
+                .*(?=\1)\10\5     # tail = \1 - (\5 + \10), but allowing tail to retreat if
+                                  # necessary to allow \5+\10 to fit; this allows the regex to
+                                  # match almost all of the small Fibonacci numbers
                 (x*)              # \11 = tail
             )
             .*(?=\11\1$)          # A = \5; B = \8; tail = \1*2 - (A + B*B)
@@ -46,8 +48,8 @@
         (?=(\8\9+$))              # \13 = \8 * \8
         \8*(\5\9+$)               # \14 = \5 * \8
     )
-    \13\14{2}                     # tail -= F_2n
+    \13\14{2}                     # tail -= F_{2n}
     (\12\13)?                     # tail -= F_{2n-1} optionally, if needed to match
-    $                             # assert tail=0
+    $                             # assert tail == 0
 |
-    ^x?x?$
+    ^x?x?$                        # the Fibonacci numbers 0, 1, 2 cannot be handled by our main algorithm, so match them here
