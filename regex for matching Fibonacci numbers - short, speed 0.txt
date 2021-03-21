@@ -41,15 +41,11 @@
 (
     # Note that if the above was skipped using the empty alternative in the lookahead,
     # the following will evaluate to 0. This relies on ECMAScript NPCG behavior.
-    \6\10
-    (
-        \5\10              # head = F_{2n+3} = L_{2n} + 2*F_{2n}
-                           #                 = \5+\6  + 2*\10
-    |
-        \11                # head = F_{2n+2} = F_{2n} + F_{2n+1}
-                           #                 = F_{2n} + (L_{2n} + F_{2n})/2
-                           #                 =  \10   +    \6   +  \11
-    )
+    \10(\6\11)             # \13  = F_{2n+1} = (L_{2n} + F_{2n})/2 = \6 + \11;
+                           # head = F_{2n+2} = F_{2n}   + F_{2n+1}
+                           #                 =  \10     +   \13
+    \13?                   # head = F_{2n+3} = F_{2n+2} + F_{2n+1}    (optionally)
+                           #                 = head     +   \13
 |
     xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled
                            # by our main algorithm, so match them here; note, as it so
