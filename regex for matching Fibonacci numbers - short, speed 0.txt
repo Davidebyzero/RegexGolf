@@ -30,23 +30,23 @@
     (?=\6*$\8)
     # \6 is now the Lucas number L_n corresponding to the Fibonacci number F_n.
     \6*
-    (?=(x\1\7+$))          # \9 = F_{2n} = L_n * F_n = \6 * (\1+1), where \6 is larger
-    ((x*)x?)\11            # \10 = ceil(\9 / 2); the remainder \9 % 2 will always be
+    (?=x\1\7+$)            # tail = F_{2n} = L_n * F_n = \6 * (\1+1), where \6 is larger
+    (x*)(\9x?)             # \9 = floor(tail / 2);
+                           # \10 = ceil(tail / 2); the remainder tail % 2 will always be
                            #       the same as the remainder discarded by \5, because
                            #       F_{2n} is odd iff L_{2n} is odd, thus this ceil()
                            #       can complement the floor() of \5 when adding \5 + \10
-                           # \11 = floor(\9 / 2)
 |                          # Allow everything above to be skipped, resulting in all
                            # capture groups being unset.
 )
 (
     # Note that if the above was skipped using the empty alternative in the lookahead,
     # the following will evaluate to 0. This relies on ECMAScript NPCG behavior.
-    \9(\5\10)              # \13  = F_{2n+1} = (L_{2n} + F_{2n})/2 = \5 + \10;
+    \9\10(\5\10)           # \12  = F_{2n+1} = (L_{2n} + F_{2n})/2 = \5 + \10;
                            # head = F_{2n+2} = F_{2n}   + F_{2n+1}
-                           #                 =  \9     +   \13
-    \13?                   # head = F_{2n+3} = F_{2n+2} + F_{2n+1}    (optionally)
-                           #                 = head     +   \13
+                           #                 = \9+\10   +   \12
+    \12?                   # head = F_{2n+3} = F_{2n+2} + F_{2n+1}    (optionally)
+                           #                 = head     +   \12
 |
     xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 1, 2, 3, 5, 8, 21 cannot be handled
                            # by our main algorithm, so match them here; note, as it so
