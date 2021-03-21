@@ -18,10 +18,12 @@
         \3+$
     )
     (|x{4})                # \4 = parity - determined by whether the index of Fibonacci
-                           #               number \1+1 is odd or even
-    (?=xx (x*)\5)          # \5 = floor((mean of (\1+1) * (\1+1) * 5 and \6 * \6) / 2)
-                           #    = floor(((F_n * F_n * 5) + (L_n * L_n)) / 2)
-                           #    = floor(L_{2n} / 2)
+                           #               number \1+1 is odd or even;
+    (?=
+        xx                 # tail = arithmetic mean of (\1+1) * (\1+1) * 5 and \6 * \6
+                           #      = ((F_n * F_n * 5) + (L_n * L_n)) / 2 = L_{2n}
+        (x*)\5             # \5 = floor(tail / 2) = floor(L_{2n} / 2)
+    )
     \4
     # require that the current tail is a perfect square
     (x(x*))                # \6 = potential square root, which will be the square root
