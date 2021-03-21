@@ -47,7 +47,7 @@
     \13?                   # head = F_{2n+3} = F_{2n+2} + F_{2n+1}    (optionally)
                            #                 = head     +   \13
 |
-    xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled
+    xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 1, 2, 3, 5, 8, 21 cannot be handled
                            # by our main algorithm, so match them here; note, as it so
                            # happens the main algorithm does match 13, so that doesn't
                            # need to be handled here.
