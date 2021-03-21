@@ -1,12 +1,12 @@
 # Match Fibonacci numbers in the domain ^x*$ using only the ECMAScript subset of regex functionality
 
-^
+^                          # tail = N = input number
 (?=
-    (x*)                   # \1+1 = potential number for which 5*(\1+1)^2 ± 4
-                           # is a perfect square; this is true iff \1+1 is a Fibonacci
-                           # number. Outside the surrounding lookahead block, \1+1 is
-                           # guaranteed to be the largest number for which this is true
-                           # such that \1 + 5*(\1+1)^2 + 4 fits into the main number.
+    (x*)                   # \1+1 = potential number for which 5*(\1+1)^2 ± 4 is a
+                           # perfect square; this is true iff \1+1 is a Fibonacci number,
+                           # which we shall call F_n. Outside the surrounding lookahead
+                           # block, \1+1 is guaranteed to be the largest number for which
+                           # this is true such that \1 + 5*(\1+1)^2 + 4 <= N.
     .*
     (?=                    # tail = (\1+1) * (\1+1) * 5 + 4
         x{4}
@@ -19,19 +19,22 @@
     )
     (|x{4})                # \4 = parity - determined by whether the index of Fibonacci
                            #               number \1+1 is odd or even
-    (?=xx (x*)(\5 x?))     # \5 = arithmetic mean of (\1+1) * (\1+1) * 5 and \7 * \7,
-                           #      divided by 2
-                           # \6 = the other half, including remainder
+    (?=xx (x*)(\5 x?))     # \5+\6 = arithmetic mean of (\1+1) * (\1+1) * 5 and \7 * \7
+                           #       = ((F_n * F_n * 5) + (L_n * L_n)) / 2 = L_{2n}
+                           # \5 = floor((\5+\6) / 2)
+                           # \6 = \5 + ((\5+\6) % 2)
     \4
     # require that the current tail is a perfect square
     (x(x*))                # \7 = potential square root, which will be the square root
-                           #      outside the surrounding lookahead; \8 = \7-1
+                           #      after the following two lookaheads; \8 = \7-1
     (?=(\7*)\8+$)          # \9 = must be zero for \7 to be a valid square root
     (?=\7*$\9)
+    # \7 is now the Lucas number L_n corresponding to the Fibonacci number F_n.
     \7*
-    (?=(x\1\8+$))          # \10 = result of multiplying \7 * (\1+1), where \7 is larger
-    (x*)\11                # \11 = \10 / 2; the remainder will always be the same as it
-                           #       is in \6, because \7 is odd iff \1+1 is odd
+    (?=(x\1\8+$))          # \10 = F_{2n} = L_n * F_n = \7 * (\1+1), where \7 is larger
+    (x*)\11                # \11 = floor(\10 / 2); the remainder \10 % 2 will always be
+                           #       the same as it is in \6, because F_{2n} is odd iff
+                           #       L_{2n} is odd
 |                          # Allow everything above to be skipped, resulting in all
                            # capture groups being unset.
 )
@@ -40,9 +43,12 @@
     # the following will evaluate to 0. This relies on ECMAScript NPCG behavior.
     \6\10
     (
-        \5\10
+        \5\10              # head = F_{2n+3} = L_{2n} + 2*F_{2n}
+                           #                 = \5+\6  + 2*\10
     |
-        \11
+        \11                # head = F_{2n+2} = F_{2n} + F_{2n+1}
+                           #                 = F_{2n} + (L_{2n} + F_{2n})/2
+                           #                 =  \10   +    \6   +  \11
     )
 |
     xx?x?|x{5}|x{8}|x{21}  # The Fibonacci numbers 0, 1, 2, 3, 5, 8, 21 cannot be handled
