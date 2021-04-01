@@ -73,7 +73,8 @@
 		(                          # \22 =       M
 			(?=\4*(x?(x*)))\23     # \23 =       M % \4; \24 = \23-1, or 0 if \23==0
 			(x(x*))                # \25 = floor(M / \4); \26 = \25-1
-			(?=\25*$)              # we can skip the test for divisibility by \5, but I'm not sure why; TODO: figure out why this is
+			(?=\25*$)              # We can skip the test for divisibility by \5, because without it, the division algorithm is still guaranteed to return the correct
+			                       # result when 3*floor(M / \4) > \4, and for the first matching value of M, we'll have ceil(sqrt(2)*floor(M / \4))+2 >= \4.
 			\5\26*$
 		)
 	)
