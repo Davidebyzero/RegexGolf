@@ -9,57 +9,57 @@
 
 (?=(x\1)+(x?(x*)))             # \3 = \1+1 = floor(sqrt(N))+1, the number base to work in; \4 = N % \3; \5 = \4-1, or 0 if \4==0
 (?=
-	\4
-	(x(x*?))                   # \6 = floor(N / \3); \7 = \6-1; Use the second shortened form of division, because we're
-	\1+$                       # guaranteed that \6 < \3 thanks to using floor(N / sqrt(2))+1 as our number base.
+    \4
+    (x(x*?))                   # \6 = floor(N / \3); \7 = \6-1; Use the second shortened form of division, because we're
+    \1+$                       # guaranteed that \6 < \3 thanks to using floor(N / sqrt(2))+1 as our number base.
 )
 (?=
-	.*
-	(?=
-		(?=\4*$)               # tail = \4 * \4
-		\4\5+$
-	)
-	(x*?)(?=\3*$)              # \8 =       (\4 * \4) % \3, the base-\3 digit in place 0 of the result for N*N
-	(x?(x*))                   # \9 = floor((\4 * \4) / \3); \10 = \9-1, or 0 if \9==0
-	(?=\9*$)
-	(
-		(?=\1+$)
-		\1\10*$
-	|
-		$\9                    # must make a special case for \9==0, because \1 is nonzero
-	)
+    .*
+    (?=
+        (?=\4*$)               # tail = \4 * \4
+        \4\5+$
+    )
+    (x*?)(?=\3*$)              # \8 =       (\4 * \4) % \3, the base-\3 digit in place 0 of the result for N*N
+    (x?(x*))                   # \9 = floor((\4 * \4) / \3); \10 = \9-1, or 0 if \9==0
+    (?=\9*$)
+    (
+        (?=\1+$)
+        \1\10*$
+    |
+        $\9                    # must make a special case for \9==0, because \1 is nonzero
+    )
 )
 (?=
-	.*
-	(?=
-		(?=\4*$)               # tail = \4 * \6; must do symmetric multiplication, because \4 is occasionally 1 larger than \6
-		(?=\6*$)
-		(?=\4\7+$)
-		   \6\5+$
-	|
-		$\4                    # must make a special case for \4==0, because \6 might not be 0
-	)
-	(x*?)(?=\3*$)              # \12 =       (\4 * \6) % \3
-	(x?(x*))                   # \13 = floor((\4 * \6) / \3); \14 = \13-1, or 0 if \13==0
-	(?=\13*$)
-	(
-		(?=\1+$)
-		\1\14*$
-	|
-		$\13                   # must make a special case for \13==0, because \1 is nonzero
-	)
+    .*
+    (?=
+        (?=\4*$)               # tail = \4 * \6; must do symmetric multiplication, because \4 is occasionally 1 larger than \6
+        (?=\6*$)
+        (?=\4\7+$)
+           \6\5+$
+    |
+        $\4                    # must make a special case for \4==0, because \6 might not be 0
+    )
+    (x*?)(?=\3*$)              # \12 =       (\4 * \6) % \3
+    (x?(x*))                   # \13 = floor((\4 * \6) / \3); \14 = \13-1, or 0 if \13==0
+    (?=\13*$)
+    (
+        (?=\1+$)
+        \1\14*$
+    |
+        $\13                   # must make a special case for \13==0, because \1 is nonzero
+    )
 )
 (?=
-	.*(?=\12\12\9$)            # tail =       2 * \12 + \9
-	(x*?)(?=\3*$)              # \16 =       (2 * \12 + \9) % \3, the base-\3 digit in place 1 of the result for N*N
-	(x?(x*))                   # \17 = floor((2 * \12 + \9) / \3); \18 = \17-1, or 0 if \17==0
-	(?=\17*$)
-	(
-		(?=\1+$)
-		\1\18*$
-	|
-		$\17                   # must make a special case for \17==0, because \1 is nonzero
-	)
+    .*(?=\12\12\9$)            # tail =       2 * \12 + \9
+    (x*?)(?=\3*$)              # \16 =       (2 * \12 + \9) % \3, the base-\3 digit in place 1 of the result for N*N
+    (x?(x*))                   # \17 = floor((2 * \12 + \9) / \3); \18 = \17-1, or 0 if \17==0
+    (?=\17*$)
+    (
+        (?=\1+$)
+        \1\18*$
+    |
+        $\17                   # must make a special case for \17==0, because \1 is nonzero
+    )
 )                              # {\6*\6 + 2*\13 + \17} = the base-\3 digit in place 2 of the result for N*N, which is allowed to exceed \3 and will always do so;
                                # Note that it will be equal to N iff N is a perfect square, because of the choice of number base.
 
@@ -67,111 +67,111 @@
 
 # Step 2a: Calculate M*M in base \3
 (?=
-	.*?                            # Determine value of M with backtracking, starting with largest values first
-	(?=
-		(                          # \20 =       M
-			(?=\3*(x?(x*)))\21     # \21 =       M % \3; \22 = \21-1, or 0 if \21==0
-			(x(x*))                # \23 = floor(M / \3); \24 = \23-1
-			(?=\23*$)
-			(?=\1*$)
-			\1\24*$
-		)
-	)
-	(?<=
-		(?=
-			(?=
-				.*
-				(?=\23*$)
-				(\23\24+$)                 # \25 = \23 * \23
-			)
-			(?=
-				.*
-				(?=
-					(?=\21*$)              # tail = \21 * \21
-					\21\22+$
-				)
-				(x*?)(?=\3*$)              # \26 =       (\21 * \21) % \3, the base-\3 digit in place 0 of the result for M*M
-				(x?(x*))                   # \27 = floor((\21 * \21) / \3); \28 = \27-1, or 0 if \27==0
-				(?=\27*$)
-				(
-					(?=\1+$)
-					\1\28*$
-				|
-					$\27                   # must make a special case for \27==0, because \1 is nonzero
-				)
-			)
-			(?=
-				.*
-				(?=
-					(?=\21*$)              # tail = \21 * \23; must do symmetric multiplication, because \21 is occasionally 1 larger than \23
-					(?=\23*$)
-					(?=\21\24+$)
-					   \23\22+$
-				|
-					$\21                   # must make a special case for \21==0, because \23 might not be 0
-				)
-				(x*?)(?=\3*$)              # \30 =       (\21 * \23) % \3
-				(x?(x*))                   # \31 = floor((\21 * \23) / \3); \32 = \31-1, or 0 if \31==0
-				(?=\31*$)
-				(
-					(?=\1+$)
-					\1\32*$
-				|
-					$\31                   # must make a special case for \31==0, because \1 is nonzero
-				)
-			)
-			(?=
-				.*(?=\30\30\27$)           # tail =       2 * \30 + \27
-				(x*?)(?=\3*$)              # \34 =       (2 * \30 + \27) % \3, the base-\3 digit in place 1 of the result for M*M
-				(x?(x*))                   # \35 = floor((2 * \30 + \27) / \3); \36 = \35-1, or 0 if \35==0
-				(?=\35*$)
-				(
-					(?=\1+$)
-					\1\36*$
-				|
-					$\35                   # must make a special case for \35==0, because \1 is nonzero
-				)
-			)                              # {\25 + 2*\31 + \35} = the base-\3 digit in place 2 of the result for M*M, which is allowed to exceed \3 and will always do so
+    .*?                            # Determine value of M with backtracking, starting with largest values first
+    (?=
+        (                          # \20 =       M
+            (?=\3*(x?(x*)))\21     # \21 =       M % \3; \22 = \21-1, or 0 if \21==0
+            (x(x*))                # \23 = floor(M / \3); \24 = \23-1
+            (?=\23*$)
+            (?=\1*$)
+            \1\24*$
+        )
+    )
+    (?<=
+        (?=
+            (?=
+                .*
+                (?=\23*$)
+                (\23\24+$)                 # \25 = \23 * \23
+            )
+            (?=
+                .*
+                (?=
+                    (?=\21*$)              # tail = \21 * \21
+                    \21\22+$
+                )
+                (x*?)(?=\3*$)              # \26 =       (\21 * \21) % \3, the base-\3 digit in place 0 of the result for M*M
+                (x?(x*))                   # \27 = floor((\21 * \21) / \3); \28 = \27-1, or 0 if \27==0
+                (?=\27*$)
+                (
+                    (?=\1+$)
+                    \1\28*$
+                |
+                    $\27                   # must make a special case for \27==0, because \1 is nonzero
+                )
+            )
+            (?=
+                .*
+                (?=
+                    (?=\21*$)              # tail = \21 * \23; must do symmetric multiplication, because \21 is occasionally 1 larger than \23
+                    (?=\23*$)
+                    (?=\21\24+$)
+                       \23\22+$
+                |
+                    $\21                   # must make a special case for \21==0, because \23 might not be 0
+                )
+                (x*?)(?=\3*$)              # \30 =       (\21 * \23) % \3
+                (x?(x*))                   # \31 = floor((\21 * \23) / \3); \32 = \31-1, or 0 if \31==0
+                (?=\31*$)
+                (
+                    (?=\1+$)
+                    \1\32*$
+                |
+                    $\31                   # must make a special case for \31==0, because \1 is nonzero
+                )
+            )
+            (?=
+                .*(?=\30\30\27$)           # tail =       2 * \30 + \27
+                (x*?)(?=\3*$)              # \34 =       (2 * \30 + \27) % \3, the base-\3 digit in place 1 of the result for M*M
+                (x?(x*))                   # \35 = floor((2 * \30 + \27) / \3); \36 = \35-1, or 0 if \35==0
+                (?=\35*$)
+                (
+                    (?=\1+$)
+                    \1\36*$
+                |
+                    $\35                   # must make a special case for \35==0, because \1 is nonzero
+                )
+            )                              # {\25 + 2*\31 + \35} = the base-\3 digit in place 2 of the result for M*M, which is allowed to exceed \3 and will always do so
 
-			# Step 2b: Calculate 2*M*M in base \3
-			(?=
-				.*
-				(?=\26\26)                 # tail =       2*\26
-				(?=\3*(x*))                # \38 =       (2*\26) % \3, the base-\3 digit in place 0 of the result for 2*M*M
-				(\1(x)|)                   # \40 = floor((2*\26) / \3) == +1 carry if {2*\26} does not fit in a base \3 digit
-			)
-			(?=
-				.*
-				(?=\34\34\40)              # tail =       2*\34 + \40
-				(?=\3*(x*))                # \41 =       (2*\34 + \40) % \3, the base-\3 digit in place 1 of the result for 2*M*M
-				(\1(x)|)                   # \43 = floor((2*\34 + \40) / \3) == +1 carry if {2*\34 + \40} does not fit in a base \3 digit
-			)                              # 2*(\25 + 2*\31 + \35) + \43 = the base-\3 digit in place 2 of the result for 2*M*M, which is allowed to exceed \3 and will always do so
+            # Step 2b: Calculate 2*M*M in base \3
+            (?=
+                .*
+                (?=\26\26)                 # tail =       2*\26
+                (?=\3*(x*))                # \38 =       (2*\26) % \3, the base-\3 digit in place 0 of the result for 2*M*M
+                (\1(x)|)                   # \40 = floor((2*\26) / \3) == +1 carry if {2*\26} does not fit in a base \3 digit
+            )
+            (?=
+                .*
+                (?=\34\34\40)              # tail =       2*\34 + \40
+                (?=\3*(x*))                # \41 =       (2*\34 + \40) % \3, the base-\3 digit in place 1 of the result for 2*M*M
+                (\1(x)|)                   # \43 = floor((2*\34 + \40) / \3) == +1 carry if {2*\34 + \40} does not fit in a base \3 digit
+            )                              # 2*(\25 + 2*\31 + \35) + \43 = the base-\3 digit in place 2 of the result for 2*M*M, which is allowed to exceed \3 and will always do so
 
-			# Step 2c: Require that 2*M*M <= N*N
+            # Step 2c: Require that 2*M*M <= N*N
 
-			(?=
-				(?=
-					(.*)                   # \44
-					\13\13\17
-					(?=\6*$)               # tail = \6 * \6
-					\6\7+$
-				)
-				\44                        # tail = {\6*\6 + 2*\13 + \17}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1
-				(
-					x+
-				|
-					(?=
-						.*(?!\16)\41       # \41 < \16
-					|
-						(?!.*(?!\38)\8)    # \38 <= \8
-						.*(?=\16$)\41$     # \41 == \16
-					)
-				)
-				(\25\31\31\35){2}\43$      # 2*(\25 + 2*\31 + \35) + \43
-			)
-		)
-		^.*
-	)
+            (?=
+                (?=
+                    (.*)                   # \44
+                    \13\13\17
+                    (?=\6*$)               # tail = \6 * \6
+                    \6\7+$
+                )
+                \44                        # tail = {\6*\6 + 2*\13 + \17}; we can do this unconditionally because our digits in place 2 are always greater than those in places 0..1
+                (
+                    x+
+                |
+                    (?=
+                        .*(?!\16)\41       # \41 < \16
+                    |
+                        (?!.*(?!\38)\8)    # \38 <= \8
+                        .*(?=\16$)\41$     # \41 == \16
+                    )
+                )
+                (\25\31\31\35){2}\43$      # 2*(\25 + 2*\31 + \35) + \43
+            )
+        )
+        ^.*
+    )
 )
 \20
 |xx?\B|                        # handle inputs in the domain ^x{0,4}$
