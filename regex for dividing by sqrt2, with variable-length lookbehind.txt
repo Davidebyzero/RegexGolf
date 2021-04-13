@@ -10,9 +10,8 @@
 (?=(x\1)+(x?(x*)))             # \3 = \1+1 = floor(sqrt(N))+1, the number base to work in; \4 = N % \3; \5 = \4-1, or 0 if \4==0
 (?=
 	\4
-	(x(x*))                    # \6 = floor(N / \3); \7 = \6-1
-	(?=\6*$)                   # we can skip the test for divisibility by \1 because it's guaranteed that \1 <= \6
-	\1\7*$
+	(x(x*?))                   # \6 = floor(N / \3); \7 = \6-1; Use the second shortened form of division, because we're
+	\1+$                       # guaranteed that \6 < \3 thanks to using floor(N / sqrt(2))+1 as our number base.
 )
 (?=
 	.*
