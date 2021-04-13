@@ -5,13 +5,16 @@
     \2+$
 )
 
-# Step 1: Calculate N*N in base floor(sqrt(N))+1
+# Step 1: Calculate N*N in base floor(sqrt(N))+1. Thanks to this choice of number base to work in, we'll be able to use the
+# second shortened form of division in all places where the number base is the divisor, because it's guaranteed to give the
+# correct quotient when the dividend is less than the squared divisor, and N itself is less than this. This form of division
+# can be recognized by its lazy rather than greedy matching of the quotient, and only one divisibility test following that.
 
 (?=(x\1)+(x?(x*)))             # \3 = \1+1 = floor(sqrt(N))+1, the number base to work in; \4 = N % \3; \5 = \4-1, or 0 if \4==0
 (?=
     \4
-    (x(x*?))                   # \6 = floor(N / \3); \7 = \6-1; Use the second shortened form of division, because we're
-    \1+$                       # guaranteed that \6 < \3 thanks to using floor(N / sqrt(2))+1 as our number base.
+    (x(x*?))                   # \6 = floor(N / \3); \7 = \6-1
+    \1+$
 )
 (?=
     .*
@@ -20,11 +23,9 @@
         \4\5+$
     )
     (x*?)(?=\3*$)              # \8 =       (\4 * \4) % \3, the base-\3 digit in place 0 of the result for N*N
-    (x?(x*))                   # \9 = floor((\4 * \4) / \3); \10 = \9-1, or 0 if \9==0
-    (?=\9*$)
+    (x?(x*?))                  # \9 = floor((\4 * \4) / \3); \10 = \9-1, or 0 if \9==0
     (
-        (?=\1+$)
-        \1\10*$
+        \1+$
     |
         $\9                    # must make a special case for \9==0, because \1 is nonzero
     )
@@ -40,11 +41,9 @@
         $\4                    # must make a special case for \4==0, because \6 might not be 0
     )
     (x*?)(?=\3*$)              # \12 =       (\4 * \6) % \3
-    (x?(x*))                   # \13 = floor((\4 * \6) / \3); \14 = \13-1, or 0 if \13==0
-    (?=\13*$)
+    (x?(x*?))                  # \13 = floor((\4 * \6) / \3); \14 = \13-1, or 0 if \13==0
     (
-        (?=\1+$)
-        \1\14*$
+        \1+$
     |
         $\13                   # must make a special case for \13==0, because \1 is nonzero
     )
@@ -52,11 +51,9 @@
 (?=
     .*(?=\12\12\9$)            # tail =       2 * \12 + \9
     (x*?)(?=\3*$)              # \16 =       (2 * \12 + \9) % \3, the base-\3 digit in place 1 of the result for N*N
-    (x?(x*))                   # \17 = floor((2 * \12 + \9) / \3); \18 = \17-1, or 0 if \17==0
-    (?=\17*$)
+    (x?(x*?))                  # \17 = floor((2 * \12 + \9) / \3); \18 = \17-1, or 0 if \17==0
     (
-        (?=\1+$)
-        \1\18*$
+        \1+$
     |
         $\17                   # must make a special case for \17==0, because \1 is nonzero
     )
@@ -71,10 +68,8 @@
     (?=
         (                          # \20 =       M
             (?=\3*(x?(x*)))\21     # \21 =       M % \3; \22 = \21-1, or 0 if \21==0
-            (x(x*))                # \23 = floor(M / \3); \24 = \23-1
-            (?=\23*$)
-            (?=\1*$)
-            \1\24*$
+            (x(x*?))               # \23 = floor(M / \3); \24 = \23-1
+            \1+$
         )
     )
     (?<=
@@ -91,11 +86,9 @@
                     \21\22+$
                 )
                 (x*?)(?=\3*$)              # \26 =       (\21 * \21) % \3, the base-\3 digit in place 0 of the result for M*M
-                (x?(x*))                   # \27 = floor((\21 * \21) / \3); \28 = \27-1, or 0 if \27==0
-                (?=\27*$)
+                (x?(x*?))                  # \27 = floor((\21 * \21) / \3); \28 = \27-1, or 0 if \27==0
                 (
-                    (?=\1+$)
-                    \1\28*$
+                    \1+$
                 |
                     $\27                   # must make a special case for \27==0, because \1 is nonzero
                 )
@@ -111,11 +104,9 @@
                     $\21                   # must make a special case for \21==0, because \23 might not be 0
                 )
                 (x*?)(?=\3*$)              # \30 =       (\21 * \23) % \3
-                (x?(x*))                   # \31 = floor((\21 * \23) / \3); \32 = \31-1, or 0 if \31==0
-                (?=\31*$)
+                (x?(x*?))                  # \31 = floor((\21 * \23) / \3); \32 = \31-1, or 0 if \31==0
                 (
-                    (?=\1+$)
-                    \1\32*$
+                    \1+$
                 |
                     $\31                   # must make a special case for \31==0, because \1 is nonzero
                 )
@@ -123,11 +114,9 @@
             (?=
                 .*(?=\30\30\27$)           # tail =       2 * \30 + \27
                 (x*?)(?=\3*$)              # \34 =       (2 * \30 + \27) % \3, the base-\3 digit in place 1 of the result for M*M
-                (x?(x*))                   # \35 = floor((2 * \30 + \27) / \3); \36 = \35-1, or 0 if \35==0
-                (?=\35*$)
+                (x?(x*?))                  # \35 = floor((2 * \30 + \27) / \3); \36 = \35-1, or 0 if \35==0
                 (
-                    (?=\1+$)
-                    \1\36*$
+                    \1+$
                 |
                     $\35                   # must make a special case for \35==0, because \1 is nonzero
                 )
