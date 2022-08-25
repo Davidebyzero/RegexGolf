@@ -18,11 +18,11 @@ fi
 script=$(
     if [ $3 -ge 0 ]; then
         for (( i=$2; i>=$1; i-- )); do
-            echo 's/\\'$i'(?!\d)/\\'$(($i+$3))'/g;'
+            echo 's/(\\\K'$i'(?!\d)|\(\?\K'$i'(?=\)))/'$(($i+$3))'/g;'
         done
     else
         for (( i=$1; i<=$2; i++ )); do
-            echo 's/\\'$i'(?!\d)/\\'$(($i+$3))'/g;'
+            echo 's/(\\\K'$i'(?!\d)|\(\?\K'$i'(?=\)))/'$(($i+$3))'/g;'
         done
     fi
     echo -n 'print'
